@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>메인페이지</title>
+</head>
+<body>
+<div class="content mt-5" layout:fragment="content">
+    <!-- 동그라미 버튼들 -->
+    <div class="circle-container">
+        <button class="circle-button">자재관리</button>
+        <button class="circle-button ms-5">인력관리</button>
+    </div>
+</div>
+</body>
+</html>
