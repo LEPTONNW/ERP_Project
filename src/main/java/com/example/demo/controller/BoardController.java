@@ -1,11 +1,8 @@
 package com.example.demo.controller;
 
-
 import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.PageRequestDTO;
 import com.example.demo.dto.PageResponesDTO;
-import com.example.demo.entity.Board;
-import com.example.demo.repository.search.BoardSearch;
 import com.example.demo.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import java.util.Collections;
 
 @Controller
 @Log4j2
@@ -35,8 +34,6 @@ public class BoardController {
     public  void register(BoardDTO boardDTO){
         //html에서 object를 사용하기 위해서 thymeleaf
         log.info("등록get 진입");
-
-
 
     }
 
@@ -101,7 +98,19 @@ public class BoardController {
         return "board/boardread";
     }
 
+    @GetMapping("/modify")
+    public String modify(Model model, @RequestParam Long bno) {
+        BoardDTO boardDTO = boardService.read(bno);
+        model.addAttribute("boardDTO", boardDTO);
+        return "board/modify"; // 수정 화면으로 이동
+    }
 
-
+    // 수정된 내용 저장
+    @PostMapping("/modify")
+    public String modifyPro(@ModelAttribute BoardDTO boardDTO, RedirectAttributes redirectAttributes) {
+       Long num = boardService.modify(boardDTO); // 수정된 내용을 서비스에서 처리
+        redirectAttributes.addFlashAttribute("message", num+ "번 글이 수정이 완료되었습니다.");
+        return "redirect:/board/list"; // 목록 페이지로 리다이렉트
+    }
 
 }

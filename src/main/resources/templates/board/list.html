@@ -38,7 +38,7 @@
             </nav>
 
             <th:block th:if="${#lists.isEmpty(boardDTOPageResponesDTO.dtoList)}">
-                <h1>너님 글이 없음</h1>
+                <h1>작성된 글이 없습니다.</h1>
             </th:block>
 
             <th:block th:unless="${#lists.isEmpty(boardDTOPageResponesDTO.dtoList)}">
@@ -64,13 +64,10 @@
                             <td th:text="${list.regidate}">@mdo</td>
                         </tr>
                     </th:block>
-
                     </tbody>
                 </table>
             </th:block>
-
         </div>
-
     </div>
 
 

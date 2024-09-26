@@ -10,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,11 +61,6 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(EntityNotFoundException::new);
 
         board.setContent(boardDTO.getContent());
-
-    }
-
-    @Override
-    public void delete(Long dno) {
 
     }
 
