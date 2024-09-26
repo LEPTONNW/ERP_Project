@@ -2,7 +2,6 @@ package com.example.demo.repository.search;
 
 import com.example.demo.entity.Board;
 import com.example.demo.entity.QBoard;
-import com.example.demo.service.BoardServiceImpl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.log4j.Log4j2;

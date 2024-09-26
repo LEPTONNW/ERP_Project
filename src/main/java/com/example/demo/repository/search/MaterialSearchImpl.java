@@ -39,12 +39,6 @@ public class MaterialSearchImpl extends QuerydslRepositorySupport implements Mat
                     case "c" :
                         booleanBuilder.or(materialEntity.matCode.contains(keyword));
                         break;
-                    case "a" :
-                        booleanBuilder.or(materialEntity.matAmount.notIn(Integer.valueOf(keyword)));
-                        break;
-                    case "p" :
-                        booleanBuilder.or(materialEntity.matPrice.notIn(Integer.valueOf(keyword)));
-                        break;
                     case "bp" :
                         booleanBuilder.or(materialEntity.matBuyPlace.contains(keyword));
                         break;

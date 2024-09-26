@@ -21,12 +21,11 @@
 
                         <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
 
-                            <option value="t" >제목</option>
-                            <option value="c">내용</option>
-                            <option value="w">작성자</option>
-                            <option value="tc">제목 + 내용</option>
-                            <option value="tw">제목 + 작성자</option>
-                            <option value="twc">제목 + 내용 + 작성자</option>
+                            <option value="n" >자재명</option>
+                            <option value="c">자재 코드</option>
+                            <option value="bp">매입처</option>
+                            <option value="bn">매입처 사업자 등록 번호</option>
+
                         </select>
                         <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -36,11 +35,11 @@
 
             </nav>
 
-            <th:block th:if="${#lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
+            <th:block th:if="${materialDTOPageResponesDTO != null and #lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
                 <h1>너님 글이 없음</h1>
             </th:block>
 
-            <th:block th:unless="${#lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
+            <th:block th:if="${materialDTOPageResponesDTO != null and !#lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -55,14 +54,18 @@
                     <th:block th:each="list: ${materialDTOPageResponesDTO.dtoList}">
                         <tr>
                             <th scope="row" th:text="${list.bno}">1</th>
-                            <td  th:text="${list.title}">Mark</td>
-                            <td  th:text="${list.content}">Otto</td>
-                            <td  th:text="${list.writer}">@mdo</td>
-                            <td  th:text="${list.regidate}">@mdo</td>
+                            <td th:text="${list.title}">Mark</td>
+                            <td th:text="${list.content}">Otto</td>
+                            <td th:text="${list.writer}">@mdo</td>
+                            <td th:text="${list.regidate}">@mdo</td>
                         </tr>
                     </th:block>
-
                     </tbody>
+                </table>
+            </th:block>
+
+
+            </tbody>
                 </table>
             </th:block>
 

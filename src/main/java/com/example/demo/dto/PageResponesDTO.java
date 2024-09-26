@@ -15,8 +15,8 @@ public class PageResponesDTO<E> {
     private int page; //현재 페이지
     private int size; //한페이지에 보여줄 게시물수
     private int total;  //게시물총수, 검색시 총수량 변경
-                        //end에서 마지막이니? 물어볼수 있음
-                        //end는 boolean
+    //end에서 마지막이니? 물어볼수 있음
+    //end는 boolean
     //시작페이지 번호
     private int start;
 
@@ -30,8 +30,8 @@ public class PageResponesDTO<E> {
     private boolean next;
 
     private List<E> dtoList; //목록에 대한 결과값, select * from table
-                             //다른곳에서도 사용이 가능하도록 컬렉션 사용
-                             //List<Board> List<Member> List<notice>
+    //다른곳에서도 사용이 가능하도록 컬렉션 사용
+    //List<Board> List<Member> List<notice>
     @Builder(builderMethodName = "withAll")
     public PageResponesDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
         if(total <= 0) {
@@ -53,4 +53,6 @@ public class PageResponesDTO<E> {
 
 
     }
+
+
 }
