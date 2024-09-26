@@ -15,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.util.Collections;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,16 +81,48 @@ public class BoardServiceImpl implements BoardService {
         Page<Board> boardpage = boardRepository.searchAll(types, keyword, pageable);
 
         //보드타입의 리스트가 >>> 보드DTO 타입의 리스트로 변환
-        List<BoardDTO> boardDTOList =
-                boardpage.getContent().
-                        stream().
-                        map(board -> mapper.map(board, BoardDTO.class))
+        // 보드 리스트가 null일 경우 빈 리스트로 처리
+        List<BoardDTO> boardDTOList = boardpage.getContent() == null ?
+                Collections.emptyList() :
+                boardpage.getContent()
+                        .stream()
+                        .map(board -> mapper.map(board, BoardDTO.class))
                         .collect(Collectors.toList());
 
+
+        //반환값 처리
         return PageResponesDTO.<BoardDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(boardDTOList)
                 .total((int)boardpage.getTotalElements())
                 .build();
     }
+
+    @Override
+    public BoardDTO read(Long bno) {
+        Board board = boardRepository.findById(bno)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        // 엔티티를 DTO로 변환하여 반환
+        return mapper.map(board, BoardDTO.class);
+    }
+
+
+    //정보 수정
+    @Override
+    public Long modify(BoardDTO boardDTO) {
+
+        Board board = boardRepository
+                .findById(boardDTO.getBno())
+                .orElseThrow(EntityNotFoundException::new);
+
+        board.setContent(boardDTO.getContent());
+        board.setTitle(boardDTO.getTitle());
+
+    return boardDTO.getBno();
+    }
+
+
+
+
 }

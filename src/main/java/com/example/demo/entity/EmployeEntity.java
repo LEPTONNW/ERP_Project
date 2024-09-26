@@ -17,7 +17,7 @@ public class EmployeEntity {
     @Column
     private String name;                //이름
     @Column
-    private int age;                    //나이
+    private LocalDate age;                    //나이
     @Column
     private String gender;              //성별
     @Column

@@ -21,4 +21,10 @@ public interface BoardService {
 
     //페이징처리, 검색처리 한 목록
     public PageResponesDTO<BoardDTO> list(PageRequestDTO pageRequestDTO);
+
+    public BoardDTO read(Long bno);
+
+    public Long modify(BoardDTO boardDTO);
+
+
 }
