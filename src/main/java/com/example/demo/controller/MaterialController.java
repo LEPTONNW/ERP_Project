@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -41,6 +43,9 @@ public class MaterialController {
     @GetMapping("/list")
     public  String list(Model model, PageRequestDTO pageRequestDTO){
         PageResponesDTO<MaterialDTO> materialDTOPageResponesDTO = materialService.list(pageRequestDTO);
+        if (materialDTOPageResponesDTO.getDtoList() == null) {
+            materialDTOPageResponesDTO.setDtoList(Collections.emptyList());
+        }
         model.addAttribute("materialDTOPageResponesDTO",materialDTOPageResponesDTO);
         return "material/list";
     }

@@ -1,6 +1,7 @@
 package com.example.demo.repository.search;
 
 import com.example.demo.dto.MaterialDTO;
+import com.example.demo.entity.MaterialEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

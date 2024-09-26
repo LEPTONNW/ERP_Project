@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class MaterialDTO {
-    private Long mno;
+    private Long num;
     private String matName;     //자재명
     private String matCode;     //자재코드
     private int matAmount;      //수량
@@ -32,5 +32,5 @@ public class MaterialDTO {
 
 
 
-//일단은 DTO는 이정도? 이걸 표로 작성하기만 하면 될듯요?
+
 
