@@ -20,5 +20,11 @@ public class MainController {
         return "main";
     }
 
+    //로그인 페이지 전환
+    @GetMapping("/login")
+    private String login() {
+        return "login";
+    }
+
 
 }

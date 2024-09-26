@@ -17,8 +17,14 @@ public interface BoardService {
 
     public void update(BoardDTO boardDTO);
 
-    public void delete(Long dno);
+
 
     //페이징처리, 검색처리 한 목록
     public PageResponesDTO<BoardDTO> list(PageRequestDTO pageRequestDTO);
+
+    public BoardDTO read(Long bno);
+
+    public Long modify(BoardDTO boardDTO);
+
+
 }

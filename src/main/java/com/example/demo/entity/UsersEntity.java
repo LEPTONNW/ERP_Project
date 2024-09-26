@@ -4,6 +4,8 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity //엔티티임을 명시
 @Getter
 @Setter
@@ -17,6 +19,9 @@ public class UsersEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mno;   //글번호 pk
 
+    @Column (length = 15, nullable = false, unique = true)
+    private String userid;
+
     @Column(length = 15, nullable = false, unique = true)
     private String pass; // 비밀번호
 
@@ -24,7 +29,7 @@ public class UsersEntity extends BaseEntity {
     private String name; // 이름
 
     @Column(nullable = false)
-    private int age; //나이
+    private LocalDate age; //나이
 
     @Column(nullable = false)
     private String gender; //성별

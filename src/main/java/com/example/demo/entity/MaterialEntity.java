@@ -2,9 +2,7 @@ package com.example.demo.entity;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -16,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MeterialEntity {
+public class MaterialEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long matNum;
@@ -37,10 +35,13 @@ public class MeterialEntity {
     private LocalDate matBuyDate;//매입일자
     @Column(length = 50,nullable = false)
     private String matText;//메모
+    @Column(columnDefinition = "text")
+    private String content;
 
     @ManyToOne
     @JoinColumn(name = "mno")
     private UsersEntity usersEntity;
+    private String writer;
 
 
 

@@ -6,14 +6,24 @@
 <head>
     <meta charset="UTF-8">
     <title>메인페이지</title>
+    <style>
+        a {
+            text-decoration: none;
+            color:black;
+        }
+    </style>
 </head>
 <body>
+
+<!-- 메인화면 컨텐츠 -->
 <div class="content mt-5" layout:fragment="content">
     <!-- 동그라미 버튼들 -->
     <div class="circle-container">
-        <button class="circle-button">자재관리</button>
+        <a href="/material/list" class="circle-button">자재관리</a>
         <button class="circle-button ms-5">인력관리</button>
     </div>
 </div>
+
+
 </body>
 </html>
