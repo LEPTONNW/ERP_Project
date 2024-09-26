@@ -26,7 +26,6 @@ public class Bimg extends BaseEntity {
     @JoinColumn(name = "mno")
     private Board board;
 
-
     //등록일자 혹은 만든이 기타등등이 들어감
 
 
