@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <div class="row mt-5">
+        <div class="col shadow">
+
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <form class="d-flex" role="search" action="/board/list" method="get"
+                          th:object="${pageRequestDTO}">
+
+                        <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
+
+                            <option value="n" >자재명</option>
+                            <option value="c">자재 코드</option>
+                            <option value="bp">매입처</option>
+                            <option value="bn">매입처 사업자 등록 번호</option>
+
+                        </select>
+                        <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">검색</button>
+                    </form>
+                    <button type="button" class="btn btn-dark"> 신규 자재 등록</button>
+                </div>
+
+            </nav>
+
+            <th:block th:if="${materialDTOPageResponesDTO != null and #lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
+                <h1>너님 글이 없음</h1>
+            </th:block>
+
+            <th:block th:if="${materialDTOPageResponesDTO != null and !#lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">제목임</th>
+                        <th scope="col">내용임</th>
+                        <th scope="col">작성자임</th>
+                        <th scope="col">등록날짜임</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="list: ${materialDTOPageResponesDTO.dtoList}">
+                        <tr>
+                            <th scope="row" th:text="${list.bno}">1</th>
+                            <td th:text="${list.title}">Mark</td>
+                            <td th:text="${list.content}">Otto</td>
+                            <td th:text="${list.writer}">@mdo</td>
+                            <td th:text="${list.regidate}">@mdo</td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </th:block>
+
+
+            </tbody>
+            </table>
+            </th:block>
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+</body>
+</html>
