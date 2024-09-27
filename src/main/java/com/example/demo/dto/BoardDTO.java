@@ -24,10 +24,10 @@ public class BoardDTO {
     @NotEmpty
     private String content;
 
-
     private String writer;
 
     private LocalDate regidate;
+
     private LocalDate modDate;
 
 
