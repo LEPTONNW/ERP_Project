@@ -7,6 +7,7 @@ import com.example.demo.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collections;
+
 
 @Controller
 @Log4j2
@@ -37,6 +39,7 @@ public class BoardController {
 
     }
 
+
     @PostMapping("/register")
     public  String registerPost(@Valid BoardDTO boardDTO, BindingResult bindingResult, Model model
     ){  //파라미터 리다이렉트 쓸때 추가 : RedirectAttributes redirectAttributes
@@ -52,39 +55,39 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, PageRequestDTO pageRequestDTO) {
-
-        //페이지에 담을 내용을 boardDTOPageResponesDTO에 리스트로 담아냄
-        PageResponesDTO<BoardDTO>  boardDTOPageResponesDTO =  boardService.list(pageRequestDTO);
-
-
-        // dtoList가 null이면 빈 리스트로 초기화
-        if (boardDTOPageResponesDTO.getDtoList() == null) {
-            boardDTOPageResponesDTO.setDtoList(Collections.emptyList());
+    public String list(@ModelAttribute PageRequestDTO pageRequestDTO, Model model) {
+        if (pageRequestDTO.getPage() < 0) {
+            pageRequestDTO.setPage(1);
         }
 
-        // content가 10자 이상일 경우 잘라내기 처리
-        boardDTOPageResponesDTO.getDtoList().forEach(boardDTO -> {
+        PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
 
-            // title 자르기
-            String title = boardDTO.getTitle();
-            if (title != null && title.length() > 10) {
-                boardDTO.setTitle(title.substring(0, 10) + "...");
-            }
+        if (boardDTOPageResponesDTO.getDtoList() == null || boardDTOPageResponesDTO.getDtoList().isEmpty()) {
+            boardDTOPageResponesDTO.setDtoList(Collections.emptyList());
+        } else {
+            boardDTOPageResponesDTO.getDtoList().forEach(boardDTO -> {
+                if (boardDTO.getTitle() != null && boardDTO.getTitle().length() > 10) {
+                    boardDTO.setTitle(boardDTO.getTitle().substring(0, 10) + "...");
+                }
+                if (boardDTO.getContent() != null && boardDTO.getContent().length() > 10) {
+                    boardDTO.setContent(boardDTO.getContent().substring(0, 10) + "...");
+                }
+                log.info(boardDTO);
+            });
+        }
 
-            //content 자르기
-            String content = boardDTO.getContent();
-            if (content != null && content.length() > 10) {
-                boardDTO.setContent(content.substring(0, 10) + "...");
-            }
-            log.info(boardDTO);  // 로그 확인용
-        });
+        int currentPage = pageRequestDTO.getPage();
+        int totalPages = boardDTOPageResponesDTO.getTotalPages();
 
-        //모델로 보냄
+        boardDTOPageResponesDTO.setFirst(currentPage == 1);
+
+        boardDTOPageResponesDTO.setLast(currentPage >= totalPages - 1);
+
         model.addAttribute("boardDTOPageResponesDTO", boardDTOPageResponesDTO);
 
-        return  "board/list";
+        return "board/list";
     }
+
 
     @GetMapping("/read")
     private String read(Model model, Long bno) {

@@ -19,7 +19,7 @@
     <div>
         <center><h4>회원가입</h4></center>
         <hr>
-        <form th:action="@{/}" method="post">
+        <form id="signupForm" name="signupForm" th:action="@{/signpage}" method="post" th:object="${usersDTO}" onsubmit="return combineAddr()">
 
             <table cellpadding="1" cellspacing="0" align="center">
 
@@ -29,27 +29,28 @@
 
                 <tr>
                     <td>아이디</td>
-                    <td><input type="text" name="userid" required></td>
+                    <td><input type="text" name="userid" th:field="*{userid}" required></td>
+                    <td><input type="button" name="userchk" value="사용가능 확인" class="btn btn-dark" onclick="chk_userid()"></td>
                 </tr>
 
                 <tr>
                     <td>비밀번호</td>
-                    <td><input type="password" name="password" required></td>
+                    <td><input type="password" id="password" name="password" th:field="*{pass}" required></td>
                 </tr>
 
                 <tr>
                     <td>비밀번호확인</td>
-                    <td><input type="password2" name="password2" required></td>
+                    <td><input type="password" id="password2" name="password2" required></td>
                 </tr>
 
                 <tr>
                     <td>이름</td>
-                    <td><input type="text" name="name" required></td>
+                    <td><input type="text" name="name" id="name" th:field="*{name}"  required></td>
                 </tr>
 
                 <tr>
                     <td>생년월일</td>
-                    <td><input type="date" name="age" required></td>
+                    <td><input type="date" name="age" id="age" th:field="*{age}" required></td>
                 </tr>
 
                 <tr>
@@ -58,19 +59,19 @@
                         <!--
                         <input type="radio" name="gender" required value="male"> 공격헬리콥터
                         -->
-                        <input type="radio" name="gender" required value="male"> 남성
-                        <input type="radio" name="gender" required value="female"> 여성 <br>
+                        <input type="radio" name="gender" value="male" th:field="*{gender}" required> 남성
+                        <input type="radio" name="gender" value="female" th:field="*{gender}" required> 여성 <br>
                     </td>
                 </tr>
 
                 <tr>
                     <td>이메일</td>
-                    <td><input type="email" name="email" required></td>
+                    <td><input type="email" name="email" class="email" id="email" th:field="*{email}" required></td>
                 </tr>
 
                 <tr>
                     <td>연락처</td>
-                    <td><input type="tel" name="phone" required></td>
+                    <td><input type="tel" name="phone" id="phone" th:field="*{phone}" required></td>
                 </tr>
 
                 <tr><td><br></td></tr>
@@ -81,14 +82,14 @@
 
                 <tr>
                     <td>상호명</td>
-                    <td><input type="text" name="B2BName" required></td>
+                    <td><input type="text" name="b2bname" id="b2bname" th:field="*{b2bname}" required></td>
 
                 </tr>
 
                 <tr>
                     <td>회사주소</td>
                     <!--
-                    <td><input type="text" name="B2BAddr" required></td>
+                    <td><input type="text" name="b2bAddr" required></td>
                     -->`
                     <td><input type="text" id="sample6_postcode" placeholder="우편번호"></td>
                     <td><button id="addr" class="btn btn-dark" onclick="execDaumPostcode()">주소찾기</button></td>
@@ -106,36 +107,165 @@
 
                 <tr>
                     <td>대표자 성함</td>
-                    <td><input type="text" name="B2BExpont" required></td>
+                    <td><input type="text" name="b2bexpont" id="b2bexpont" th:field="*{b2bexpont}" required></td>
                 </tr>
 
                 <tr>
                     <td>대표이메일</td>
-                    <td><input type="email" name="B2BEmail" required></td>
+                    <td><input type="email" name="b2bemail" id="b2bemail" th:field="*{b2bemail}" required></td>
                 </tr>
 
                 <tr>
                     <td>회사연락처</td>
-                    <td><input type="tel" name="B2BContact" required></td>
+                    <td><input type="tel" name="b2bcontact" id="b2bcontact" th:field="*{b2bcontact}" required></td>
                 </tr>
 
                 <tr>
                     <td>사업자등록번호</td>
-                    <td><input type="text" id="corp_reg" name="corp_button"></td>
-                    <td><button class="btn btn-dark" onclick="corp_chk(event)">사업자등록번호 찾기</button></td>
+                    <td><input type="text" id="corp_reg" name="corp_button" th:field="*{b2bnumber}" required></td>
+                    <td><button class="btn btn-dark" onclick="corp_chk(event)">사업자등록번호 확인</button></td>
                 </tr>
 
+                <!-- 숨겨진 input -->
+                <input type="hidden" name="b2baddr" th:field="*{b2baddr}" id="combine">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <tr><td><br></td></tr>
-
                 <tr>
                     <td colspan="3"><button type="submit" class="btn btn-dark" style="width:100%;">회원가입</button></td>
                 </tr>
             </table>
 
+            <button type="button" onclick="test()">테스트버튼</button>
         </form>
 
 
         <script>
+            let a = 0; //이메일 중복 확인용
+            let b = 0; //아이디 중복 확인용
+            //테스트버튼
+            function test() {
+                document.getElementById("userid").value = "leptonnw";
+                document.getElementById("password").value = "congress2tlf@";
+                document.getElementById("password2").value ="congress2tlf@";
+                document.getElementById("name").value = "장선호";
+                document.getElementById("age").value = "1997-01-08";
+                document.getElementById("email").value = "kac4484@gmail.com";
+                document.getElementById("phone").value = "01063538609";
+                document.getElementById("b2bname").value = "우리컴퓨터ERP";
+                document.getElementById("sample6_address").value = "인천 남동구 주안로 136";
+                document.getElementById("sample6_postcode").value = "22135";
+                document.getElementById("sample6_detailAddress").value = "더플러스타워 1503호";
+                document.getElementById("sample6_extraAddress").value = "(주안동)";
+                document.getElementById("b2bexpont").value = "장선호";
+                document.getElementById("b2bemail").value = "kac4484@gmail.com";
+                document.getElementById("b2bcontact").value = "01063538609";
+                document.getElementById("corp_reg").value = "1231231231";
+            }
+
+
+
+            //아이디 중복체크 스크립트
+            function chk_userid() {
+                var userid = $('#userid').val();
+
+                //서버에 중복체크 요청 보내기
+                $.ajax({
+                   type: 'GET',
+                    url: '/chk-user',
+                    data : {userid: userid},
+                    success : function (response) {
+                       if(response === true) {
+                           alert('이미 존재하는 아이디 입니다.');
+                           $('#userid').val(''); //아이디 필드 초기화
+                       }
+                       else {
+                           console.log(response);
+                           alert('사용 가능한 아이디 입니다.');
+                           // 입력 필드를 비활성화
+                           $("#userid").prop("readonly", true);
+                           $("#userid").css("background-color" , "lightgray");
+                           b = 1;
+                       }
+                    }
+                });
+            }
+
+
+
+
+            //회원가입 클릭시 이메일 가입 여부 확인
+            function chk_email() {
+                console.log("여기체크이메일");
+                var email = $('#email').val();
+
+                //서버에 이메일 중복체크 요청 보내기
+                $.ajax({
+                    type: 'GET',
+                    url: '/chk-signup',
+                    data : {email: email},
+                    success : function (response) {
+                        //console.log("리턴값 1 0" + response)
+                        if(response) {
+                            a = 0;
+                        }
+                        else {
+                            a = 1;
+                        }
+                    }
+                });
+            }
+
+            let pass;
+            let pass2
+            //우편번호, 주소, 상세주소, 추가주소 모두 합체
+            //주소 하나로 합쳐서 숨겨진 input에 저장
+            function combineAddr() {
+                pass = document.getElementById("password").value;
+                pass2 = document.getElementById("password2").value;
+                console.log(pass + pass2);
+                if(pass === pass2) { //비밀번호가 일치할 경우
+                    if(b === 0) {
+                        alert('아이디의 "사용가능 확인" 버튼을 먼저 눌러주세요');
+                        return false;
+                    }
+                    else {
+                        if(a === 0) {
+                            alert('이미 가입된 이메일 입니다.');
+                            $('#email').val(''); //이메일 필드 초기화
+                            $('#email').focus();
+
+                            return false;
+                        }
+                        else {
+                            //console.log("else가 작동함");
+                            var p_code = document.getElementById("sample6_postcode").value; //우편번호
+                            var add = document.getElementById("sample6_address").value //주소
+                            var d_add = document.getElementById("sample6_detailAddress").value //상세주소
+                            var e_add = document.getElementById("sample6_extraAddress").value //추가주소
+
+                            //합체
+                            var combined = p_code + ' ' + add + ' ' + d_add + ' ' + e_add;
+
+                            //숨겨진 input에 값 저장
+                            document.getElementById("combine").value = combined.toString();
+                            //console.log("여기");
+
+                            return true;
+                        }
+                    }
+                }
+                else { //비밀번호가 일치하지 않을경우
+                    alert("비밀번호가 일치하지 않습니다.");
+                    $('#password').val(''); //입력필드 초기화
+                    $('#password2').val(''); //입력필드 초기화
+                    $('#password').focus();
+                    pass = "";
+                    pass2 = "";
+                    return false;
+                }
+
+            }
+
 
             //주소찾기API 스크립트
             function execDaumPostcode() {
@@ -218,9 +348,10 @@
                             //성공
                             console.log("success");
                             alert('사용가능한 사업자등록번호 입니다.');
-                            
+
                             // 입력 필드를 비활성화
-                            $("#corp_reg").prop("disabled", true);
+                            $("#corp_reg").prop("readonly", true);
+                            $("#corp_reg").css("background-color" , "lightgray");
 
                         } else {
                             //실패
@@ -235,9 +366,14 @@
                 });
             }
 
+            //이메일 필드에서 값이 바뀌면 작동함
+            $(".email").on("change", function () {
+                console.log("이메일 입력됨");
+                chk_email();
+            })
         </script>
     </div>
-
+<!-- 안씀
     <div style="display: none;" class="addr_modal">
         주소찾기 모달창
     </div>
@@ -245,6 +381,7 @@
     <div style="display: none;" class="?">
         사업자등록번호 찾기 모달창
     </div>
+ -->
 </div>
 
 

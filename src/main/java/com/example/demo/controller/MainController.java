@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -24,6 +23,11 @@ public class MainController {
     @GetMapping("/login")
     private String login() {
         return "login";
+    }
+
+    @GetMapping("/acc-denied")
+    private String acc() {
+        return "acc-denied";
     }
 
 
