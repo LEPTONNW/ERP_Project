@@ -19,7 +19,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" th:field="*{content}" id="content" rows="3"></textarea>
+                    <input type="text" class="form-control" th:field="*{content}" id="content" placeholder="여기다가 제목을써봐">
                     <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
                 </div>
             </div>
