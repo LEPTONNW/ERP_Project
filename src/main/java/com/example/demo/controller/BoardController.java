@@ -7,6 +7,7 @@ import com.example.demo.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +37,7 @@ public class BoardController {
         log.info("등록get 진입");
 
     }
+
 
     @PostMapping("/register")
     public  String registerPost(@Valid BoardDTO boardDTO, BindingResult bindingResult, Model model

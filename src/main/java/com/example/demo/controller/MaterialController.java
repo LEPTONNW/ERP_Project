@@ -8,6 +8,7 @@ import com.example.demo.service.MaterialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/material")
 public class MaterialController {
     private final MaterialService materialService;
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("register")
     public  void register(MaterialDTO materialDTO){
 
     }
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
     public  String registerPost(@Valid MaterialDTO materialDTO, BindingResult bindingResult, Model model
     ){
@@ -38,17 +41,23 @@ public class MaterialController {
         materialService.register(materialDTO);
         return "redirect:/material/list";
     }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public  String list(Model model, PageRequestDTO pageRequestDTO){
         PageResponesDTO<MaterialDTO> materialDTOPageResponesDTO = materialService.list(pageRequestDTO);
         model.addAttribute("materialDTOPageResponesDTO",materialDTOPageResponesDTO);
         return "material/list";
     }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/read")
     public String readOne(Long mno, Model model){
         model.addAttribute("materialDTO",materialService.read(mno));
         return "material/read";
     }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
     public String modify(Long mno,Model model){
         model.addAttribute("materialDTO",materialService.read(mno));
