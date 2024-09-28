@@ -38,8 +38,10 @@ public class PageRequestDTO {
         return type.split("");
     }
 
-    public Pageable getPageable(String...props) {
-        return PageRequest.of(this.page-1, this.size, Sort.by(props).descending());
+    public Pageable getPageable(String... props) {
+        // 페이지 인덱스가 0보다 작으면 0으로 설정
+        int pageIndex = Math.max(this.page - 1, 0);
+        return PageRequest.of(pageIndex, this.size, Sort.by(props).descending());
     }
 
     public String getLink(){

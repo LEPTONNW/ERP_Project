@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,29 +11,22 @@ import java.util.List;
 @Getter
 @Setter
 public class PageResponesDTO<E> {
-    private int page; //현재 페이지
-    private int size; //한페이지에 보여줄 게시물수
-    private int total;  //게시물총수, 검색시 총수량 변경
-                        //end에서 마지막이니? 물어볼수 있음
-                        //end는 boolean
-    //시작페이지 번호
-    private int start;
+    private int page; // 현재 페이지
+    private int size; // 한 페이지에 보여줄 게시물 수
+    private int total; // 게시물 총 수
+    private int totalPages; // 총 페이지 수
+    private int start; // 시작 페이지 번호
+    private int end; // 끝 페이지 번호
+    private boolean prev; // 이전 페이지 존재 여부
+    private boolean next; // 다음 페이지 존재 여부
+    private boolean first; // 맨 처음 페이지 존재 여부
+    private boolean last; // 맨 마지막 페이지 존재 여부
 
-    //끝 페이지 번호
-    private int end;
+    private List<E> dtoList; // 목록에 대한 결과값
 
-    //이전페이지 존재 여부
-    private boolean prev;
-
-    //다음페이지 존재 여부
-    private boolean next;
-
-    private List<E> dtoList; //목록에 대한 결과값, select * from table
-                             //다른곳에서도 사용이 가능하도록 컬렉션 사용
-                             //List<Board> List<Member> List<notice>
     @Builder(builderMethodName = "withAll")
     public PageResponesDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
-        if(total <= 0) {
+        if (total <= 0) {
             return;
         }
 
@@ -42,15 +34,21 @@ public class PageResponesDTO<E> {
         this.size = pageRequestDTO.getSize();
         this.total = total;
 
+        // 총 페이지 수 계산
+        this.totalPages = (int) Math.ceil(total / (double) size);
+
         this.dtoList = dtoList;
 
-        this.end = (int)(Math.ceil(this.page / 10.0)) * 10;
+        // 현재 페이지가 0이면 맨 처음 페이지로 간주
+        this.first = this.page == 0;
+
+        // 마지막 페이지 여부 설정
+        this.last = this.page + 1 >= totalPages;
+
+        this.end = (int) (Math.ceil(this.page / 10.0)) * 10;
         this.start = this.end - 9;
-        int last = (int) (Math.ceil(total/(double) size));
-        this.end = end > last ? last : end;
+        this.end = end > totalPages ? totalPages : end;
         this.prev = this.start > 1;
         this.next = total > this.end * this.size;
-
-
     }
 }
