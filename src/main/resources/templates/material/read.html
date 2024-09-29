@@ -1,10 +1,65 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+
+<div layout:fragment="content">
+
+    <div class="row mt-5">
+        <div class="col shadow" >
+            <img th:src="${materialDTO.imgUrl}" alt="Image">
+            <div class="row mt-2">
+                <div class="row mt-2">
+                    <div class="col">자재 명</div>
+                    <div class="col" th:text="${materialDTO.matName}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">자재 코드</div>
+                    <div class="col" th:text="${materialDTO.matCode}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">수량</div>
+                    <div class="col" th:text="${materialDTO.matAmount}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">수량당 금액</div>
+                    <div class="col" th:text="${materialDTO.matPrice}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">매입처</div>
+                    <div class="col" th:text="${materialDTO.matBuyPlace}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">사업자 번호</div>
+                    <div class="col" th:text="${materialDTO.matBuyNum}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">매입 일자</div>
+                    <div class="col" th:text="${materialDTO.matBuyDate}"> </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">메모</div>
+                    <div class="col" th:text="${materialDTO.matText}"> </div>
+                </div>
+
+
+            </div>
+
+            <a th:href="@{/material/modify(num=${materialDTO.num})}" class="btn btn-dark">수정</a>
+            <a th:href="@{/material/del(num=${materialDTO.num})}" class="btn btn-dark">삭제</a>
+            <a href="/material/list"  type="button"  class="btn btn-dark">목록</a>
+        </div>
+    </div>
+
+</div>
+
 
 </body>
 </html>

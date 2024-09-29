@@ -17,9 +17,9 @@ import java.time.LocalDate;
 public class MaterialEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long matNum;
+    private Long num;
 
-    @Column(length = 10,nullable = false)
+    @Column(length = 250,nullable = false)
     private String matName;//자재명
     @Column(nullable = false,unique = true)
     private String matCode;//자재코드
@@ -37,6 +37,8 @@ public class MaterialEntity {
     private String matText;//메모
     @Column(columnDefinition = "text")
     private String content;
+    @Column
+    private String imgUrl;//url
 
     @ManyToOne
     @JoinColumn(name = "mno")
