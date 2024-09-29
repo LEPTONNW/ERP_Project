@@ -22,7 +22,7 @@
         <a href="/board/list" type="button" class="btn btn-dark me-2">목록으로 돌아가기</a>
         <a th:href="@{/board/modify(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
 
-        <a href="/board/delete" type="button" class="btn btn-danger">삭제</a>
+        <a th:href="@{/board/delete}" type="button" class="btn btn-danger">삭제</a>
     </div>
 </div>
 </body>

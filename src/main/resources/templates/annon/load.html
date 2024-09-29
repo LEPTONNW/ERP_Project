@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세보기</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+        <h4>제목</h4>
+        <h1 th:text="${annonDTO.title}">제목</h1>
+
+        <h4>내용</h4>
+        <p th:text="${annonDTO.content}">내용</p>
+        <p>작성자: <span th:text="${annonDTO.writer}"></span></p>
+        <p>등록 날짜: <span th:text="${annonDTO.regidate}"></span></p>
+
+        <div class="d-flex justify-content-end mt-3 mb-3">
+            <a href="/annon/main" type="button" class="btn btn-dark me-2">목록으로 돌아가기</a>
+            <a th:href="@{/annon/alter(bno=${annonDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
+
+            <a th:href="@{/annon/delete(bno=${annonDTO.bno})}" type="button" class="btn btn-danger">삭제</a>
+        </div>
+
+</div>
+</body>
+</html>

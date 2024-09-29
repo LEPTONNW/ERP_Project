@@ -32,6 +32,7 @@ public class BoardController {
     // 댓글도
     //이미지도
 
+
     @GetMapping("/register")
     public  void register(BoardDTO boardDTO){
         //html에서 object를 사용하기 위해서 thymeleaf
@@ -39,7 +40,7 @@ public class BoardController {
 
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
     public  String registerPost(@Valid BoardDTO boardDTO, BindingResult bindingResult, Model model
     ){  //파라미터 리다이렉트 쓸때 추가 : RedirectAttributes redirectAttributes
@@ -90,7 +91,7 @@ public class BoardController {
 
 
     @GetMapping("/read")
-    private String read(Model model, Long bno) {
+    public String read(Model model, Long bno) {
         // 게시글 번호를 통해 상세 정보를 가져옴
         BoardDTO boardDTO = boardService.read(bno);
 
@@ -101,6 +102,7 @@ public class BoardController {
         return "board/boardread";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
     public String modify(Model model, @RequestParam Long bno) {
         BoardDTO boardDTO = boardService.read(bno);
@@ -108,6 +110,7 @@ public class BoardController {
         return "board/modify"; // 수정 화면으로 이동
     }
 
+    @PreAuthorize("isAuthenticated()")
     // 수정된 내용 저장
     @PostMapping("/modify")
     public String modifyPro(@ModelAttribute BoardDTO boardDTO, RedirectAttributes redirectAttributes) {

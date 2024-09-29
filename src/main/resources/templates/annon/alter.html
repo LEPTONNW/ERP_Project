@@ -5,15 +5,15 @@
       layout:decorate="~{layouts/layout1.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>수정 창</title>
 </head>
 <body>
 <div layout:fragment="content">
-    <form th:action="@{/board/modify}" method="post" th:object="${boardDTO}">
+    <form th:action="@{/annon/alter}" method="post" th:object="${annonDTO}">
         <div class="row mt-5">
             <div class="col shadow">
                 <div class="mb-3 mt-3">
-                    <input type="hidden" name="bno" th:value="${boardDTO.bno}">
+                    <input type="hidden" name="bno" th:value="${annonDTO.bno}">
                     <label for="title" class="form-label">제목</label>
                     <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="여기다가 수정내용을 작성">
                     <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
@@ -26,13 +26,13 @@
             </div>
         </div>
         <div class="text-center mt-4">
+            <!--
+            <a th:href="@{/annon/load(bno=${annonDTO.bno})}" class="btn btn-primary me-2">수정 완료</a>
+            -->
             <button type="submit" class="btn btn-primary me-2">수정 완료</button>
-            <a type="button" href="/board/list" class="btn btn-dark">취소</a>
+            <a type="button" href="/annon/main" class="btn btn-dark">취소</a>
         </div>
     </form>
-
-
-    여기에 등록작성할꺼임
 </div>
 </body>
 </html>
