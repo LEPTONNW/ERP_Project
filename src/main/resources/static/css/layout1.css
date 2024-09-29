@@ -1,0 +1,19 @@
+.circle-button {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 3px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    text-align: center;
+    background-color: white;
+}
+
+.circle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+}

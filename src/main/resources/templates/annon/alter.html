@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>수정 창</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <form th:action="@{/annon/alter}" method="post" th:object="${annonDTO}">
+        <div class="row mt-5">
+            <div class="col shadow">
+                <div class="mb-3 mt-3">
+                    <input type="hidden" name="bno" th:value="${annonDTO.bno}">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="여기다가 수정내용을 작성">
+                    <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" th:field="*{content}" id="content" rows="3" placeholder="여기다가 수정내용을 작성"></textarea>
+                    <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <!--
+            <a th:href="@{/annon/load(bno=${annonDTO.bno})}" class="btn btn-primary me-2">수정 완료</a>
+            -->
+            <button type="submit" class="btn btn-primary me-2">수정 완료</button>
+            <a type="button" href="/annon/main" class="btn btn-dark">취소</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

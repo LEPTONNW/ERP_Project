@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <div class="row mt-5">
+        <div class="col shadow" >
+
+            <form action="/material/modify" method="post" th:object="${materialDTO}">
+
+                <input type="hidden" name="num" th:value="${materialDTO.num}">
+                <label for="title" class="form-label">자재명</label>
+                <input type="text" class="form-control" th:field="*{matName}" id="matName" placeholder="">
+                <p th:if="${#fields.hasErrors('matName')}" th:errors="*{matName}" class="fieldError"></p>
+                <label for="title" class="form-label">자재 코드</label>
+                <input type="text" class="form-control" th:field="*{matCode}" id="title" placeholder="">
+                <p th:if="${#fields.hasErrors('matCode')}" th:errors="*{matCode}" class="fieldError"></p>
+                <label for="title" class="form-label">자재 수량</label>
+                <input type="text" class="form-control" th:field="*{matAmount}" id="title" placeholder="">
+                <p th:if="${#fields.hasErrors('matAmount')}" th:errors="*{matAmount}" class="fieldError"></p>
+                <label for="title" class="form-label">자재 가격</label>
+                <input type="text" class="form-control" th:field="*{matPrice}" id="title" placeholder="">
+                <p th:if="${#fields.hasErrors('matPrice')}" th:errors="*{matPrice}" class="fieldError"></p>
+                <label for="title" class="form-label">매입처</label>
+                <input type="text" class="form-control" th:field="*{matBuyPlace}" id="title" placeholder="">
+                <p th:if="${#fields.hasErrors('matBuyPlace')}" th:errors="*{matBuyPlace}" class="fieldError"></p>
+                <label for="title" class="form-label">매입처 사업자 번호</label>
+                <input type="text" class="form-control" th:field="*{matBuyNum}" id="title" placeholder="">
+                <p th:if="${#fields.hasErrors('matBuyNum')}" th:errors="*{matBuyNum}" class="fieldError"></p>
+                <label for="title" class="form-label">매입 일자</label>
+                <input type="date" class="form-control" name="matBuyDate" th:value="${materialDTO.matBuyDate}"  placeholder="">
+                <p th:if="${#fields.hasErrors('matBuyDate')}" th:errors="*{matBuyDate}" class="fieldError"></p>
+                <div class="mb-3">
+                    <label for="matText" class="form-label">메모</label>
+                    <textarea class="form-control" th:field="*{matText}" id="matText" rows="3"></textarea>
+                    <p th:if="${#fields.hasErrors('matText')}" th:errors="*{matText}" class="fieldError"></p>
+                </div>
+                <button type="submit" class="btn btn-dark">수정 완료</button>
+                <a th:href="@{/material/del(num=${materialDTO.num})}" class="btn btn-dark">삭제</a>
+
+                <a href="/material/list"  type="button"  class="btn btn-dark">목록</a>
+            </form>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

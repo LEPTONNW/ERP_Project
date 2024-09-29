@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        a {
+            text-decoration-line: none;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <div class="row mt-5">
+        <div class="col shadow">
+
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <form class="d-flex formObj" role="search" action="/material/list" method="get"
+                          th:object="${pageRequestDTO}">
+                        <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
+                            <option value="n">자재명</option>
+                            <option value="c">자재 코드</option>
+                            <option value="bp">매입처</option>
+                            <option value="bn">매입처 사업자 등록 번호</option>
+                        </select>
+                        <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                    <a href="/material/register" class="btn btn-dark">신규 자재 등록</a>
+                </div>
+            </nav>
+
+            <th:block th:unless="${#lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">자재명</th>
+                        <th scope="col">자재 코드</th>
+                        <th scope="col">매입처</th>
+                        <th scope="col">매입 일자</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="list : ${materialDTOPageResponesDTO.dtoList}">
+                        <tr>
+                            <th th:text="${list.num}"></th>
+                            <td>
+                                <a class="matNamelink" th:data-num="${list.num}">
+                                    [[${list.matName}]]
+                                </a>
+                            </td>
+                            <td>
+                                <a class="matcodelink" th:data-num="${list.num}">
+                                    [[${list.matCode}]]
+                                </a>
+                            </td>
+                            <td th:text="${list.matBuyPlace}">@mdo</td>
+                            <td th:text="${list.matBuyDate}">@mdo</td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </th:block>
+
+            <th:block th:if="${#lists.isEmpty(materialDTOPageResponesDTO.dtoList)}">
+                <h1>자재가 존재하지 않습니다.</h1>
+            </th:block>
+
+            <div class="row text-center">
+                <div class="col">
+                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                        <ul class="pagination justify-content-center">
+                            <li th:if="${materialDTOPageResponesDTO.prev}" class="paginate_button previous" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
+                                <a class="page-link" th:data-num="${materialDTOPageResponesDTO.start - 1}">Previous</a>
+                            </li>
+
+                            <th:block th:each="i : ${#numbers.sequence(materialDTOPageResponesDTO.start, materialDTOPageResponesDTO.end)}">
+                                <li th:classappend="${materialDTOPageResponesDTO.page == i} ? 'active'" class="paginate_button" aria-controls="dataTables-example" tabindex="0">
+                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <li th:if="${materialDTOPageResponesDTO.next}" class="paginate_button next" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
+                                <a class="page-link" th:data-num="${materialDTOPageResponesDTO.end + 1}">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/material/modify}"  method="post" class="col shadow subpage">
+            <div>
+                <div class="row mt-2">
+                    <img class="col imglink" src="" alt="미리보기 이미지" />
+                </div>
+                <div class="row mt-2">
+                    <div class="col">자재명</div>
+                    <div class="col matNameOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">자재 코드</div>
+                    <div class="col matCodeOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">수량</div>
+                    <div class="col matAmountOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">수량당 금액</div>
+                    <div class="col matPriceOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">매입처</div>
+                    <div class="col matBuyPlaceOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">사업자 번호</div>
+                    <div class="col matBuyNumOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">매입 일자</div>
+                    <div class="col matBuyDateOne"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">메모</div>
+                    <div class="col matTextOne"></div>
+                </div>
+                <input type="button" id="attt" name="attt" class="btn btn-dark butttt" value="수정">
+                <input type="button"class="btn btn-dark delete" value="삭제">
+                <a href="/material/list" type="button" class="btn btn-dark">목록</a>
+                <a href="" class="btn btn-dark bye">닫기</a>
+            </div>
+        </form>
+
+        <form th:action="@{/material/modify}" method="post" class="col shadow subpage2">
+            <div>
+
+                <div class="col matNum"></div>
+
+                <div class="row mt-2">
+                    <div class="col">자재명</div>
+                    <div class="col matNameOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">자재 코드</div>
+                    <div class="col matCodeOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">수량</div>
+                    <div class="col matAmountOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">수량당 금액</div>
+                    <div class="col matPriceOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">매입처</div>
+                    <div class="col matBuyPlaceOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">사업자 번호</div>
+                    <div class="col matBuyNumOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">매입 일자</div>
+                    <div class="col matBuyDateOne2"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">메모</div>
+                    <div class="col matTextOne2"></div>
+                </div>
+                <input type="submit"  id="att2" name="attt2" class="btn btn-dark " value="수정완료" >
+                <input type="button"class="btn btn-dark delete" value="삭제">
+                <a href="/material/list" type="button" class="btn btn-dark">목록</a>
+                <a href="" class="btn btn-dark bye">닫기</a>
+            </div>
+        </form>
+
+        <script th:inline="javascript">
+            let count = 0;
+            $(document).ready(function() {
+                $(".subpage").hide();
+                $(".subpage2").hide();
+                let dtoList = [[${materialDTOPageResponesDTO.dtoList}]];
+                let num;
+
+                document.querySelector(".pagination").addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let target = e.target;
+
+                    if (target.tagName !== 'A') {
+                        return;
+                    }
+
+                    let num = target.getAttribute("data-num");
+
+                    let formObj = document.querySelector(".formObj");
+                    formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
+                    formObj.submit();
+                });
+                $(".delete").on("click", function() {
+                    if (confirm("진짜 삭제함?")) {
+                        window.location.href = "/material/del?num=" + num;
+                    }
+                    else {
+                        alert("신중해")
+                    }
+                });
+
+                $(".matcodelink, .matNamelink").on("click", function () {
+                    $(".subpage").show();
+                    $(".subpage2").hide();
+                    num= $(this).data("num");
+                    for (let i = 0; i < dtoList.length; i++) {
+                        if (dtoList[i].num === num) {
+                            $(".imglink").attr("src", dtoList[i].imgUrl);
+                            $(".matNameOne").text(dtoList[i].matName);
+                            $(".matCodeOne").text(dtoList[i].matCode);
+                            $(".matAmountOne").text(dtoList[i].matAmount);
+                            $(".matPriceOne").text(dtoList[i].matPrice);
+                            $(".matBuyPlaceOne").text(dtoList[i].matBuyPlace);
+                            $(".matBuyNumOne").text(dtoList[i].matBuyNum);
+                            $(".matBuyDateOne").text(dtoList[i].matBuyDate);
+                            $(".matTextOne").text(dtoList[i].matText);
+
+                        }
+                    }
+
+                });
+
+                $("#attt").on("click", function () {
+                    $(".subpage").hide();
+                    $(".subpage2").show();
+
+                    for (let i = 0; i < dtoList.length; i++) {
+                        if (num == dtoList[i].num) {
+                            console.log("받았어? = "+dtoList[i].num)
+                            $(".matNum").html(`<input type="hidden" name="num" value="${dtoList[i].num}" />`);
+                            $(".matNameOne2").html(`<input type="text" name="matName" value="${dtoList[i].matName}" />`);
+                            $(".matCodeOne2").html(`<input type="text" name="matCode" value="${dtoList[i].matCode}" />`);
+                            $(".matAmountOne2").html(`<input type="number" name="matAmount" value="${dtoList[i].matAmount}" />`);
+                            $(".matPriceOne2").html(`<input type="number" name="matPrice" value="${dtoList[i].matPrice}" />`);
+                            $(".matBuyPlaceOne2").html(`<input type="text" name="matBuyPlace" value="${dtoList[i].matBuyPlace}" />`);
+                            $(".matBuyNumOne2").html(`<input type="text" name="matBuyNum" value="${dtoList[i].matBuyNum}" />`);
+                            $(".matBuyDateOne2").html(`<input type="date" name="matBuyDate" value="${dtoList[i].matBuyDate}" />`);
+                            $(".matTextOne2").html(`<textarea name="matText">${dtoList[i].matText}</textarea>`);
+                        }
+                    }
+
+                });
+                $("#att2").on("click", function() {
+                    alert("수정완료됨");
+                });
+            });
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

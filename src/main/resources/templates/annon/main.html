@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 목록</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <div class="row mt-5">
+        <div class="col shadow">
+
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <form class="d-flex" role="search" action="/annon/main" method="get" th:object="${pageRequestDTO}">
+
+                        <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
+                            <option value="t">제목</option>
+                            <option value="c">내용</option>
+                            <option value="w">작성자</option>
+                            <option value="tc">제목 + 내용</option>
+                            <option value="tw">제목 + 작성자</option>
+                            <option value="twc">제목 + 내용 + 작성자</option>
+                        </select>
+                        <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">검색</button>
+                    </form>
+                    <a th:href="@{/annon/create}" type="button" class="btn btn-dark">등록</a>
+                </div>
+            </nav>
+
+            <th:block th:if="${#lists.isEmpty(annonDTOPageResponesDTO.dtoList)}">
+                <h1>작성된 글이 없습니다.</h1>
+            </th:block>
+
+            <th:block th:unless="${#lists.isEmpty(annonDTOPageResponesDTO.dtoList)}">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">번호</th>
+                        <th scope="col">제목</th>
+                        <th scope="col">내용</th>
+                        <th scope="col">작성자</th>
+                        <th scope="col">등록날짜</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="list, stat : ${annonDTOPageResponesDTO.dtoList}">
+                        <tr>
+                            <th scope="row" th:text="${stat.index + 1}">1</th>
+                            <td>
+                                <a th:href="@{/annon/load(bno=${list.bno})}" th:text="${list.title}">제목</a>
+                            </td>
+                            <td th:text="${list.content}">내용</td>
+                            <td th:text="${list.writer}">작성자</td>
+                            <td th:text="${list.regidate}">등록날짜</td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </th:block>
+
+            <div class="row text-center">
+                <div class="col">
+                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                        <ul class="pagination justify-content-center">
+
+                            <!-- 맨 처음 버튼 -->
+                            <li th:if="${!annonDTOPageResponesDTO.first}" class="paginate_button first">
+                                <a class="page-link" th:href="@{/annon/main(page=1, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">처음</a>
+                            </li>
+
+                            <!-- 이전 버튼 -->
+                            <li th:if="${annonDTOPageResponesDTO.prev}" class="paginate_button previous">
+                                <a class="page-link" th:href="@{/annon/main(page=${annonDTOPageResponesDTO.start - 1}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">이전</a>
+                            </li>
+
+                            <!-- 페이지 번호 -->
+                            <th:block th:each="i : ${#numbers.sequence(annonDTOPageResponesDTO.start, annonDTOPageResponesDTO.end)}">
+                                <li th:class="${annonDTOPageResponesDTO.page == i} ? 'paginate_button active' : 'paginate_button'">
+                                    <a class="page-link" th:href="@{/annon/main(page=${i}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <!-- 다음 버튼 -->
+                            <li th:if="${annonDTOPageResponesDTO.next}" class="paginate_button next">
+                                <a class="page-link" th:href="@{/annon/main(page=${annonDTOPageResponesDTO.end + 1}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">다음</a>
+                            </li>
+
+                            <!-- 마지막 버튼 -->
+                            <li th:if="${!annonDTOPageResponesDTO.last}" class="paginate_button last">
+                                <a class="page-link" th:href="@{/annon/main(page=${annonDTOPageResponesDTO.totalPages}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">마지막</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div> <!-- col -->
+            </div> <!-- 페이징 처리 -->
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

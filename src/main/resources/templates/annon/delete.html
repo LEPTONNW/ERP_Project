@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>게시물 삭제</title>
+
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h4>제목</h4>
+    <h1 th:text="${annonDTO.title}">제목</h1>
+
+    <h4>내용</h4>
+    <p th:text="${annonDTO.content}">내용</p>
+    <p>작성자: <span th:text="${annonDTO.writer}"></span></p>
+    <p>등록 날짜: <span th:text="${annonDTO.regidate}"></span></p>
+
+    <form id="delete" th:action="@{/annon/delete}" method="post" th:object="${annonDTO}">
+        <input type="hidden" name="bno" th:value="${annonDTO.bno}"/>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-danger" onclick="confirmDelete(event)">삭제</button>
+            <a type="button" href="/annon/load" class="btn btn-dark">취소</a>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
+
+<script>
+    function confirmDelete(event) {
+        event.preventDefault();
+        const confirmation = confirm("삭제하시겠습니까?");
+        if (confirmation) {
+            document.getElementById("delete").submit();
+        }
+    }
+</script>
