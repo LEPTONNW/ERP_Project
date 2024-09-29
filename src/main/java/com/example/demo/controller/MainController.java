@@ -31,9 +31,7 @@ public class MainController {
 
     //권한 필요 페이지
     @GetMapping("/acc-denied")
-    public String acc() {
-        return "acc-denied";
-    }
+    public String acc() {return "acc-denied"; }
 
 
 }

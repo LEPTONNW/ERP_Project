@@ -26,7 +26,7 @@ public class PageResponesDTO<E> {
 
     @Builder(builderMethodName = "withAll")
     public PageResponesDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
-        if (total <= 0) {
+        if (total <= 1) {
             return;
         }
 
@@ -36,19 +36,22 @@ public class PageResponesDTO<E> {
 
         // 총 페이지 수 계산
         this.totalPages = (int) Math.ceil(total / (double) size);
-
         this.dtoList = dtoList;
 
-        // 현재 페이지가 0이면 맨 처음 페이지로 간주
-        this.first = this.page == 0;
-
-        // 마지막 페이지 여부 설정
-        this.last = this.page + 1 >= totalPages;
-
         this.end = (int) (Math.ceil(this.page / 10.0)) * 10;
+        //시작페이지
         this.start = this.end - 9;
+        //마지막
         this.end = end > totalPages ? totalPages : end;
+        //이전
         this.prev = this.start > 1;
+        //다음
         this.next = total > this.end * this.size;
+
+        // 맨 처음 페이지 존재 여부
+        this.first = this.page == 0; // 현재 페이지가 0이면 첫 페이지
+
+        // 맨 마지막 페이지 존재 여부
+        this.last = this.page == totalPages - 1; // 현재 페이지가 마지막 페이지인지 확인
     }
 }

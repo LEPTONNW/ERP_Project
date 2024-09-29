@@ -52,26 +52,24 @@ public class AnnonController {
 
 
     @GetMapping("/main")
-    public String main(Model model, PageRequestDTO pageRequestDTO) {
-
-        // 페이지 번호가 음수인 경우 0으로 설정
-        if (pageRequestDTO.getPage() < 0) {
-            pageRequestDTO.setPage(0);
+    public String main(@ModelAttribute PageRequestDTO pageRequestDTO, Model model) {
+        // 페이지 번호가 1 미만일 경우 1로 설정
+        if (pageRequestDTO.getPage() < 1) {
+            pageRequestDTO.setPage(1);
         }
 
-        // 게시물 목록을 페이징 처리하여 가져옴
+        // 게시물 목록 조회
         PageResponesDTO<AnnonDTO> annonDTOPageResponesDTO = annonService.main(pageRequestDTO);
 
-        // DTO 리스트가 null인 경우 빈 리스트로 설정
-        if (annonDTOPageResponesDTO.getDtoList() == null) {
+        // 게시물 리스트가 비어있으면 빈 리스트 설정
+        if (annonDTOPageResponesDTO.getDtoList() == null || annonDTOPageResponesDTO.getDtoList().isEmpty()) {
             annonDTOPageResponesDTO.setDtoList(Collections.emptyList());
         } else {
-            // 제목과 내용을 간략히 표시
+            // 게시물 제목 및 내용 길이 제한
             annonDTOPageResponesDTO.getDtoList().forEach(annonDTO -> {
                 if (annonDTO.getTitle() != null && annonDTO.getTitle().length() > 10) {
                     annonDTO.setTitle(annonDTO.getTitle().substring(0, 10) + "...");
                 }
-
                 if (annonDTO.getContent() != null && annonDTO.getContent().length() > 10) {
                     annonDTO.setContent(annonDTO.getContent().substring(0, 10) + "...");
                 }
@@ -79,19 +77,17 @@ public class AnnonController {
             });
         }
 
-        // 첫 페이지 여부 설정
-        annonDTOPageResponesDTO.setFirst(pageRequestDTO.getPage() == 0);
+        // 현재 페이지 및 총 페이지 수
+        int currentPage = pageRequestDTO.getPage();
+        int totalPages = annonDTOPageResponesDTO.getTotalPages();
 
-        // 마지막 페이지 여부 설정
-        annonDTOPageResponesDTO.setLast(pageRequestDTO.getPage() + 1 >= annonDTOPageResponesDTO.getTotalPages());
+        // 모델에 게시물 리스트와 첫/마지막 페이지 정보를 추가
+        model.addAttribute("annonDTOPageResponesDTO", annonDTOPageResponesDTO); // 모델에 annonDTO 추가
+        model.addAttribute("firstPage", 1); // 첫 페이지
+        model.addAttribute("lastPage", totalPages); // 마지막 페이지
 
-        // 모델에 페이징된 응답 추가
-        model.addAttribute("annonDTOPageResponesDTO", annonDTOPageResponesDTO);
-
-        // 뷰 이름 반환
-        return "annon/main";
+        return "annon/main"; // 반환되는 뷰 이름
     }
-
     @GetMapping("/load")
     public String load(Model model, Long bno) {
         AnnonDTO annonDTO = annonService.load(bno);

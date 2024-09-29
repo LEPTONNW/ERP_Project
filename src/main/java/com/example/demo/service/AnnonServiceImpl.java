@@ -71,22 +71,22 @@ public class AnnonServiceImpl implements AnnonService {
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable("bno");
 
-        Page<Annon> annonpage = annonRepository.searchAll(types, keyword, pageable);
+        // 게시물 검색
+        Page<Annon> annonPage = annonRepository.searchAll(types, keyword, pageable);
 
-        //보드타입의 리스트가 >>> 보드DTO 타입의 리스트로 변환
-        // 보드 리스트가 null일 경우 빈 리스트로 처리
-        List<AnnonDTO> annonDTOList = annonpage.getContent() == null ?
+        // Board 리스트를 AnnonDTO 리스트로 변환
+        List<AnnonDTO> annonDTOList = annonPage.getContent() == null ?
                 Collections.emptyList() :
-                annonpage.getContent()
+                annonPage.getContent()
                         .stream()
-                        .map(annon -> mapper.map(annon, AnnonDTO.class))
+                        .map(annon -> mapper.map(annon, AnnonDTO.class)) // 변환 타입 변경
                         .collect(Collectors.toList());
 
-        //반환값 처리
+        // 반환값 처리
         return PageResponesDTO.<AnnonDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(annonDTOList)
-                .total((int)annonpage.getTotalElements())
+                .total((int) annonPage.getTotalElements())
                 .build();
     }
 

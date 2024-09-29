@@ -51,7 +51,7 @@
                     <th:block th:each="list, stat : ${boardDTOPageResponesDTO.dtoList}">
                         <tr>
                             <!-- 현재 페이지에 맞는 번호 출력 -->
-                            <th scope="row" th:text="${(boardDTOPageResponesDTO.page * boardDTOPageResponesDTO.size) + (stat.index + 1)}">1</th>
+                            <th scope="row" th:text="${(boardDTOPageResponesDTO.page * boardDTOPageResponesDTO.size) + (stat.index + 1) - 10 }">1</th>
                             <td>
                                 <a th:href="@{/board/read(bno=${list.bno})}" th:text="${list.title}">제목</a>
                             </td>
@@ -69,37 +69,44 @@
                     <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
                         <ul class="pagination justify-content-center">
 
-                            <!-- 맨 처음 버튼 -->
-                            <li th:if="${!boardDTOPageResponesDTO.first}" class="paginate_button first">
-                                <a class="page-link" th:href="@{/board/list(page=0, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">처음</a>
+                            <!-- 처음 페이지 버튼 -->
+                            <li th:class="${boardDTOPageResponesDTO.page == 1 ? 'disabled' : ''}" class="paginate_button">
+                                <a class="page-link" th:href="@{/board/list(page=${firstPage}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">처음</a>
                             </li>
 
                             <!-- 이전 버튼 -->
-                            <li th:if="${boardDTOPageResponesDTO.page > 0}" class="paginate_button previous">
+                            <li th:if="${boardDTOPageResponesDTO.page > 1}" class="paginate_button previous">
                                 <a class="page-link" th:href="@{/board/list(page=${boardDTOPageResponesDTO.page - 1}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">이전</a>
+                            </li>
+                            <li th:if="${boardDTOPageResponesDTO.page == 1}" class="paginate_button previous disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">이전</a>
                             </li>
 
                             <!-- 페이지 번호 -->
                             <th:block th:each="i : ${#numbers.sequence(boardDTOPageResponesDTO.start, boardDTOPageResponesDTO.end)}">
                                 <li th:class="${boardDTOPageResponesDTO.page == i ? 'paginate_button active' : ''}">
-                                    <a class="page-link" th:href="@{/board/list(page=${i}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">[[${i + 1}]]</a>
+                                    <a class="page-link" th:href="@{/board/list(page=${i}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">[[${i}]]</a>
                                 </li>
                             </th:block>
 
                             <!-- 다음 버튼 -->
-                            <li th:if="${boardDTOPageResponesDTO.next}" class="paginate_button next">
+                            <li th:if="${boardDTOPageResponesDTO.page < boardDTOPageResponesDTO.totalPages}" class="paginate_button next">
                                 <a class="page-link" th:href="@{/board/list(page=${boardDTOPageResponesDTO.page + 1}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">다음</a>
                             </li>
-
-                            <!-- 마지막 버튼 -->
-                            <li th:if="${!boardDTOPageResponesDTO.last}" class="paginate_button last">
-                                <a class="page-link" th:href="@{/board/list(page=${boardDTOPageResponesDTO.totalPages - 1}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">마지막</a>
+                            <li th:if="${boardDTOPageResponesDTO.page >= boardDTOPageResponesDTO.totalPages}" class="paginate_button next disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">다음</a>
                             </li>
 
+                            <!-- 마지막 페이지 버튼 -->
+                            <li th:class="${boardDTOPageResponesDTO.page == boardDTOPageResponesDTO.totalPages ? 'disabled' : ''}" class="paginate_button">
+                                <a class="page-link" th:href="@{/board/list(page=${lastPage}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">마지막</a>
+                            </li>
+
+                            <div>
                         </ul>
                     </div>
                 </div> <!-- col -->
-            </div> <!-- 페이징 처리 -->
+            </div> <!-- row -->
 
         </div>
     </div>

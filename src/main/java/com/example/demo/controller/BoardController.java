@@ -57,15 +57,19 @@ public class BoardController {
 
     @GetMapping("/list")
     public String list(@ModelAttribute PageRequestDTO pageRequestDTO, Model model) {
-        if (pageRequestDTO.getPage() < 0) {
+        // 페이지 번호가 1 미만일 경우 1로 설정
+        if (pageRequestDTO.getPage() < 1) {
             pageRequestDTO.setPage(1);
         }
 
+        // 게시물 목록 조회
         PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
 
+        // 게시물 리스트가 비어있으면 빈 리스트 설정
         if (boardDTOPageResponesDTO.getDtoList() == null || boardDTOPageResponesDTO.getDtoList().isEmpty()) {
             boardDTOPageResponesDTO.setDtoList(Collections.emptyList());
         } else {
+            // 게시물 제목 및 내용 길이 제한
             boardDTOPageResponesDTO.getDtoList().forEach(boardDTO -> {
                 if (boardDTO.getTitle() != null && boardDTO.getTitle().length() > 10) {
                     boardDTO.setTitle(boardDTO.getTitle().substring(0, 10) + "...");
@@ -77,14 +81,14 @@ public class BoardController {
             });
         }
 
+        // 현재 페이지 및 총 페이지 수
         int currentPage = pageRequestDTO.getPage();
         int totalPages = boardDTOPageResponesDTO.getTotalPages();
 
-        boardDTOPageResponesDTO.setFirst(currentPage == 1);
-
-        boardDTOPageResponesDTO.setLast(currentPage >= totalPages - 1);
-
+        // 모델에 게시물 리스트와 첫/마지막 페이지 정보를 추가
         model.addAttribute("boardDTOPageResponesDTO", boardDTOPageResponesDTO);
+        model.addAttribute("firstPage", 1); // 첫 페이지
+        model.addAttribute("lastPage", totalPages); // 마지막 페이지
 
         return "board/list";
     }
