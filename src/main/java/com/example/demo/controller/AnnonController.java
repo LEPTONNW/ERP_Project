@@ -93,7 +93,7 @@ public class AnnonController {
     }
 
     @GetMapping("/load")
-    private String load(Model model, Long bno) {
+    public String load(Model model, Long bno) {
         AnnonDTO annonDTO = annonService.load(bno);
 
         model.addAttribute("annonDTO", annonDTO);
@@ -102,6 +102,7 @@ public class AnnonController {
     }
 
 
+    @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/alter")
     public String alter(Model model, @RequestParam Long bno) {
         AnnonDTO annonDTO = annonService.load(bno);
@@ -110,7 +111,7 @@ public class AnnonController {
     }
 
     // 수정된 내용 저장
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/alter")
     public String alterPro(@ModelAttribute AnnonDTO annonDTO, RedirectAttributes redirectAttributes) {
         Long bno = annonService.alter(annonDTO); // 수정된 내용을 서비스에서 처리
@@ -118,7 +119,8 @@ public class AnnonController {
         return "redirect:/annon/main"; // 목록 페이지로 리다이렉트
     }
 
-    @PreAuthorize("isAuthenticated()")
+
+    @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/delete")
     public String delete(Model model, @RequestParam Long bno) {
         AnnonDTO annonDTO = annonService.load(bno);
@@ -126,7 +128,7 @@ public class AnnonController {
         return "annon/delete";
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/delete")
     public String deletePro(@RequestParam Long bno) {
         AnnonDTO annonDTO = new AnnonDTO();
