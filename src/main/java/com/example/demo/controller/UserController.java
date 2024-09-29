@@ -26,7 +26,7 @@ public class UserController {
 
     //회원가입
     @GetMapping("/signpage")
-    private String signup(Model model) {
+    public String signup(Model model) {
         UsersDTO usersDTO = new UsersDTO();
 
         model.addAttribute("usersDTO", usersDTO);
@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/chk-signup")//이메일, 사업자번호 중복체크용 API
-    private ResponseEntity checkInfo(@RequestParam("email") String email) {
+    public ResponseEntity checkInfo(@RequestParam("email") String email) {
         boolean exsists = userService.checkUserEmail(email);
         //log.info("INFO : {}",exsists);
         return ResponseEntity.ok(exsists);
@@ -66,7 +66,7 @@ public class UserController {
 
     //아이디 중복체크용 API
     @GetMapping("/chk-user")
-    private ResponseEntity chekUsername(@RequestParam("userid") String userid) {
+    public ResponseEntity chekUsername(@RequestParam("userid") String userid) {
         boolean exsists = userService.checkIfUserExsists(userid);
         return ResponseEntity.ok(exsists);
     }
@@ -86,9 +86,13 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/mypage")
-    public String mypage(@ModelAttribute UsersDTO usersDTO, Model model, Principal principal) {
+    public String mypage(@ModelAttribute UsersDTO usersDTO, //폼에서 DTO로 바인딩하기 위해 사용
+                         Model model,
+                         Principal principal //현재 세션정보
+                         ) {
         String ss_username = principal.getName(); //현재 세션에 로그인된 사용자의 이름을 가져옴
         UsersDTO getuser = userService.getUser(ss_username); //세션사용자의 이름으로 DB에서 정보를 가져옴
+
 
         //입력한 비밀번호화 가져온 DB정보의 비밀번호가 맞는지 비교
         if(passwordEncoder.matches(usersDTO.getPass(), getuser.getPass())) {
@@ -98,14 +102,34 @@ public class UserController {
         }
         else {
             //비밀번호 불일치
-            model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
-            return "/";
+            model.addAttribute("userDTO", usersDTO);
+            model.addAttribute("err", "비밀번호가 일치하지 않습니다.");
+            return "mypage_chk";
         }
     }
 
     //마이페이지는 GET으로 접속 불가능하게 막음
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/mypage")
     public String mypage() {
-        return "/acc-denied";
+        return "mypage_chk";
+    }
+
+
+
+    //마이페이지 수정완료 페이지는 GET방식으로 접속하는걸 허용하지 않음
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("mypage_success")
+    public String mypage_success() {
+        return "main";
+    }
+
+    //마이페이지 수정완료 버튼 클릭시
+    @PostMapping("mypage_edit")
+    public String mypage_edit(@ModelAttribute UsersDTO usersDTO, Model model) {
+
+
+
+        return "mypage_success";
     }
 }

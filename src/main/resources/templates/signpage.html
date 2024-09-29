@@ -17,11 +17,11 @@
 <body>
 <div class="content mt-5" layout:fragment="content">
     <div>
-        <center><h4>회원가입</h4></center>
+        <center><h3>회원가입</h3></center>
         <hr>
         <form id="signupForm" name="signupForm" th:action="@{/signpage}" method="post" th:object="${usersDTO}" onsubmit="return combineAddr()">
 
-            <table cellpadding="1" cellspacing="0" align="center">
+            <table cellpadding="5" cellspacing="0" align="center">
 
                 <tr>
                     <td><h5>◆개인정보</h5></td>
@@ -29,28 +29,28 @@
 
                 <tr>
                     <td>아이디</td>
-                    <td><input type="text" name="userid" th:field="*{userid}" required></td>
-                    <td><input type="button" name="userchk" value="사용가능 확인" class="btn btn-dark" onclick="chk_userid()"></td>
+                    <td><input type="text" name="userid" th:field="*{userid}" class="form-control" required></td>
+                    <td>&nbsp;<input type="button" name="userchk" value="사용가능 확인" class="btn btn-dark" onclick="chk_userid()"></td>
                 </tr>
 
                 <tr>
                     <td>비밀번호</td>
-                    <td><input type="password" id="password" name="password" th:field="*{pass}" required></td>
+                    <td><input type="password" id="password" name="password" th:field="*{pass}" class="form-control" required></td>
                 </tr>
 
                 <tr>
                     <td>비밀번호확인</td>
-                    <td><input type="password" id="password2" name="password2" required></td>
+                    <td><input type="password" id="password2" name="password2" class="form-control" required></td>
                 </tr>
 
                 <tr>
                     <td>이름</td>
-                    <td><input type="text" name="name" id="name" th:field="*{name}"  required></td>
+                    <td><input type="text" name="name" id="name" class="form-control" th:field="*{name}"  required></td>
                 </tr>
 
                 <tr>
                     <td>생년월일</td>
-                    <td><input type="date" name="age" id="age" th:field="*{age}" required></td>
+                    <td><input type="date" name="age" id="age" class="form-control" th:field="*{age}" required></td>
                 </tr>
 
                 <tr>
@@ -66,12 +66,12 @@
 
                 <tr>
                     <td>이메일</td>
-                    <td><input type="email" name="email" class="email" id="email" th:field="*{email}" required></td>
+                    <td><input type="email" name="email" class="email form-control" id="email" th:field="*{email}" required></td>
                 </tr>
 
                 <tr>
                     <td>연락처</td>
-                    <td><input type="tel" name="phone" id="phone" th:field="*{phone}" required></td>
+                    <td><input type="tel" name="phone" id="phone" class="form-control" th:field="*{phone}" required></td>
                 </tr>
 
                 <tr><td><br></td></tr>
@@ -82,7 +82,7 @@
 
                 <tr>
                     <td>상호명</td>
-                    <td><input type="text" name="b2bname" id="b2bname" th:field="*{b2bname}" required></td>
+                    <td><input type="text" name="b2bname" id="b2bname" class="form-control" th:field="*{b2bname}" required></td>
 
                 </tr>
 
@@ -91,38 +91,38 @@
                     <!--
                     <td><input type="text" name="b2bAddr" required></td>
                     -->`
-                    <td><input type="text" id="sample6_postcode" placeholder="우편번호"></td>
+                    <td><input type="text" id="sample6_postcode" class="form-control" placeholder="우편번호"></td>
                     <td><button id="addr" class="btn btn-dark" onclick="execDaumPostcode()">주소찾기</button></td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input type="text" id="sample6_address" placeholder="주소"></td>
+                    <td><input type="text" id="sample6_address" class="form-control" placeholder="주소"></td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input type="text" id="sample6_detailAddress" placeholder="상세주소"></td>
-                    <td><input type="text" id="sample6_extraAddress" placeholder="추가주소"></td>
+                    <td><input type="text" id="sample6_detailAddress" class="form-control" placeholder="상세주소"></td>
+                    <td><input type="text" id="sample6_extraAddress" class="form-control" placeholder="추가주소"></td>
 
                 </tr>
 
                 <tr>
                     <td>대표자 성함</td>
-                    <td><input type="text" name="b2bexpont" id="b2bexpont" th:field="*{b2bexpont}" required></td>
+                    <td><input type="text" name="b2bexpont" id="b2bexpont" class="form-control" th:field="*{b2bexpont}" required></td>
                 </tr>
 
                 <tr>
                     <td>대표이메일</td>
-                    <td><input type="email" name="b2bemail" id="b2bemail" th:field="*{b2bemail}" required></td>
+                    <td><input type="email" name="b2bemail" id="b2bemail" class="form-control" th:field="*{b2bemail}" required></td>
                 </tr>
 
                 <tr>
                     <td>회사연락처</td>
-                    <td><input type="tel" name="b2bcontact" id="b2bcontact" th:field="*{b2bcontact}" required></td>
+                    <td><input type="tel" name="b2bcontact" id="b2bcontact" class="form-control" th:field="*{b2bcontact}" required></td>
                 </tr>
 
                 <tr>
                     <td>사업자등록번호</td>
-                    <td><input type="text" id="corp_reg" name="corp_button" th:field="*{b2bnumber}" required></td>
+                    <td><input type="text" id="corp_reg" name="corp_button" class="form-control" th:field="*{b2bnumber}" required></td>
                     <td><button class="btn btn-dark" onclick="corp_chk(event)">사업자등록번호 확인</button></td>
                 </tr>
 
@@ -179,7 +179,7 @@
                            $('#userid').val(''); //아이디 필드 초기화
                        }
                        else {
-                           console.log(response);
+                           //console.log(response);
                            alert('사용 가능한 아이디 입니다.');
                            // 입력 필드를 비활성화
                            $("#userid").prop("readonly", true);
@@ -244,7 +244,7 @@
                             var e_add = document.getElementById("sample6_extraAddress").value //추가주소
 
                             //합체
-                            var combined = p_code + ' ' + add + ' ' + d_add + ' ' + e_add;
+                            var combined = p_code + '-' + add + '-' + d_add + '-' + e_add;
 
                             //숨겨진 input에 값 저장
                             document.getElementById("combine").value = combined.toString();
