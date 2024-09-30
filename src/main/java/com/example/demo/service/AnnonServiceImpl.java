@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.AnnonDTO;
-import com.example.demo.dto.PageRequestDTO;
-import com.example.demo.dto.PageResponesDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Annon;
+import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.AnnonRepository;
+import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -13,11 +13,13 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -29,12 +31,21 @@ public class AnnonServiceImpl implements AnnonService {
 
     private final AnnonRepository annonRepository;
 
+    private  UserService userService;
+
+    private  final UserRepository userRepository;
+
     private ModelMapper mapper = new ModelMapper();
 
+
     @Override
-    public Long create(@Valid AnnonDTO annonDTO) {
-        log.info("서비스로 들어온 dto: " + annonDTO);
+    public Long create(@Valid AnnonDTO annonDTO, Principal principal){
+
+        UsersEntity usersEntity = userRepository.findByUserid(principal.getName()).get();
+
+        log.info("유저객체 : " + usersEntity);
         Annon annon = mapper.map(annonDTO, Annon.class);
+        annon.setUsersEntity(usersEntity);
         log.info("서비스에서 변환된 dto > entity : " + annon);
         annonRepository.save(annon);
 
@@ -79,7 +90,7 @@ public class AnnonServiceImpl implements AnnonService {
                 Collections.emptyList() :
                 annonPage.getContent()
                         .stream()
-                        .map(annon -> mapper.map(annon, AnnonDTO.class)) // 변환 타입 변경
+                        .map(annon -> mapper.map(annon, AnnonDTO.class).setUsersDTO(mapper.map(annon.getUsersEntity(), UsersDTO.class))) // 변환 타입 변경
                         .collect(Collectors.toList());
 
         // 반환값 처리
@@ -91,9 +102,15 @@ public class AnnonServiceImpl implements AnnonService {
     }
 
     @Override
+    public String main(Principal principal) {
+        String userId = principal.getName(); // 로그인한 사용자의 ID를 가져옴
+        UsersDTO usersDTO = userService.getUser(userId); // 사용자 정보를 가져옴
+        return userId;
+    }
+
+
+    @Override
     public AnnonDTO load(Long bno) {
-
-
 
         log.info("LOG!!! :");
         Annon annon = annonRepository.findById(bno)
@@ -118,20 +135,17 @@ public class AnnonServiceImpl implements AnnonService {
         return annonDTO.getBno();
     }
 
-    public Long delete(AnnonDTO annonDTO) {
-        // bno로 게시물 찾기
-        Optional<Annon> annon = annonRepository.findById(annonDTO.getBno());
 
-        // 게시물이 존재하는 경우 삭제
-        if (annon.isPresent()) {
-            annonRepository.delete(annon.get()); // 삭제 수행
-            return annonDTO.getBno();            // 삭제된 bno 반환
+    @Transactional
+    @Override
+    public void delete(Long bno) {
+        if (annonRepository.existsById(bno)) {
+            annonRepository.deleteById(bno); // 게시글 삭제
+            log.info("게시글이 성공적으로 삭제되었습니다. bno: {}", bno); // 삭제 성공 로깅
         } else {
-            throw new EntityNotFoundException("공지사항이 존재하지 않습니다. : " + annonDTO.getBno());
+            throw new EntityNotFoundException("공지사항이 존재하지 않습니다."); // 예외 처리
         }
     }
-
-
 
 }
 

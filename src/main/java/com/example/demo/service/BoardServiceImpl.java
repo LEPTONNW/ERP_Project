@@ -4,8 +4,11 @@ package com.example.demo.service;
 import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.PageRequestDTO;
 import com.example.demo.dto.PageResponesDTO;
+import com.example.demo.dto.UsersDTO;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
 import java.util.Collections;
 
 
@@ -27,13 +32,26 @@ import java.util.stream.Collectors;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
+
+    private final UserService userService;
+
+    private final UserRepository userRepository;
+
     private ModelMapper mapper = new ModelMapper();
 
     @Override
-    public Long register(BoardDTO boardDTO) {
+    public Long register(BoardDTO boardDTO, Principal principal) {
         log.info("서비스로 들어온 dto: " + boardDTO);
         //등록
+        UsersDTO usersDTO = userService.getUser(principal.getName());
+
+        //UsersEntity usersEntity = mapper.map(usersDTO, UsersEntity.class);
+
+        UsersEntity usersEntity = userRepository.findByUserid(principal.getName()).get();
+
+        log.info("유저객체 : " +usersEntity);
         Board board = mapper.map(boardDTO, Board.class);
+        board.setUsersEntity(usersEntity);
         log.info("서비스에서 변환된 dto > entity : " + board);
         boardRepository.save(board);
 
@@ -47,48 +65,49 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boardList = boardRepository.findAll();
 
         List<BoardDTO> boardDTOList =
-        boardList.stream().map(abc -> mapper.map(abc, BoardDTO.class)).collect(Collectors.toList());
+                boardList.stream().map(abc -> mapper.map(abc, BoardDTO.class)).collect(Collectors.toList());
 
         return boardDTOList;
     }
 
     @Override
-    public void update(BoardDTO boardDTO) {
-        //트랜잭션이 적용이 되어있어서 엔티티매니저가 적용된다.
-
-        Board board = boardRepository
-                .findById(boardDTO.getBno())
-                .orElseThrow(EntityNotFoundException::new);
-
-        board.setContent(boardDTO.getContent());
-
+    public  String list(Principal principal) {
+        String userId = principal.getName(); // 로그인한 사용자의 ID를 가져옴
+        UsersDTO usersDTO = userService.getUser(userId); // 사용자 정보를 가져옴
+        return userId;
     }
 
     //size, page, keyword, types
     @Override
     public PageResponesDTO<BoardDTO> list(PageRequestDTO pageRequestDTO) {
         String[] types = pageRequestDTO.getTypes();
-
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable("bno");
 
-        Page<Board> boardpage = boardRepository.searchAll(types, keyword, pageable);
+        // 사용자 정보를 가져오기
 
-        //보드타입의 리스트가 >>> 보드DTO 타입의 리스트로 변환
-        // 보드 리스트가 null일 경우 빈 리스트로 처리
-        List<BoardDTO> boardDTOList = boardpage.getContent() == null ?
-                Collections.emptyList() :
-                boardpage.getContent()
-                        .stream()
-                        .map(board -> mapper.map(board, BoardDTO.class))
-                        .collect(Collectors.toList());
+        // 게시물 페이지 조회
+        Page<Board> boardPage = boardRepository.searchAll(types, keyword, pageable);
+
+        // Board 리스트가 null일 경우 빈 리스트로 처리
+        List<BoardDTO> boardDTOList = boardPage.hasContent() ? boardPage.getContent()
+                .stream()
+                .map(board -> {
+                    BoardDTO boardDTO = mapper.map(board, BoardDTO.class);
+                    if (board.getUsersEntity() != null) {
+                        boardDTO.setUsersDTO(mapper.map(board.getUsersEntity(), UsersDTO.class));
+                    }
+                    return boardDTO;
+                })
+                .collect(Collectors.toList()) : Collections.emptyList();
 
 
-        //반환값 처리
+
+        // 반환값 처리
         return PageResponesDTO.<BoardDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(boardDTOList)
-                .total((int)boardpage.getTotalElements())
+                .total((int) boardPage.getTotalElements())
                 .build();
     }
 
@@ -97,8 +116,10 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(bno)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
+        BoardDTO boardDTO = mapper.map(board, BoardDTO.class).setUsersDTO(mapper.map(board.getUsersEntity(), UsersDTO.class));
+
         // 엔티티를 DTO로 변환하여 반환
-        return mapper.map(board, BoardDTO.class);
+        return boardDTO;
     }
 
 
@@ -113,10 +134,19 @@ public class BoardServiceImpl implements BoardService {
         board.setContent(boardDTO.getContent());
         board.setTitle(boardDTO.getTitle());
 
-    return boardDTO.getBno();
+        return boardDTO.getBno();
     }
 
-
-
+    @Override
+    @Transactional
+    public void delete(Long bno) {
+        if (boardRepository.existsById(bno)) {
+            boardRepository.deleteById(bno); // 게시글 삭제
+        } else {
+            throw new IllegalArgumentException("게시글이 존재하지 않습니다."); // 예외 처리
+        }
+    }
 
 }
+
+

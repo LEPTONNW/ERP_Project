@@ -3,21 +3,20 @@ package com.example.demo.controller;
 import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.PageRequestDTO;
 import com.example.demo.dto.PageResponesDTO;
+import com.example.demo.dto.UsersDTO;
 import com.example.demo.service.BoardService;
+import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Collections;
 
 
@@ -29,12 +28,19 @@ import java.util.Collections;
 public class BoardController {
     //서비스들 가져오기 그리고 필요하다면 user등등 다
     private  final BoardService boardService;
-    // 댓글도
-    //이미지도
 
+    @Autowired
+    private final UserService userService;
+    private UserService usersService;
 
     @GetMapping("/register")
-    public  void register(BoardDTO boardDTO){
+    public  void register(BoardDTO boardDTO , Principal principal, Model model){
+        UsersDTO usersDTO =  userService.getUser(principal.getName());
+
+        log.info(usersDTO);
+        boardDTO.setWriter(usersDTO.getName());
+
+        model.addAttribute("boardDTO", boardDTO);
         //html에서 object를 사용하기 위해서 thymeleaf
         log.info("등록get 진입");
 
@@ -42,7 +48,7 @@ public class BoardController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
-    public  String registerPost(@Valid BoardDTO boardDTO, BindingResult bindingResult, Model model
+    public  String register(@Valid BoardDTO boardDTO, BindingResult bindingResult, Model model, Principal principal
     ){  //파라미터 리다이렉트 쓸때 추가 : RedirectAttributes redirectAttributes
 
         log.info("파라미터로 입력된 : " +boardDTO);
@@ -51,7 +57,9 @@ public class BoardController {
             log.info(bindingResult.getAllErrors()); //유효성검사에 대한 결과
             return "board/register";
         }
-        boardService.register(boardDTO);
+
+        boardService.register(boardDTO, principal);
+
         return "redirect:/board/list";
     }
 
@@ -61,6 +69,7 @@ public class BoardController {
         if (pageRequestDTO.getPage() < 1) {
             pageRequestDTO.setPage(1);
         }
+
 
         // 게시물 목록 조회
         PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
@@ -90,17 +99,23 @@ public class BoardController {
         model.addAttribute("firstPage", 1); // 첫 페이지
         model.addAttribute("lastPage", totalPages); // 마지막 페이지
 
+
         return "board/list";
     }
 
 
     @GetMapping("/read")
-    public String read(Model model, Long bno) {
+    public String read(Model model, Long bno, Principal principal) {
         // 게시글 번호를 통해 상세 정보를 가져옴
         BoardDTO boardDTO = boardService.read(bno);
 
+        UsersDTO usersDTO =  userService.getUser(principal.getName());
+
+        log.info(usersDTO);
+        boardDTO.setWriter(usersDTO.getName());
         // 모델에 담아 뷰로 전달
         model.addAttribute("boardDTO", boardDTO);
+
 
         // 상세 페이지 뷰로 이동
         return "board/boardread";
@@ -114,13 +129,11 @@ public class BoardController {
         return "board/modify"; // 수정 화면으로 이동
     }
 
-    @PreAuthorize("isAuthenticated()")
-    // 수정된 내용 저장
-    @PostMapping("/modify")
-    public String modifyPro(@ModelAttribute BoardDTO boardDTO, RedirectAttributes redirectAttributes) {
-       Long num = boardService.modify(boardDTO); // 수정된 내용을 서비스에서 처리
-        redirectAttributes.addFlashAttribute("message", num+ "번 글이 수정이 완료되었습니다.");
-        return "redirect:/board/list"; // 목록 페이지로 리다이렉트
+
+    @PostMapping("/delete")
+    public String deletePost(@RequestParam Long bno) {
+        boardService.delete(bno);
+        return "redirect:/board/list"; // 삭제 후 목록 페이지로 리다이렉트
     }
 
 }

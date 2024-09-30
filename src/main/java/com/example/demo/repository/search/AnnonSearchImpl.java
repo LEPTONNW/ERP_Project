@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.util.List;
 
 @Log4j2
-public class AnnonSearchImpl extends QuerydslRepositorySupport implements  AnnonSearch {
+public class AnnonSearchImpl extends QuerydslRepositorySupport implements AnnonSearch {
 
     public AnnonSearchImpl(){
         super(Annon.class);
@@ -24,7 +24,7 @@ public class AnnonSearchImpl extends QuerydslRepositorySupport implements  Annon
 
         QAnnon annon = QAnnon.annon;        //q도메인객체
 
-        JPQLQuery<Annon> query = from(annon); //select * from board
+        JPQLQuery<Annon> query = from(annon); //select * from annon
 
         System.out.println(query);   //select * from board
 

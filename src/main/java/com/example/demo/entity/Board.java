@@ -29,7 +29,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "mno")
     private UsersEntity usersEntity;
 
-
     private String writer;
 
     //등록일자 혹은 만든이 기타등등이 들어감

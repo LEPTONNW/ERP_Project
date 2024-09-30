@@ -15,20 +15,24 @@ public class AnnonDTO {
 
     private Long bno;   //글번호 pk
 
-
     @NotNull
     @Size(min = 2, max = 50)
     private String title;   //제목
 
-
     @NotEmpty
     @Size(min = 2, max = 500)
     private String content;
-
 
     private String writer;
 
     private LocalDate regidate;
 
     private LocalDate modDate;
+
+    private UsersDTO usersDTO;
+
+    public AnnonDTO setUsersDTO(UsersDTO usersDTO) {
+        this.usersDTO = usersDTO;
+        return this;
+    }
 }

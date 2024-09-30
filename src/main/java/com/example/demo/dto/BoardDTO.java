@@ -30,5 +30,10 @@ public class BoardDTO {
 
     private LocalDate modDate;
 
+    private UsersDTO usersDTO;
 
+    public BoardDTO setUsersDTO(UsersDTO usersDTO) {
+        this.usersDTO = usersDTO;
+        return this;
+    }
 }

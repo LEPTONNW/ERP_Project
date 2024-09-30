@@ -1,18 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.AnnonDTO;
-import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.PageRequestDTO;
 import com.example.demo.dto.PageResponesDTO;
-import com.example.demo.entity.Annon;
+import com.example.demo.dto.UsersDTO;
 import com.example.demo.service.AnnonService;
-import com.example.demo.service.AnnonServiceImpl;
+import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.Collections;
 
 @Controller
@@ -30,22 +27,34 @@ public class AnnonController {
 
     private final AnnonService annonService;
 
+    private final UserService userService;
+
     @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/create")
-    public String create(AnnonDTO annonDTO){
-        return "annon/create";
+    public void create(AnnonDTO annonDTO, Principal principal, Model model){
+        UsersDTO usersDTO = userService.getUser(principal.getName());
+
+        log.info(usersDTO);
+        annonDTO.setWriter(usersDTO.getName());
+
+        model.addAttribute("annonDTO", annonDTO);
+        log.info("get 공지 진입ㅇㅎ");
     }
 
     @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/create")
-    public  String Create(@Valid AnnonDTO annonDTO, BindingResult bindingResult, Model model) {
+    public String Create(@Valid AnnonDTO annonDTO, BindingResult bindingResult, Model model, Principal principal) {
         log.info("파라미터로 입력된 : " + annonDTO);
+        log.info("파라미터로 입력된 : " + principal.getName());
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
             return "annon/create";
         }
-        annonService.create(annonDTO);
+
+        annonService.create(annonDTO, principal);
+
+
         return "redirect:/annon/main";
     }
 
@@ -85,12 +94,18 @@ public class AnnonController {
         model.addAttribute("annonDTOPageResponesDTO", annonDTOPageResponesDTO); // 모델에 annonDTO 추가
         model.addAttribute("firstPage", 1); // 첫 페이지
         model.addAttribute("lastPage", totalPages); // 마지막 페이지
+        log.info("들어가짐?");
 
         return "annon/main"; // 반환되는 뷰 이름
     }
+
+
     @GetMapping("/load")
-    public String load(Model model, Long bno) {
+    public String load(Model model, Long bno, Principal principal) {
         AnnonDTO annonDTO = annonService.load(bno);
+
+        UsersDTO usersDTO = userService.getUser(principal.getName());
+        annonDTO.setWriter(usersDTO.getName());
 
         model.addAttribute("annonDTO", annonDTO);
 
@@ -117,25 +132,11 @@ public class AnnonController {
 
 
     @PreAuthorize("hasRole('SUPERADMIN')")
-    @GetMapping("/delete")
-    public String delete(Model model, @RequestParam Long bno) {
-        AnnonDTO annonDTO = annonService.load(bno);
-        model.addAttribute("annonDTO", annonDTO);
-        return "annon/delete";
-    }
-
-    @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/delete")
-    public String deletePro(@RequestParam Long bno) {
-        AnnonDTO annonDTO = new AnnonDTO();
-        annonDTO.setBno(bno);
-
-        annonService.delete(annonDTO);
-
-        return "redirect:/annon/main";
+    public String deletePost(@RequestParam Long bno) {
+        annonService.delete(bno);
+        return "redirect:/board/list"; // 삭제 후 목록 페이지로 리다이렉트
     }
-
-
 
 
 }
