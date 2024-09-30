@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -12,10 +13,14 @@ import java.time.LocalDate;
 @ToString
 @Data
 public class UsersDTO {
+    private Long mno; //번호
+
     //회원정보
     private String userid;      //아이디
     private String pass;        //비밀번호
     private String name;        //이름
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate age;            //생년월일
     private String gender;      //성별
     private String email;       //이메일

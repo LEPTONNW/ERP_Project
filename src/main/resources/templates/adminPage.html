@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지 [SUPER ADMIN]</title>
+</head>
+<body>
+<div class="content mt-5" layout:fragment="content">
+
+    <!-- 오류메시지 출력 -->
+    <div class="d-flex justify-content-center mt-3" th:if="${err}">
+        <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+    </div>
+    <!-- 오류 메시지 출력 끝 -->
+
+    <table cellpadding="5" cellspacing="5" align="center" class="table">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">아이디</th>
+            <th scope="col">이메일</th>
+            <th scope="col">사업장이름</th>
+            <th scope="col">사업자번호</th>
+        </tr>
+        </thead>
+
+        <!-- 리스트가 비어있지 않을때만 가져옴 -->
+        <th:block th:unless="${userDTOList.isEmpty()}">
+            <tbody>
+            <tr th:each="user : ${userDTOList}">
+                <td scope="row" th:text="${user.mno}"></td>
+                <td th:text="${user.userid}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.b2bname}"></td>
+                <td th:text="${user.b2bnumber}"></td>
+            </tr>
+            </tbody>
+        </th:block>
+    </table>
+</div>
+</body>
+</html>

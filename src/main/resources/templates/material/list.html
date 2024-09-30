@@ -23,7 +23,7 @@
 
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
-                    <form class="d-flex formObj" role="search" action="/material/list" method="get"
+                    <form class="d-flex formObj" role="search" th:action="@{/material/list}" method="get"
                           th:object="${pageRequestDTO}">
                         <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
                             <option value="n">자재명</option>

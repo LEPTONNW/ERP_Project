@@ -46,6 +46,10 @@ public class SecurityConfig {
                         .loginPage("/login") //사용자 정의 PostMapping 로그인 페이지
                         .defaultSuccessUrl("/", true) //로그인 성공 후 이동할 페이지
                         .permitAll()
+                        .successHandler((request, response, authentication) -> {
+                            // 이미 로그인된 사용자가 로그인 페이지에 접근할 경우 메인 페이지로 리다이렉트
+                            response.sendRedirect("/main");
+                        })
                 )
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) //로그아웃을 받을 GetMapping

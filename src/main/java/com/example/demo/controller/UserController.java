@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import com.example.demo.dto.UsersDTO;
+import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.security.Principal;
 
 @Controller
@@ -22,7 +25,9 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private String encpass; //임시 비밀번호 저장변수
 
     //회원가입
     @GetMapping("/signpage")
@@ -36,7 +41,7 @@ public class UserController {
     //회원가입 버튼 누른 후
     @PostMapping("/signpage")
     public String registerUser(@Valid UsersDTO usersDTO, BindingResult bindingResult) {
-        log.info(usersDTO);
+        //log.info(usersDTO);
 
         if(bindingResult.hasErrors()) {
             log.error("Error : {}" , bindingResult.getAllErrors());
@@ -115,21 +120,124 @@ public class UserController {
         return "mypage_chk";
     }
 
-
-
     //마이페이지 수정완료 페이지는 GET방식으로 접속하는걸 허용하지 않음
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("mypage_success")
+    @GetMapping("/mypage_success")
     public String mypage_success() {
         return "main";
     }
 
+
     //마이페이지 수정완료 버튼 클릭시
-    @PostMapping("mypage_edit")
-    public String mypage_edit(@ModelAttribute UsersDTO usersDTO, Model model) {
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/mypage_edit")
+    public String mypage_edit(@ModelAttribute UsersDTO usersDTO,
+                              Principal principal,
+                              Model model
+                              ) {
+        String username = principal.getName(); //현재 세션의 사용자 이름을 가져옴
+
+        //사용자 정보 업데이트 처리
+        try {
+            userService.updateUser(username, usersDTO);
+            return "mypage_success";
+        }
+        catch (Exception e) {
+            String ss_username = principal.getName(); //현재 세션에 로그인된 사용자의 이름을 가져옴
+            UsersDTO getuser = userService.getUser(ss_username); //세션사용자의 이름으로 DB에서 정보를 가져옴
+
+            model.addAttribute("userDTO", getuser);
+            model.addAttribute("err", "ERROR : 알 수 없는 이유로 수정되지 않았습니다.");
+            model.addAttribute("errAny", e.toString());
+
+            log.info("LOG!!! : {}", getuser.getAge().toString());
+            return "mypage";
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/passchg")
+    public String passchg(Model model
+                          ) {
+        try {
+            model.addAttribute("userDTO" , new UsersDTO());
+            model.addAttribute("oldpass" , "");
+            return "passchg";
+        }
+        catch (Exception e) {
+            model.addAttribute("err", "잘못된 접근입니다.");
+            //model.addAttribute("errAny", e.toString());
+            return "main";
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/passchg_pro")
+    public String passchg_pro(Model model,
+                              @ModelAttribute UsersDTO usersDTO,
+                              Principal principal,
+                              @RequestParam String oldpass
+                              ) {
 
 
+        String username = principal.getName(); //현재 세션 사용자 이름 가져옴
+        UsersDTO getuser = userService.getUser(username); //현재 세션 사용자의 정보 가져옴
+        try {
+            model.addAttribute("userDTO", usersDTO); //폼에 바인딩
+            model.addAttribute("oldpass", oldpass); //이전 비번 바인딩
 
-        return "mypage_success";
+            if(passwordEncoder.matches(oldpass, getuser.getPass())) { //입력한 번호, 세션 사용자의 번호 비교
+                userService.updatePass(username, usersDTO);
+                return "mypage_success";
+            }
+            else {
+                model.addAttribute("err", "기존 비밀번호가 일치하지 않습니다.");
+                return "passchg";
+            }
+        }
+        catch (Exception e) {
+            model.addAttribute("err", "ERROR : 알 수 없는 이유로 수정되지 않았습니다.");
+            return "passchg";
+        }
+    }
+
+    @GetMapping("/forgotpass")
+    public String forgotpass(Model model) {
+        try {
+            model.addAttribute("userDTO", new UsersDTO());
+            return "forgotpass";
+        }
+        catch (Exception e) {
+            model.addAttribute("err", "잘못된 접근입니다.");
+            return "forgotpass";
+        }
+    }
+
+    @PostMapping("/forgotpass_pro")
+    public String forgotpass_pro(Model model, @ModelAttribute UsersDTO usersDTO) {
+        try {
+            model.addAttribute("userDTO", usersDTO); //폼에 바인딩
+
+            //입력된 아이디, 이메일 정보 확인
+            UsersDTO getuser = userService.getUser(usersDTO.getUserid()); //입력된 아이디로 Entity정보 가져옴
+            String email = getuser.getEmail(); //가져온 Entity정보에서 이메일 뽑아냄
+
+            if(email.equals(usersDTO.getEmail())) { //Entity의 이메일 정보와 폼에서 입력받은 이메일 정보가 같을 경우 작동
+                encpass = mailService.sendMail(email); //Entity에서 가져온 이메일로 임시비밀번호 전송후 임시비번 리턴
+                userService.forgotpass(getuser.getUserid(), encpass); //임시비밀번호로 해당계정의 패스워드 변경
+
+
+                model.addAttribute("scc", "이메일로 임시비밀번호가 발급되었습니다.");
+                return "forgotpass";
+            }
+            else {
+                model.addAttribute("err", "ERROR : 아이디 또는 이메일 정보가 일치하지 않습니다.");
+                return "forgotpass";
+            }
+        }
+        catch (Exception e) {
+            model.addAttribute("err", "ERROR : 아이디 또는 이메일 정보가 일치하지 않습니다.");
+            return "forgotpass";
+        }
     }
 }

@@ -20,56 +20,62 @@
 <body>
 <div class="content mt-5" layout:fragment="content">
 <h1>마이페이지</h1> <br><br><br><br><br><br>
-    <form th:object="${userDTO}">
+    <form th:object="${userDTO}" th:action="@{/mypage_edit}" method="post">
         <div class="d-flex justify-content-center">
             <h3>개인정보</h3>
         </div>
+        <!-- 오류메시지 출력 -->
+        <div class="d-flex justify-content-center mt-3" th:if="${err}">
+            <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${errAny}"></div>
+        </div>
+        <!-- 오류 메시지 출력 끝 -->
         <hr>
         <table cellpadding="5" cellspacing="5" align="center">
             <tr>
                 <td rowspan="4">
                     <div class="image-box"><img src="" class="img-fluid" alt="프로필 사진"></div>
                 <td>아이디 :</td>
-                <td><input type="text" class="form-control" placeholder="아이디" th:value="${userDTO.userid}"  required></td>
+                <td><input type="text" class="form-control" placeholder="아이디" th:field="*{userid}"  required readonly style="background-color: lightgray"></td>
                 </td>
             </tr>
 
             <tr>
                 <td>비밀번호 :</td>
                 <td>
-                    <button class="btn btn-dark">비밀번호 변경</button>
+                    <a th:href="@{/passchg}" class="btn btn-dark">비밀번호 변경</a>
                 </td>
             </tr>
 
             <tr>
                 <td>이름 :</td>
-                <td><input type="text" class="form-control" th:value="${userDTO.name}" placeholder="이름" required></td>
+                <td><input type="text" class="form-control" th:field="*{name}" placeholder="이름" required></td>
             </tr>
 
             <tr>
                 <td>생년월일 :</td>
-                <td><input type="date" class="form-control" th:value="${userDTO.age}" required></td>
+                <td><input type="date" class="form-control" th:field="*{age}" required></td>
             </tr>
 
             <tr>
                 <td><input type="button" class="btn btn-dark" value="사진 업로드"></td>
                 <td>성별</td>
                 <td>
-                    <input type="checkbox" name="gender" value="male" th:checked="${userDTO.gender == 'male'}" required> 남성
-                    <input type="checkbox" name="gender" value="female" th:checked="${userDTO.gender == 'female'}" required> 여성
+                    <input type="radio" name="gender" value="male" th:checked="${userDTO.gender == 'male'}" > 남성
+                    <input type="radio" name="gender" value="female" th:checked="${userDTO.gender == 'female'}" > 여성
                 </td>
             </tr>
 
             <tr>
                 <td></td>
                 <td>이메일 :</td>
-                <td><input type="email" class="form-control" th:value="${userDTO.email}" required></td>
+                <td><input type="email" class="form-control" th:field="*{email}" required></td>
             </tr>
 
             <tr>
                 <td></td>
                 <td>연락처 :</td>
-                <td><input type="tel" class="form-control" th:value="${userDTO.phone}" required></td>
+                <td><input type="tel" class="form-control" th:field="*{phone}" required></td>
             </tr>
 
             <tr><td><br></td></tr>
@@ -85,7 +91,7 @@
         <table cellpadding="5" cellspacing="5" align="center">
             <tr>
                 <td>상호명 : </td>
-                <td><input type="text" th:value="${userDTO.b2bname}" class="form-control"></td>
+                <td><input type="text" th:field="*{b2bname}" class="form-control"></td>
             </tr>
 
             <tr>
@@ -106,22 +112,22 @@
 
             <tr>
                 <td>대표자 성함</td>
-                <td><input type="text" name="b2bexpont" id="b2bexpont" class="form-control" th:value="${userDTO.b2bexpont}" required></td>
+                <td><input type="text" name="b2bexpont" id="b2bexpont" class="form-control" th:field="*{b2bexpont}" required></td>
             </tr>
 
             <tr>
                 <td>대표이메일</td>
-                <td><input type="email" name="b2bemail" id="b2bemail" class="form-control" th:value="${userDTO.b2bemail}" required></td>
+                <td><input type="email" name="b2bemail" id="b2bemail" class="form-control" th:field="*{b2bemail}" required></td>
             </tr>
 
             <tr>
                 <td>회사연락처</td>
-                <td><input type="tel" name="b2bcontact" id="b2bcontact" class="form-control" th:value="${userDTO.b2bcontact}" required></td>
+                <td><input type="tel" name="b2bcontact" id="b2bcontact" class="form-control" th:field="*{b2bcontact}" required></td>
             </tr>
 
             <tr>
                 <td>사업자등록번호</td>
-                <td><input type="text" id="corp_reg" name="corp_button" class="form-control" th:value="${userDTO.b2bnumber}" required></td>
+                <td><input type="text" id="corp_reg" name="corp_button" class="form-control" th:field="*{b2bnumber}" required></td>
                 <td><button class="btn btn-dark" onclick="corp_chk(event)">사업자등록번호 확인</button></td>
             </tr>
 
@@ -134,7 +140,7 @@
             </tr>
         </table>
 
-        <input id=b2addr name=b2addr type="hidden" th:value="${userDTO.b2baddr}">
+        <input id=b2addr name=b2addr type="hidden" th:field="*{b2baddr}">
     </form>
 
     <script>

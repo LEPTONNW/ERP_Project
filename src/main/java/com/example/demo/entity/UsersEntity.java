@@ -39,7 +39,7 @@ public class UsersEntity extends BaseEntity {
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate age; //생년월일
-    //@NotEmpty(message = "게이임?? 씹련")
+
     @Column(nullable = false)
     private String gender; //성별
 

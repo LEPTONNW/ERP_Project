@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>비밀번호 찾기</title>
+</head>
+<body>
+<div class="content mt-5" layout:fragment="content">
+    <div class="d-flex justify-content-center">
+        <h3>비밀번호 찾기</h3>
+    </div>
+    <!-- 오류메시지 출력 -->
+    <div class="d-flex justify-content-center mt-3" th:if="${err}">
+        <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+    </div>
+    <div class="d-flex justify-content-center mt-3" th:if="${scc}">
+        <div class="alert alert-success" role="alert" th:text="${scc}"></div>
+    </div>
+    <!-- 오류 메시지 출력 끝 -->
+    <hr>
+    <form th:action="@{/forgotpass_pro}" method="post" th:object="${userDTO}">
+        <table cellpadding="5" cellspacing="5" align="center">
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr>
+                <td>아이디 : </td>
+                <td><input type="text" id="userid" name="userid" class="form-control" th:field="*{userid}" placeholder="아이디 입력"></td>
+            </tr>
+
+            <tr>
+                <td>이메일 : </td>
+                <td><input type="text" id="email" name="email" class="form-control" th:field="*{email}" placeholder="이메일 입력"></td>
+            </tr>
+
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr>
+                <td colspan="2"><input type="submit" class="btn btn-dark" value="임시 비밀번호 발급" style="width: 100%"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script>
+    window.onload = function () {
+        document.getElementById('email').value = "";
+        document.getElementById('userid').value = "";
+    }
+</script>
+</body>
+</html>
