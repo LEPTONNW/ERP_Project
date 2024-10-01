@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AdminSearchDTO;
 import com.example.demo.dto.UsersDTO;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.service.UserService;
@@ -12,14 +13,17 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 @Controller
@@ -68,10 +72,25 @@ public class MainController {
     //관리자 페이지
     @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/adminPage")
-    public String adminPage (Model model) {
+    public String adminPage (Model model, @RequestParam(value = "page", defaultValue = "1") int page) {
         try{
             List<UsersDTO> usersDTOList = userService.getAllUser(); //모든 정보 가져옴
-            model.addAttribute("userDTOList", usersDTOList); //모델로 바인딩
+            //컨틀로러에 메서드를 직접 적어서 호출함, 유저 정보, 페이지를 10개씩 잘라서 배열에 저장
+            List<UsersDTO[]> paginatedUserList = getPaginatedUserList(usersDTOList, 10);
+
+            model.addAttribute("seDTO", new AdminSearchDTO()); //검색폼 바인딩
+
+            // 현재 페이지에 해당하는 데이터를 모델로 바인딩
+            if (page <= paginatedUserList.size()) {
+                model.addAttribute("userDTOList", paginatedUserList.get(page - 1));
+            } else {
+                model.addAttribute("err", "ERROR: 유효하지 않은 페이지 번호입니다.");
+            }
+
+            // 총 페이지 수와 현재 페이지 정보를 모델에 추가
+            model.addAttribute("totalPages", paginatedUserList.size());
+            model.addAttribute("currentPage", page);
+
             return "adminPage";
         }
         catch (Exception e) {
@@ -80,5 +99,153 @@ public class MainController {
         }
 
     }
+
+    @PreAuthorize("hasRole('SUPERADMIN')")
+    @PostMapping("/admin_se")
+    public String admin_idse (Model model, @RequestParam(value = "page", defaultValue = "1") int page, @ModelAttribute AdminSearchDTO adminSearchDTO) {
+
+        model.addAttribute("seDTO", adminSearchDTO); //검색폼 바인딩
+
+        List<UsersDTO> list = new ArrayList<>(); //list 초기화
+
+        try {
+            //아이디로 검색
+            if (adminSearchDTO.getType().equals("id")) {
+                if(adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(userService.getAllUser());
+                }
+                else {
+                    list = new ArrayList<>(userService.getIdUser("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+
+            //이메일로 검색
+            else if (adminSearchDTO.getType().equals("ea")) {
+                if(adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(userService.getAllUser());
+                }
+                else {
+                    list = new ArrayList<>(userService.getEaUser( "%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+
+            //사업자등록번호로 검색
+            else if(adminSearchDTO.getType().equals("ea")) {
+                if(adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(userService.getAllUser());
+                }
+                else {
+                    list = new ArrayList<>(userService.getB2User("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+
+            }
+            else {
+                list = new ArrayList<>(userService.getAllUser());
+            }
+        }
+        catch (Exception e) {
+            model.addAttribute("err", "ERROR : 유저를 찾을 수 없습니다.");
+            return "adminPage";
+        }
+
+
+        //페이징처리구간
+        List<UsersDTO[]> paginatedUserList = getPaginatedUserList(list, 10);
+        try {
+            // 현재 페이지에 해당하는 데이터를 모델로 바인딩
+            if (page <= paginatedUserList.size()) {
+                model.addAttribute("userDTOList", paginatedUserList.get(page - 1));
+            } else {
+                model.addAttribute("err", "ERROR: 유효하지 않은 페이지 접근입니다.");
+            }
+
+            // 총 페이지 수와 현재 페이지 정보를 모델에 추가
+            model.addAttribute("totalPages", paginatedUserList.size());
+            model.addAttribute("currentPage", page);
+
+            return "adminPage";
+        }
+        catch (Exception e) {
+            model.addAttribute("err", "ERROR : 유저를 찾을 수 없습니다.");
+            return "adminPage";
+        }
+    }
+
+    //페이징처리를 컨트롤러에서 직접 할 것임
+    public List<UsersDTO[]> getPaginatedUserList(List<UsersDTO> usersDTOList, int itemsPerPage) {
+        int totalRecords = usersDTOList.size();         //UserEntity 가 가진 유저의 총 레코드 수
+        int totalPages = totalRecords / itemsPerPage;   //10으로 나눈 몫 || 한 화면에 10개씩 페이지 이동버튼을 보이기위함
+        int remainder = totalRecords % itemsPerPage;    //10으로 나눈 나머지
+
+        if (remainder != 0) { //나머지가 0이 아닐 경우 작동
+            totalPages += 1; // 총 페이지 수 +1 은 2차원 배열의 크기를 지정하기 위함임 0부터 시작하기 때문
+        }
+
+        UsersDTO[][] paginatedArray = new UsersDTO[totalPages][]; //UsesDTO 타입인 2차원 배열 생성
+        for (int i = 0; i < totalPages; i++) {
+            int start = i * itemsPerPage; //배열 시작점
+            int end = Math.min(start + itemsPerPage, totalRecords); //배열 끝점
+            paginatedArray[i] = usersDTOList.subList(start, end).toArray(new UsersDTO[0]); //2차원 배열 최대크기 지정 및 값저장
+        }
+
+        return Arrays.asList(paginatedArray); //가공된 2차원 배열 정보 리턴
+    }
+
+    @PreAuthorize("hasRole('SUPERADMIN')")
+    @GetMapping("/adminpage_chg")
+    public String adminpage_chg(@RequestParam String userid, Model model) {
+
+        try {
+            UsersDTO usersDTO = userService.getUser(userid);
+            model.addAttribute("userDTO", usersDTO);
+            return "adminpage_pro";
+        }
+        catch (Exception e) {
+            model.addAttribute("userDTO", new UsersDTO());
+            model.addAttribute("err", "유저 정보를 찾을 수 없습니다.");
+            return "adminpage_pro";
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/employe/main")
+    public String employe_main(Model model, @RequestParam(value = "page", defaultValue = "1") int page, Principal principal) {
+
+        String username = principal.getName(); //세션 사용자의 이름을 가져옴
+        UsersDTO userDTO = userService.getUser(username); //세션 사용자의 이름으로 사용자 정보를 담아냄
+        String CompanyNumber = userDTO.getB2bnumber(); //사업자번호
+
+        List<UsersDTO> list = new ArrayList<>(); //list 초기화
+
+        //리스트에 세션사용자의 사업자번호로 되어있는 모든 사람의 정보를 리스트에 담아냄
+        list = new ArrayList<>(userService.getB2User(CompanyNumber));
+
+
+        try{
+            List<UsersDTO> usersDTOList = userService.getAllUser(); //모든 정보 가져옴
+            //컨틀로러에 메서드를 직접 적어서 호출함, 유저 정보, 페이지를 10개씩 잘라서 배열에 저장
+            List<UsersDTO[]> paginatedUserList = getPaginatedUserList(list, 10);
+
+            model.addAttribute("", new AdminSearchDTO()); //검색폼 바인딩
+
+            // 현재 페이지에 해당하는 데이터를 모델로 바인딩
+            if (page <= paginatedUserList.size()) {
+                model.addAttribute("userDTOList", paginatedUserList.get(page - 1));
+            } else {
+                model.addAttribute("err", "ERROR: 유효하지 않은 페이지 번호입니다.");
+            }
+
+            // 총 페이지 수와 현재 페이지 정보를 모델에 추가
+            model.addAttribute("totalPages", paginatedUserList.size());
+            model.addAttribute("currentPage", page);
+
+            return "employe/main";
+        }
+        catch (Exception e) {
+            model.addAttribute("err" , "ERROR : 현재 유저정보가 없습니다.");
+            return "employe/main";
+        }
+    }
+
 
 }

@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 
 
@@ -70,13 +71,15 @@ public class BoardController {
             pageRequestDTO.setPage(1);
         }
 
-
         // 게시물 목록 조회
         PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
 
         // 게시물 리스트가 비어있으면 빈 리스트 설정
         if (boardDTOPageResponesDTO.getDtoList() == null || boardDTOPageResponesDTO.getDtoList().isEmpty()) {
             boardDTOPageResponesDTO.setDtoList(Collections.emptyList());
+        } else if (boardDTOPageResponesDTO.getDtoList().size() == 1) {
+            // 리스트 길이가 1인 경우에도 리스트를 ArrayList로 설정
+            boardDTOPageResponesDTO.setDtoList(new ArrayList<>(boardDTOPageResponesDTO.getDtoList()));
         } else {
             // 게시물 제목 및 내용 길이 제한
             boardDTOPageResponesDTO.getDtoList().forEach(boardDTO -> {
@@ -98,7 +101,6 @@ public class BoardController {
         model.addAttribute("boardDTOPageResponesDTO", boardDTOPageResponesDTO);
         model.addAttribute("firstPage", 1); // 첫 페이지
         model.addAttribute("lastPage", totalPages); // 마지막 페이지
-
 
         return "board/list";
     }

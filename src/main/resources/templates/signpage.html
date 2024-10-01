@@ -23,6 +23,12 @@
 
             <table cellpadding="5" cellspacing="0" align="center">
 
+                <!-- 비밀번호 불일치 시 오류 메시지 출력 -->
+                <div class="d-flex justify-content-center mt-3" th:if="${err}">
+                    <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+                </div>
+                <!-- 오류 메시지 출력 끝 -->
+
                 <tr>
                     <td><h5>◆개인정보</h5></td>
                 </tr>
@@ -134,9 +140,9 @@
 
                 <tr>
                     <td>
-                        <textarea style="width: 100%;" rows="10">
+                        <textarea style="width: 100%;" rows="10" readonly>
 1. 개인정보의 수집 및 이용 목적
-- 정부 및 지자체의 중소·중견기업 분야별 지원정책 및 참여기회 제공
+- 기업 분야별 지원정책 및 참여기회 제공
 
 2. 수집하는 개인정보의 항목
 - 필수항목 : 이름, 이메일, 휴대폰전화번호
@@ -160,7 +166,7 @@
                 <tr><td><h4>개인정보 수집 이용 조회 동의</h4><hr></td></tr>
                 <tr>
                     <td>
-                        <textarea style="width: 100%;" rows="10">
+                        <textarea style="width: 100%;" rows="10" readonly>
 우리컴퓨터ERP(은)는 「개인정보보호법」 제15조 제1항 제1호, 제17조 제1항 제1호, 제23조 제1호 따라 아래와 같이 개인정보의 수집. 이용에 관하여 귀하의 동의를 얻고자 합니다.
 
 재단은 이용자의 사전 동의 없이는 이용자의 개인정보를 함부로 공개하지 않으며, 수집된 정보는 아래와 같이 이용하고 있습니다. 이용자가 제공한 모든 정보는 아래의 목적에 필요한 용도 이외로는 사용되지 않으며 이용 목적이 변경될 시에는 이를 알리고 동의를 구할 것입니다.
@@ -227,7 +233,7 @@ IP 주소, 쿠키, 서비스 이용 기록, 방문기록 등
 
                 <tr>
                     <td>
-                        <textarea style="width: 100%;" rows="10">
+                        <textarea style="width: 100%;" rows="10" readonly>
 1. 개인정보의 수집 및 이용 목적
 - 당 관리시스템의 '자재관리' 및 '인력관리' 서비스를 이용하기 위해
 

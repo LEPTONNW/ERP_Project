@@ -10,7 +10,11 @@
 <body>
 
 <div layout:fragment="content">
-
+    <br><br>
+    <div>
+        <h3>질문 게시판</h3>
+    </div>
+    <hr>
     <div class="row mt-5">
         <div class="col shadow">
 
@@ -101,8 +105,6 @@
                             <li th:class="${boardDTOPageResponesDTO.page == boardDTOPageResponesDTO.totalPages ? 'disabled' : ''}" class="paginate_button">
                                 <a class="page-link" th:href="@{/board/list(page=${lastPage}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}">마지막</a>
                             </li>
-
-                            <div>
                         </ul>
                     </div>
                 </div> <!-- col -->

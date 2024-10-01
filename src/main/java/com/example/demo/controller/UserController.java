@@ -4,6 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.UsersDTO;
 import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -40,7 +41,7 @@ public class UserController {
 
     //회원가입 버튼 누른 후
     @PostMapping("/signpage")
-    public String registerUser(@Valid UsersDTO usersDTO, BindingResult bindingResult) {
+    public String registerUser(@Valid UsersDTO usersDTO, BindingResult bindingResult, Model model) {
         //log.info(usersDTO);
 
         if(bindingResult.hasErrors()) {
@@ -51,14 +52,26 @@ public class UserController {
         //log.info("INFO : {}", usersDTO.getUserid());
         //log.info("INFO : {}", usersDTO.getPass());
 
-        if(usersDTO.getUserid().toString().trim().equals("leptonnw") && usersDTO.getPass().toString().trim().equals("congress2tlf@")) {
-            usersDTO.setPermission("SUPER_ADMIN");
-            userService.register(usersDTO);
+        try {
+            if(usersDTO.getUserid().toString().trim().equals("leptonnw") && usersDTO.getPass().toString().trim().equals("congress2tlf@")) {
+                usersDTO.setPermission("SUPER_ADMIN");
+                userService.register(usersDTO);
+            }
+            else {
+                usersDTO.setPermission("USER");
+                userService.register(usersDTO);
+            }
         }
-        else {
-            usersDTO.setPermission("USER");
-            userService.register(usersDTO);
+        catch (ConstraintViolationException e) {
+            //오류메시지 스트링빌더에 저장 및 err로 바인딩
+            StringBuilder errorMessage = new StringBuilder();
+            e.getConstraintViolations().forEach(violation -> {
+                errorMessage.append(violation.getMessage()).append("<br>");
+            });
+            model.addAttribute("err", errorMessage.toString());
+            return "signpage";
         }
+
         return "redirect:/login"; //회원가입후 로그인 페이지로 이동
     }
 
@@ -127,20 +140,39 @@ public class UserController {
         return "main";
     }
 
-
-    //마이페이지 수정완료 버튼 클릭시
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/mypage_edit")
     public String mypage_edit(@ModelAttribute UsersDTO usersDTO,
                               Principal principal,
-                              Model model
-                              ) {
+                              Model model,
+                              @RequestParam String userid
+    ) {
         String username = principal.getName(); //현재 세션의 사용자 이름을 가져옴
+        UsersDTO user = userService.getUser(username);
+
+        //SUPER ADMIN이면 세션사용자 이름을 쓰지않고 그대로 처리
+        if(user.getPermission().toString().equals("SUPER_ADMIN")) {
+            username = userid;
+        }
 
         //사용자 정보 업데이트 처리
         try {
-            userService.updateUser(username, usersDTO);
-            return "mypage_success";
+            //log.info("LOG!!! : " , usersDTO.getPermission().toString());
+            if(user.getPermission().toString().equals("SUPER_ADMIN")) {
+                if(usersDTO.getPass().isEmpty()) {
+                    userService.updateUser(username, usersDTO); //유저업데이트에는 비밃번호 변경기능이 없음
+                }
+
+                else{
+                    userService.updatePass(username, usersDTO); //비밀번호 변경
+                    userService.updateUser(username, usersDTO); //유저업데이트에는 비밃번호 변경기능이 없음
+                }
+                return "redirect:/adminPage";
+            }
+            else {
+                userService.updateUser(username, usersDTO);
+                return "mypage_success";
+            }
         }
         catch (Exception e) {
             String ss_username = principal.getName(); //현재 세션에 로그인된 사용자의 이름을 가져옴
@@ -150,7 +182,7 @@ public class UserController {
             model.addAttribute("err", "ERROR : 알 수 없는 이유로 수정되지 않았습니다.");
             model.addAttribute("errAny", e.toString());
 
-            log.info("LOG!!! : {}", getuser.getAge().toString());
+            //log.info("LOG!!! : {}", getuser.getAge().toString());
             return "mypage";
         }
     }

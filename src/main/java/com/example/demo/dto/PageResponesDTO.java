@@ -3,9 +3,7 @@ package com.example.demo.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.domain.PageRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,32 +24,28 @@ public class PageResponesDTO<E> {
 
     @Builder(builderMethodName = "withAll")
     public PageResponesDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
-        if (total <= 1) {
-            return;
-        }
-
         this.page = pageRequestDTO.getPage();
         this.size = pageRequestDTO.getSize();
         this.total = total;
 
         // 총 페이지 수 계산
-        this.totalPages = (int) Math.ceil(total / (double) size);
+        this.totalPages = (int) Math.ceil((double) total / size);
         this.dtoList = dtoList;
 
-        this.end = (int) (Math.ceil(this.page / 10.0)) * 10;
-        //시작페이지
+        this.end = (int) (Math.ceil((double) this.page / 10.0)) * 10;
+        // 시작 페이지
         this.start = this.end - 9;
-        //마지막
-        this.end = end > totalPages ? totalPages : end;
-        //이전
+        // 마지막 페이지
+        this.end = Math.min(this.end, totalPages);
+        // 이전 페이지 존재 여부
         this.prev = this.start > 1;
-        //다음
+        // 다음 페이지 존재 여부
         this.next = total > this.end * this.size;
 
         // 맨 처음 페이지 존재 여부
-        this.first = this.page == 0; // 현재 페이지가 0이면 첫 페이지
+        this.first = this.page == 1;
 
         // 맨 마지막 페이지 존재 여부
-        this.last = this.page == totalPages - 1; // 현재 페이지가 마지막 페이지인지 확인
+        this.last = this.page == totalPages;
     }
 }

@@ -5,7 +5,7 @@
       layout:decorate="~{layouts/layout1.html}">
 <head>
     <meta charset="UTF-8">
-    <title>내 정보</title>
+    <title>유저 정보</title>
     <!-- CDN List -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -19,7 +19,7 @@
 </head>
 <body>
 <div class="content mt-5" layout:fragment="content">
-<h1>마이페이지</h1> <br><br><br><br><br><br>
+    <h1>마이페이지</h1> <br><br><br><br><br><br>
     <form th:object="${userDTO}" th:action="@{/mypage_edit}" method="post">
         <div class="d-flex justify-content-center">
             <h3>개인정보</h3>
@@ -36,14 +36,14 @@
                 <td rowspan="4">
                     <div class="image-box"><img src="" class="img-fluid" alt="프로필 사진"></div>
                 <td>아이디 :</td>
-                <td><input type="text" class="form-control" placeholder="아이디" th:field="*{userid}"  required readonly style="background-color: lightgray"></td>
+                <td><input type="text" name="userid" class="form-control" placeholder="아이디" th:field="*{userid}"  required readonly style="background-color: lightgray"></td>
                 </td>
             </tr>
 
             <tr>
                 <td>비밀번호 :</td>
                 <td>
-                    <a th:href="@{/passchg}" class="btn btn-dark">비밀번호 변경</a>
+                    <input type="text" id="pass" name="pass" th:field="*{pass}">
                 </td>
             </tr>
 
@@ -76,6 +76,16 @@
                 <td></td>
                 <td>연락처 :</td>
                 <td><input type="tel" class="form-control" th:field="*{phone}" required></td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>관리권한 : </td>
+                <td>
+                    <input type="radio" name="role" th:field="*{permission}" value="SUPER_ADMIN" th:checked="${userDTO.permission == 'SUPER_ADMIN'}"> SUPER ADMIN
+                    <input type="radio" name="role" value="ADMIN" th:field="*{permission}" th:checked="${userDTO.permission == 'ADMIN'}"> 관리자
+                    <input type="radio" name="role" value="USER" th:field="*{permission}" th:checked="${userDTO.permission == 'USER'}"> 일반유저
+                </td>
             </tr>
 
             <tr><td><br></td></tr>
@@ -139,17 +149,16 @@
                 <td colspan="3"><input type="submit" class="btn btn-dark" value="정보 수정" style="width: 100%"></td>
             </tr>
         </table>
-        <input id=b2addr name=b2addr type="hidden" th:field="*{b2baddr}">
 
-        <!-- 숨김처리 -->
-        <input type="hidden" id="pass" name="pass" th:field="*{pass}">
-        <input type="hidden" name="role" th:value="${userDTO.permission}" th:field="*{permission}">
+        <input id=b2addr name=b2addr type="hidden" th:field="*{b2baddr}">
     </form>
 
     <script>
         //주소분리기
         window.onload = function() {
-            document.getElementById('pass').value = ""; //hidden 속성 패드워드칸 초기화
+            document.getElementById('pass').value = "";
+
+
             try {
                 var addr = document.getElementById('b2addr').value;
                 var addrArray = addr.split('-');

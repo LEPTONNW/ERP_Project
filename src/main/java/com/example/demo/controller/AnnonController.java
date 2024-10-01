@@ -82,7 +82,7 @@ public class AnnonController {
                 if (annonDTO.getContent() != null && annonDTO.getContent().length() > 10) {
                     annonDTO.setContent(annonDTO.getContent().substring(0, 10) + "...");
                 }
-                log.info(annonDTO);
+                //log.info(annonDTO);
             });
         }
 
@@ -94,7 +94,7 @@ public class AnnonController {
         model.addAttribute("annonDTOPageResponesDTO", annonDTOPageResponesDTO); // 모델에 annonDTO 추가
         model.addAttribute("firstPage", 1); // 첫 페이지
         model.addAttribute("lastPage", totalPages); // 마지막 페이지
-        log.info("들어가짐?");
+        //log.info("들어가짐?");
 
         return "annon/main"; // 반환되는 뷰 이름
     }

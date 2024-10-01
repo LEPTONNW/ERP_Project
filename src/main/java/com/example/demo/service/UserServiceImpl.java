@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -90,6 +91,9 @@ public class UserServiceImpl implements UserService{
             usersEntity1.setB2bcontact(usersDTO.getName());
             usersEntity1.setB2bnumber(usersDTO.getB2bnumber());
 
+            //권한
+            usersEntity1.setPermission(usersDTO.getPermission());
+
             //업데이트된 엔티티를 저장
             userRepository.save(usersEntity1);
 
@@ -127,7 +131,7 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    //발급된 임시비밀번호로 패스워드 변경 (암호화X)
+    //발급된 임시비밀번호로 패스워드 변경
     @Override
     public String forgotpass(String userid, String pass) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
@@ -151,12 +155,46 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+    //모든 유저 가져오기 기능
     @Override
     public List<UsersDTO> getAllUser() {
         //List에 모든 유저정보 담아냄
         List<UsersEntity> usersEntities = userRepository.findAll();
 
         //매퍼와 Collectors 이용해서 DTO로 변환하여 반환
+        return usersEntities.stream()
+                .map(user -> modelMapper.map(user, UsersDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //아이디로 검색
+    @Override
+    public List<UsersDTO> getIdUser(String userid) {
+        List<UsersEntity> usersEntities = userRepository.findByUseridLike(userid);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return usersEntities.stream()
+                .map(user -> modelMapper.map(user, UsersDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //관리자페이지 이메일로 검색
+    @Override
+    public List<UsersDTO> getEaUser(String email) {
+        List<UsersEntity> usersEntities = userRepository.findByEmailLike(email);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return usersEntities.stream()
+                .map(user -> modelMapper.map(user, UsersDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //관리자 페이지 사업자번호로 검색
+    @Override
+    public List<UsersDTO> getB2User(String b2bnumber) {
+        List<UsersEntity> usersEntities = userRepository.findByB2bnumberLike(b2bnumber);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
         return usersEntities.stream()
                 .map(user -> modelMapper.map(user, UsersDTO.class))
                 .collect(Collectors.toList());
