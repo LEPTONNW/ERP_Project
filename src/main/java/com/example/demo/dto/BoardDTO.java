@@ -28,8 +28,6 @@ public class BoardDTO {
 
     private LocalDate regidate;
 
-    private LocalDate modDate;
-
     private UsersDTO usersDTO;
 
     public BoardDTO setUsersDTO(UsersDTO usersDTO) {

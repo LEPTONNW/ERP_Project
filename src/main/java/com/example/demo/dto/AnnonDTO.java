@@ -27,8 +27,6 @@ public class AnnonDTO {
 
     private LocalDate regidate;
 
-    private LocalDate modDate;
-
     private UsersDTO usersDTO;
 
     public AnnonDTO setUsersDTO(UsersDTO usersDTO) {
