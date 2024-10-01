@@ -14,8 +14,19 @@
 
     <div class="row mt-5">
         <div class="col shadow" >
-            <img th:src="${materialDTO.imgUrl}" alt="Image">
+
+
             <div class="row mt-2">
+                <div class="row mt-2 mb-3">
+                    <div class="col">
+                        <img th:src="@{ '/images/material/' + ${bimgDTO.imgname} }" class="card-img-top" alt="...">
+                    </div>
+                </div>
+
+
+                [[${bimgDTO.oriimgname}]]<br>
+                [[${bimgDTO.img_url}]]<br>
+                [[${bimgDTO.bino}]]<br>
                 <div class="row mt-2">
                     <div class="col">자재 명</div>
                     <div class="col" th:text="${materialDTO.matName}"> </div>

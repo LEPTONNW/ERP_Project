@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface MaterialService {
 
-    public void register(MaterialDTO materialDTO);
+    public boolean register(MaterialDTO materialDTO, MultipartFile multipartFile);
     public List<MaterialDTO> selectAll();
     public MaterialDTO read(Long num);
     public void update(MaterialDTO materialDTO);
     public Long delete(Long num);
     public PageResponesDTO<MaterialDTO> list(PageRequestDTO pageRequestDTO);
-    public String uploadFile(MultipartFile file);
+
 
 
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>오시는길</title>
+    <style>
+        a {
+            text-decoration: none;
+            color:black;
+        }
+    </style>
+</head>
+<body>
+<div class="title"></div>
+
+<div class="container">
+    <div layout:fragment="content" class="content">
+        <br><br><br>
+        <div class="d-flex jutify-content-center">
+            <h1>오시는 길</h1>
+        </div>
+        <hr>
+       <div class="d-felx justify-content-center">
+        <div id="map" style="width: 80%; height: 600px;">
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=697a4efa8368901817ec338fb59eef6d"></script>
+        <script type="text/javascript">
+
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new kakao.maps.LatLng(37.58651018184118 , 126.9748537557414 ), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            // 지도를 클릭한 위치에 표출할 마커입니다
+            var marker = new kakao.maps.Marker({
+                // 지도 중심좌표에 마커를 생성합니다
+                position: map.getCenter()
+            });
+            // 지도에 마커를 표시합니다
+            marker.setMap(map);
+            kakao.maps.event.addListener(marker, 'click', function() {
+                window.location.href = "https://band.us/band/80769063";
+            });
+
+        </script>
+        </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

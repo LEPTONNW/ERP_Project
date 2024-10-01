@@ -4,14 +4,19 @@ import com.example.demo.dto.BoardDTO;
 import com.example.demo.dto.MaterialDTO;
 import com.example.demo.dto.PageRequestDTO;
 import com.example.demo.dto.PageResponesDTO;
+import com.example.demo.entity.BimgEntity;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.MaterialEntity;
+import com.example.demo.repository.BimgRepository;
 import com.example.demo.repository.MaterialRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.val;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,22 +30,44 @@ import java.util.stream.Collectors;
 @Log4j2
 @Transactional
 public class MaterialServiceImpl implements MaterialService {
-    private final MaterialRepository materialRepository;
-    private ModelMapper mapper = new ModelMapper();
 
+
+
+    @Value("${materialImgLocation}")
+
+    private String MaterialImgLocation;
+
+    private final MaterialRepository materialRepository;
+    private final BimgRepository bimgRepository;
+    private ModelMapper mapper = new ModelMapper();
+    private final BimgSerivce bimgSerivce;
 
     @Override
-    public void register(MaterialDTO materialDTO) {
+    public boolean register(MaterialDTO materialDTO, MultipartFile multipartFile) {
+
+
+
+
         log.info("dto들어옴"+materialDTO);
-        MaterialEntity materialEntity = mapper.map(materialDTO, MaterialEntity.class);
-        materialRepository.save(materialEntity);
+
+        MaterialEntity materialEntity =  materialRepository.findByMatCode(materialDTO.getMatCode());
+
+        if(materialEntity == null){
+            materialEntity = mapper.map(materialDTO, MaterialEntity.class);
+            materialRepository.save(materialEntity);
+            bimgSerivce.Bimgregister(materialEntity, multipartFile, MaterialImgLocation);
+            log.info("여기는 레지 진행완");
+            return true;
+        }else {
+            log.info("저장 불가중복");
+            return false;
+        }
+
+
 
     }
-    public String uploadFile(MultipartFile file) {
-        // 파일 업로드 로직 구현 (예: AWS S3, 로컬 디렉토리 등)
-        // 업로드된 파일의 URL을 반환
-        return "";
-    }
+
+
 
 
 
@@ -70,6 +97,7 @@ public class MaterialServiceImpl implements MaterialService {
         MaterialEntity materialEntity = materialRepository.findById(materialDTO.getNum())
                 .orElseThrow(EntityNotFoundException::new);
 
+
         materialEntity.setMatName(materialDTO.getMatName());
         materialEntity.setMatCode(materialDTO.getMatCode());
         materialEntity.setMatAmount(materialDTO.getMatAmount());
@@ -83,13 +111,19 @@ public class MaterialServiceImpl implements MaterialService {
 
     }
 
+    @Transactional
     @Override
     public Long delete(Long num) {
+        bimgRepository.deleteByMaterialEntity_Num(num);
         MaterialEntity materialEntity =  materialRepository.findById(num).get();
+
         if (materialEntity != null) {
+            bimgRepository.deleteById(num);
             materialRepository.deleteById(num);
+
             log.info("혹시 서비스까진 오셨나요");
             return materialEntity.getNum();
+
         } else {
             return null;
         }

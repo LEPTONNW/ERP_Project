@@ -51,6 +51,8 @@ public class MainController {
     //public String login() {
     //    return "login";
     //}
+    @GetMapping("/map")//오시는길
+    public  String map() {return "map";}
 
     @GetMapping("/login")
     public String login(HttpServletRequest request, HttpServletResponse response) throws IOException {
