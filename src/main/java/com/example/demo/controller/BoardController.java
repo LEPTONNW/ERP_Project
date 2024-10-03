@@ -49,9 +49,12 @@ public class BoardController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
-    public  String register(@Valid BoardDTO boardDTO, BindingResult bindingResult, Model model, Principal principal
-    ){  //파라미터 리다이렉트 쓸때 추가 : RedirectAttributes redirectAttributes
+    public  String register(@Valid BoardDTO boardDTO,
+                            BindingResult bindingResult,
+                            Model model,
+                            Principal principal) {
 
+        //파라미터 리다이렉트 쓸때 추가 : RedirectAttributes redirectAttributes
         log.info("파라미터로 입력된 : " +boardDTO);
 
         if(bindingResult.hasErrors()){ //유효성검사간 에러가 있니?
@@ -65,7 +68,8 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    public String list(@ModelAttribute PageRequestDTO pageRequestDTO, Model model) {
+    public String list(@ModelAttribute PageRequestDTO pageRequestDTO,
+                       Model model) {
         // 페이지 번호가 1 미만일 경우 1로 설정
         if (pageRequestDTO.getPage() < 1) {
             pageRequestDTO.setPage(1);
@@ -110,6 +114,11 @@ public class BoardController {
     public String read(Model model, Long bno, Principal principal) {
         // 게시글 번호를 통해 상세 정보를 가져옴
         BoardDTO boardDTO = boardService.read(bno);
+
+        // 로그인 되지 않은 상태에서 접속할 시 로그인창으로 이동
+        if(principal == null) {
+            return "redirect:/login";
+        }
 
         UsersDTO usersDTO =  userService.getUser(principal.getName());
 

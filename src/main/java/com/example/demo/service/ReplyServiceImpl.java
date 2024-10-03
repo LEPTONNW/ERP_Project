@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dto.ReplyDTO;
 import com.example.demo.entity.Reply;
 import com.example.demo.repository.ReplyRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -16,8 +15,8 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
 
-    private final ModelMapper mapper = new ModelMapper();  // final로 변경
-    private final ReplyRepository replyRepository; // final로 변경
+    private final ModelMapper mapper = new ModelMapper();
+    private final ReplyRepository replyRepository;
 
 
     @Override
@@ -38,5 +37,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         return replyDTO;
     }
+
+
 
 }

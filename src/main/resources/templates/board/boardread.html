@@ -20,8 +20,8 @@
 
     <div class="d-flex justify-content-end mt-3 mb-3">
         <a href="/board/list" type="button" class="btn btn-dark me-2">목록으로 돌아가기</a>
+        <a th:href="@{/reply/create(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">답변</a>
         <a th:href="@{/board/modify(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
-
         <form th:action="@{/board/delete}" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
             <input type="hidden" name="bno" th:value="${boardDTO.bno}"/>
             <button type="submit" class="btn btn-danger">삭제</button>
