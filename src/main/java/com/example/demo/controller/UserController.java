@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 
+import com.example.demo.dto.EimgDTO;
 import com.example.demo.dto.UsersDTO;
+import com.example.demo.service.EimgService;
 import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -30,6 +33,7 @@ public class UserController {
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
     private String encpass; //임시 비밀번호 저장변수
+    private final EimgService eimgService;
 
     //회원가입
     @GetMapping("/signpage")
@@ -109,12 +113,24 @@ public class UserController {
     ) {
         String ss_username = principal.getName(); //현재 세션에 로그인된 사용자의 이름을 가져옴
         UsersDTO getuser = userService.getUser(ss_username); //세션사용자의 이름으로 DB에서 정보를 가져옴
-
+        EimgDTO eimgDTO = eimgService.read(getuser.getMno());
 
         //입력한 비밀번호화 가져온 DB정보의 비밀번호가 맞는지 비교
         if (passwordEncoder.matches(usersDTO.getPass(), getuser.getPass())) {
             //비밀번호 일치
             model.addAttribute("userDTO", getuser);
+            if (eimgDTO == null) {
+                model.addAttribute("eimgDTO", new EimgDTO());
+
+            } else {
+                model.addAttribute("eimgDTO", eimgDTO);
+
+            }
+
+
+            log.info("이미지 dto : " + eimgDTO);
+
+
             return "mypage";
         } else {
             //비밀번호 불일치
@@ -128,6 +144,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/mypage")
     public String mypage() {
+
         return "mypage_chk";
     }
 
@@ -142,11 +159,19 @@ public class UserController {
     @PostMapping("/mypage_edit")
     public String mypage_edit(@ModelAttribute UsersDTO usersDTO,
                               Principal principal,
-                              Model model,
+                              Model model, MultipartFile multipartFile,
                               @RequestParam String userid
     ) {
         String username = principal.getName(); //현재 세션의 사용자 이름을 가져옴
         UsersDTO user = userService.getUser(username);
+
+        if (multipartFile != null) {
+            log.info(multipartFile.getOriginalFilename());
+            log.info(multipartFile.getOriginalFilename());
+            log.info(multipartFile.getOriginalFilename());
+            log.info(multipartFile.getOriginalFilename());
+        }
+
 
         //SUPER ADMIN이면 세션사용자 이름을 쓰지않고 그대로 처리
         if (user.getPermission().toString().equals("SUPER_ADMIN")) {
@@ -161,12 +186,11 @@ public class UserController {
                     userService.updateUser(username, usersDTO, multipartFile); //유저업데이트에는 비밃번호 변경기능이 없음
                 } else {
                     userService.updatePass(username, usersDTO); //비밀번호 변경
-                    userService.updateUser(username, usersDTO); //유저업데이트에는 비밃번호 변경기능이 없음
+                    userService.updateUser(username, usersDTO, multipartFile); //유저업데이트에는 비밃번호 변경기능이 없음
                 }
                 return "redirect:/adminPage";
-            }
-            else {
-                userService.updateUser(username, usersDTO);
+            } else {
+                userService.updateUser(username, usersDTO, multipartFile);
                 return "mypage_success";
             }
         } catch (Exception e) {
@@ -260,5 +284,42 @@ public class UserController {
             model.addAttribute("err", "ERROR : 아이디 또는 이메일 정보가 일치하지 않습니다.");
             return "forgotpass";
         }
+    }
+   /*@PostMapping("/register2")
+    public String registerPost(@Valid UsersDTO usersDTO,BindingResult bindingResult, Model model,
+                               Principal principal, MultipartFile multipartFile){
+       if(bindingResult.hasErrors()){
+           log.info("에러");
+           log.info(bindingResult.getAllErrors());
+           return "mypage";
+       }
+
+       if (multipartFile !=null){
+           log.info("이름이다" + multipartFile.getOriginalFilename());
+           log.info("크기다" + multipartFile.getSize());
+       }
+       return "redirect:/mypage";
+   }*/
+
+    public String result;
+    @PreAuthorize("hasAnyRole('SUPERADMIN', 'ADMIN')")
+    @GetMapping("/delete_user")
+    public String delete_user(@RequestParam String userid, Model model, HttpServletRequest request) {
+
+        String referer = request.getHeader("Referer"); // 이전 페이지 URL을 가져옴
+
+        try {
+             result = userService.delete_user(userid);
+            model.addAttribute("err", result);
+            return "mypage_success";
+        }
+
+        //삭제 실패 시
+        catch (Exception e) {
+            model.addAttribute("err", result);
+            return "redirect:" + referer; // 이전 페이지로 리디렉션
+        }
+
+
     }
 }

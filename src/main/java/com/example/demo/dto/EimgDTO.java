@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public class EimgDTO {
     private Long eino;
+    private String picname;
     private  String oripicname;
     private  String pic_url;
     private UsersDTO usersDTO;

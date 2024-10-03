@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UsersDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface UserService {
 
     UsersDTO getUser(String userid); //내정보 가져오기용
 
-    UsersDTO updateUser(String userid, UsersDTO usersDTO);//마이프로필 변경
+    UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile);//마이프로필 변경
 
     UsersDTO updatePass(String userid, UsersDTO usersDTO); //비밀번호 변경
 
@@ -27,5 +28,9 @@ public interface UserService {
 
     List<UsersDTO> getEaUser(String b2bnumber); //관리자페이지 이메일로 검색
     List<UsersDTO> getB2User(String email); //관리자페이지 사업자번호로 검색
+
+    public boolean register2(UsersDTO usersDTO, MultipartFile multipartFile);
+
+    String delete_user(String userid);
 
 }

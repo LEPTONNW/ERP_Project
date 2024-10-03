@@ -42,7 +42,11 @@ public class MaterialEntity {
     @ManyToOne
     @JoinColumn(name = "mno")
     private UsersEntity usersEntity;
-    private String writer;
+
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    private  UsersEntity userid;
+
 
 
 

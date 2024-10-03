@@ -2,16 +2,25 @@ package com.example.demo.service;
 
 
 import com.example.demo.dto.UsersDTO;
+import com.example.demo.entity.BimgEntity;
+import com.example.demo.entity.EmployeEntity;
 import com.example.demo.entity.UsersEntity;
+import com.example.demo.repository.BimgRepository;
+import com.example.demo.repository.EimgRepository;
+import com.example.demo.repository.EmployeRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
 import java.util.List;
@@ -27,6 +36,13 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private ModelMapper modelMapper = new ModelMapper();
+
+    @Value("${employeImgLocation}")
+    private String employeImgLocation;
+    private final EimgRepository eimgRepository;
+    private final EimgService eimgService;
+    private final EmployeRepository employeRepository;
+    private final BimgRepository bimgRepository;
 
 
     //회원가입 처리
@@ -48,7 +64,24 @@ public class UserServiceImpl implements UserService{
         //저장된 엔티티의 ID 반환
         return savedUser.getMno();
     }
+    @Override
+    public boolean register2(UsersDTO usersDTO, MultipartFile multipartFile){
+        log.info("dto들어옴"+usersDTO);
 
+        Optional<UsersEntity> usersEntity =  userRepository.findByUserid(usersDTO.getUserid());
+
+        UsersEntity usersEntity2 = usersEntity.get();
+        if(usersEntity == null){
+            usersEntity2 = modelMapper.map(usersDTO, UsersEntity.class);
+            userRepository.save(usersEntity2);
+            eimgService.eimgregister2(usersEntity2, multipartFile ,employeImgLocation );
+            log.info("여기는 레지 진행완");
+            return true;
+        }else {
+            log.info("저장 불가중복");
+            return false;
+        }
+    }
     //중복확인
     @Override
     public boolean checkIfUserExsists(String userid) {
@@ -70,7 +103,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UsersDTO updateUser(String userid, UsersDTO usersDTO) {
+    public UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
 
         if(usersEntity.isPresent()) {
@@ -97,8 +130,11 @@ public class UserServiceImpl implements UserService{
 
             //업데이트된 엔티티를 저장
             userRepository.save(usersEntity1);
-
+            if(multipartFile != null){
+                eimgService.eimgregister2(usersEntity1 , multipartFile, employeImgLocation);
+            }
             return modelMapper.map(usersEntity1, UsersDTO.class);
+
         }
         else {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");

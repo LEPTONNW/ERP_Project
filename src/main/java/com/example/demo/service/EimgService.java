@@ -24,18 +24,18 @@ public class EimgService {
     private final EimgRepository eimgRepository;
     private ModelMapper mapper = new ModelMapper();
 
-    public void Bimgregister(UsersEntity usersEntity, MultipartFile multipartFile, String materialImgLocation) {
+    public void eimgregister2(UsersEntity usersEntity, MultipartFile multipartFile, String employeImgLocation) {
         UUID uuid = UUID.randomUUID();
         String originalFilename = multipartFile.getOriginalFilename();
         String newSaveName = originalFilename
                 .substring(originalFilename.lastIndexOf("/") + 1);
-        String fileUploadFullUrl = materialImgLocation + "/" + uuid.toString() + "_" + newSaveName;
+        String fileUploadFullUrl = employeImgLocation + "/" + uuid.toString() + "_" + newSaveName;
 
         efileService.uploadFile(multipartFile, fileUploadFullUrl);
         EimgEntity eimgEntity = new EimgEntity();
         eimgEntity.setUsersEntity(usersEntity);
         eimgEntity.setPicname(uuid.toString() + "_" + newSaveName);
-        eimgEntity.setPic_url(materialImgLocation);
+        eimgEntity.setPic_url(employeImgLocation);
         eimgEntity.setOripicname(newSaveName);
 
         eimgRepository.save(eimgEntity);
@@ -45,19 +45,24 @@ public class EimgService {
     public EimgDTO read(Long mno){
         EimgEntity eimgEntity = eimgRepository.findPK(mno);
         log.info("여기 달린 이미지에요 엔튀리"+eimgEntity);
-        EimgDTO eimgDTO = mapper.map(eimgEntity, EimgDTO.class);
-        log.info("여기 달린 이미지에요 디티오"+eimgDTO);
-        return  eimgDTO;
+        if(eimgEntity != null){
+            EimgDTO eimgDTO = mapper.map(eimgEntity, EimgDTO.class);
+            log.info("여기 달린 이미지에요 디티오"+eimgDTO);
+            return  eimgDTO;
+        }else {
+            return  null;
+        }
+
+
     }
     public List<EimgDTO> allread(){
-        //List<EimgEntity> eimgEntityList = bimgRepository.findAll();
+
         List<EimgEntity> eimgEntityList = eimgRepository.findallall();
         log.info("여기 달린 이미지에요 엔튀리"+eimgEntityList);
 
         List<EimgDTO> eimgDTOList =
                 eimgEntityList.stream().map(eimgEntity -> mapper.map(eimgEntity, EimgDTO.class).setUserSDTO(mapper.map(eimgEntity.getUsersEntity(), UsersDTO.class))).collect(Collectors.toList());
         //
-
         return eimgDTOList;
     }
 

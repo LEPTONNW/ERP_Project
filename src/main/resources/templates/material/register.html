@@ -14,28 +14,26 @@
         <div class="row mt-5">
             <div class="col shadow">
                 <div class="mb-3 mt-3">
-                    <input type="file" th:field="*{imgFile}" accept="image/*" onchange="previewImage(event)">
-                    <img id="preview" src="#" alt="Image Preview" style="display:none;">
-                    <label for="title" class="form-label">자재명</label>
-                    <input type="text" class="form-control" th:field="*{matName}" id="title" placeholder="자재명을 입력하시오">
+                    <label for="matName" class="form-label">자재명</label>
+                    <input type="text" class="form-control" th:field="*{matName}" id="matName" placeholder="자재명을 입력하시오">
                     <p th:if="${#fields.hasErrors('matName')}" th:errors="*{matName}" class="fieldError"></p>
-                    <label for="title" class="form-label">자재 코드</label>
-                    <input type="text" class="form-control" th:field="*{matCode}" id="title" placeholder="">
+                    <label for="matCode" class="form-label">자재 코드</label>
+                    <input type="text" class="form-control" th:field="*{matCode}" id="matCode" placeholder="">
                     <p th:if="${#fields.hasErrors('matCode')}" th:errors="*{matCode}" class="fieldError"></p>
-                    <label for="title" class="form-label">자재 수량</label>
-                    <input type="text" class="form-control" th:field="*{matAmount}" id="title" placeholder="">
+                    <label for="matAmount" class="form-label">자재 수량</label>
+                    <input type="text" class="form-control" th:field="*{matAmount}" id="matAmount" placeholder="">
                     <p th:if="${#fields.hasErrors('matAmount')}" th:errors="*{matAmount}" class="fieldError"></p>
-                    <label for="title" class="form-label">자재 가격</label>
-                    <input type="text" class="form-control" th:field="*{matPrice}" id="title" placeholder="">
+                    <label for="matPrice" class="form-label">자재 가격</label>
+                    <input type="text" class="form-control" th:field="*{matPrice}" id="matPrice" placeholder="">
                     <p th:if="${#fields.hasErrors('matPrice')}" th:errors="*{matPrice}" class="fieldError"></p>
-                    <label for="title" class="form-label">매입처</label>
-                    <input type="text" class="form-control" th:field="*{matBuyPlace}" id="title" placeholder="">
+                    <label for="matBuyPlace" class="form-label">매입처</label>
+                    <input type="text" class="form-control" th:field="*{matBuyPlace}" id="matBuyPlace" placeholder="">
                     <p th:if="${#fields.hasErrors('matBuyPlace')}" th:errors="*{matBuyPlace}" class="fieldError"></p>
-                    <label for="title" class="form-label">매입처 사업자 번호</label>
-                    <input type="text" class="form-control" th:field="*{matBuyNum}" id="title" placeholder="">
+                    <label for="matBuyNum" class="form-label">매입처 사업자 번호</label>
+                    <input type="text" class="form-control" th:field="*{matBuyNum}" id="matBuyNum" placeholder="">
                     <p th:if="${#fields.hasErrors('matBuyNum')}" th:errors="*{matBuyNum}" class="fieldError"></p>
-                    <label for="title" class="form-label">매입 일자</label>
-                    <input type="date" class="form-control" th:field="*{matBuyDate}" id="title" placeholder="">
+                    <label for="matBuyDate" class="form-label">매입 일자</label>
+                    <input type="date" class="form-control" th:field="*{matBuyDate}" id="matBuyDate" placeholder="">
                     <p th:if="${#fields.hasErrors('matBuyDate')}" th:errors="*{matBuyDate}" class="fieldError"></p>
                     <div class="mb-3">
                         <label for="matText" class="form-label">메모</label>
@@ -45,20 +43,17 @@
                 </div>
             </div>
         </div>
+        <label for="matName" class="form-label">사진</label>
+        <input class="form-control" type="file" name="multipartFile" id="" >
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-dark">저장</button>
             <a type="button" href="/material/list" class="btn btn-dark">목록</a>
         </div>
     </form>
-    <script>
-        function previewImage(event) {
-            var reader = new FileReader();
-            reader.onload = function() {
-                var output = document.getElementById('preview');
-                output.src = reader.result;
-                output.style.display = 'block';
-            };
-            reader.readAsDataURL(event.target.files[0]);
+    <script th:inline="javascript">
+        let msg = [[${msg}]]
+        if (msg !== null){
+            alert(msg)
         }
     </script>
 

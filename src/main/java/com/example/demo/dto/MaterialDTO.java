@@ -35,7 +35,7 @@ public class MaterialDTO {
 
 
 
-    private String writer;
+    private String userid;//==userid
     private LocalDate regidate;
     private LocalDate modDate;
 }

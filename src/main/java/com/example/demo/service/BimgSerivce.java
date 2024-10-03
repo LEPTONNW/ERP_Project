@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +28,9 @@ public class BimgSerivce {
     private ModelMapper mapper = new ModelMapper();
 
     public void Bimgregister(MaterialEntity materialEntity, MultipartFile multipartFile, String materialImgLocation){
+
+
+
         UUID uuid = UUID.randomUUID();
         String originalFilename =multipartFile.getOriginalFilename();
         String newSaveName = originalFilename
