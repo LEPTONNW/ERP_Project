@@ -21,4 +21,6 @@ public interface UserRepository  extends JpaRepository<UsersEntity, Long> {
     List<UsersEntity> findByB2bnumberLike(String b2bnumber); //사업자번호로 조회
 
     boolean existsByEmail(String email); //이메일 중복확인용
+
+    Optional<UsersEntity> findByMno(Long mno); //mno로 조회
 }

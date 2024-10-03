@@ -208,46 +208,4 @@ public class MainController {
             return "adminpage_pro";
         }
     }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/employe/main")
-    public String employe_main(Model model, @RequestParam(value = "page", defaultValue = "1") int page, Principal principal) {
-
-        String username = principal.getName(); //세션 사용자의 이름을 가져옴
-        UsersDTO userDTO = userService.getUser(username); //세션 사용자의 이름으로 사용자 정보를 담아냄
-        String CompanyNumber = userDTO.getB2bnumber(); //사업자번호
-
-        List<UsersDTO> list = new ArrayList<>(); //list 초기화
-
-        //리스트에 세션사용자의 사업자번호로 되어있는 모든 사람의 정보를 리스트에 담아냄
-        list = new ArrayList<>(userService.getB2User(CompanyNumber));
-
-
-        try{
-            List<UsersDTO> usersDTOList = userService.getAllUser(); //모든 정보 가져옴
-            //컨틀로러에 메서드를 직접 적어서 호출함, 유저 정보, 페이지를 10개씩 잘라서 배열에 저장
-            List<UsersDTO[]> paginatedUserList = getPaginatedUserList(list, 10);
-
-            model.addAttribute("", new AdminSearchDTO()); //검색폼 바인딩
-
-            // 현재 페이지에 해당하는 데이터를 모델로 바인딩
-            if (page <= paginatedUserList.size()) {
-                model.addAttribute("userDTOList", paginatedUserList.get(page - 1));
-            } else {
-                model.addAttribute("err", "ERROR: 유효하지 않은 페이지 번호입니다.");
-            }
-
-            // 총 페이지 수와 현재 페이지 정보를 모델에 추가
-            model.addAttribute("totalPages", paginatedUserList.size());
-            model.addAttribute("currentPage", page);
-
-            return "employe/main";
-        }
-        catch (Exception e) {
-            model.addAttribute("err" , "ERROR : 현재 유저정보가 없습니다.");
-            return "employe/main";
-        }
-    }
-
-
 }

@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-@RequiredArgsConstructor
 @Log4j2
-@Transactional
+@RequiredArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
 
     private final ModelMapper mapper = new ModelMapper();  // final로 변경
     private final ReplyRepository replyRepository; // final로 변경
 
+
+    @Override
     public ReplyDTO replyCreate(ReplyDTO replyDTO) {
 
         // ReplyDTO를 Reply 엔티티로 변환

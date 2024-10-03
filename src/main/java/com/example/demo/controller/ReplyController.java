@@ -37,7 +37,7 @@ public class ReplyController {
         replyDTO.setRwriter(writer); //댓글작성자 지정;
         replyDTO.setRtitle(writer); //제목 임시지정
 
-        replyService.replyCreate(replyDTO);
+        //replyService.replyCreate(replyDTO);
 
         return "redirect:/board/read?bno=" + bno;
     }

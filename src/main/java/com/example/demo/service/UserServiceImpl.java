@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService{
         //DTO를 엔티티로 변환
         UsersEntity usersEntity = modelMapper.map(usersDTO, UsersEntity.class);
         //log.info(usersEntity);
+
         //데이터베이스에 저장
         UsersEntity savedUser = userRepository.save(usersEntity);
 
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService{
             usersEntity1.setB2baddr(usersDTO.getB2baddr());
             usersEntity1.setB2bexpont(usersDTO.getB2bexpont());
             usersEntity1.setB2bemail(usersDTO.getB2bemail());
-            usersEntity1.setB2bcontact(usersDTO.getName());
+            usersEntity1.setB2bcontact(usersDTO.getB2bcontact());
             usersEntity1.setB2bnumber(usersDTO.getB2bnumber());
 
             //권한
@@ -198,5 +199,54 @@ public class UserServiceImpl implements UserService{
         return usersEntities.stream()
                 .map(user -> modelMapper.map(user, UsersDTO.class))
                 .collect(Collectors.toList());
+    }
+
+
+    //유저정보 삭제
+    @Override
+    public String delete_user(String userid) {
+        Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
+        UsersEntity usersEntity1 = usersEntity.get();
+
+        Optional<EmployeEntity> employeEntity = employeRepository.findByMnoMno(usersEntity1.getMno());
+        Optional<BimgEntity> bimgEntity = bimgRepository.findById(usersEntity1.getMno());
+
+
+        if(usersEntity.isPresent()) {
+            if(employeEntity.isPresent()) {
+                //모든 데이터가 있을 경우 삭제
+                if(bimgEntity.isPresent()) {
+                    employeRepository.delete(employeEntity.get());
+                    userRepository.delete(usersEntity.get());
+                    bimgRepository.delete(bimgEntity.get());
+                    return "사용자가 정상적으로 삭제되었습니다.";
+                }
+
+                //유저와 사원 데이터만 있을 경우 삭제
+                else {
+                    userRepository.delete(usersEntity.get());
+                    employeRepository.delete(employeEntity.get());
+                    return "사용자가 정상적으로 삭제되었습니다.";
+                }
+
+            }
+            else {
+                //사진과 유저데이터만 있을 경우 삭제
+                if(bimgEntity.isPresent()) {
+                    bimgRepository.delete(bimgEntity.get());
+                    userRepository.delete(usersEntity.get());
+                    return "사용자가 정상적으로 삭제되었습니다.";
+                }
+                else {
+                    //유저 데이터만 있을 경우 삭제
+                    userRepository.delete(usersEntity.get());
+                    return "사용자가 정상적으로 삭제되었습니다.";
+                }
+            }
+        }
+        else {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.잘못된 사용자 입니다.");
+        }
+
     }
 }

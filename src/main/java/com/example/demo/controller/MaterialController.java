@@ -19,6 +19,7 @@ import java.io.Console;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
+import java.io.File;
 
 @Controller
 @Log4j2
@@ -35,7 +36,8 @@ public class MaterialController {
     }
     @PostMapping("/register")
     public  String registerPost(@Valid MaterialDTO materialDTO, BindingResult bindingResult, Model model,
-                                Principal Principal, MultipartFile multipartFile){
+                                Principal Principal,  MultipartFile multipartFile){
+
         log.info("파라미터로 입력된 : " +materialDTO);
 
 

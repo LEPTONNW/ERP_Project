@@ -19,7 +19,7 @@
 </head>
 <body>
 <div class="content mt-5" layout:fragment="content">
-    <h1>마이페이지</h1> <br><br><br><br><br><br>
+    <h1>사용자 정보 페이지</h1> <br><br><br><br><br><br>
     <form th:object="${userDTO}" th:action="@{/mypage_edit}" method="post">
         <div class="d-flex justify-content-center">
             <h3>개인정보</h3>
@@ -27,7 +27,6 @@
         <!-- 오류메시지 출력 -->
         <div class="d-flex justify-content-center mt-3" th:if="${err}">
             <div class="alert alert-danger" role="alert" th:text="${err}"></div>
-            <div class="alert alert-danger" role="alert" th:text="${errAny}"></div>
         </div>
         <!-- 오류 메시지 출력 끝 -->
         <hr>
@@ -146,12 +145,19 @@
             <tr><td><br></td></tr>
 
             <tr>
-                <td colspan="3"><input type="submit" class="btn btn-dark" value="정보 수정" style="width: 100%"></td>
+                <td colspan="3"><input type="submit" class="btn btn-dark" value="정보 수정" style="width: 563px"></td>
             </tr>
         </table>
-
         <input id=b2addr name=b2addr type="hidden" th:field="*{b2baddr}">
     </form>
+    <form th:action="@{/delete_user}" method="get">
+        <input type="hidden" name="userid" th:value="${userDTO.userid}" />
+        <div class="d-flex justify-content-center mt-3" style="width: 100%;">
+            <button type="submit" class="btn btn-danger" style="width: 563px;">유저 삭제</button>
+        </div>
+    </form>
+
+
 
     <script>
         //주소분리기

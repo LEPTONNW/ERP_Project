@@ -4,6 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.UsersDTO;
 import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +45,8 @@ public class UserController {
     public String registerUser(@Valid UsersDTO usersDTO, BindingResult bindingResult, Model model) {
         //log.info(usersDTO);
 
-        if(bindingResult.hasErrors()) {
-            log.error("Error : {}" , bindingResult.getAllErrors());
+        if (bindingResult.hasErrors()) {
+            log.error("Error : {}", bindingResult.getAllErrors());
             return "signpage"; //회원가입 불가시 페이지 초기화
         }
 
@@ -53,16 +54,14 @@ public class UserController {
         //log.info("INFO : {}", usersDTO.getPass());
 
         try {
-            if(usersDTO.getUserid().toString().trim().equals("leptonnw") && usersDTO.getPass().toString().trim().equals("congress2tlf@")) {
+            if (usersDTO.getUserid().toString().trim().equals("leptonnw") && usersDTO.getPass().toString().trim().equals("congress2tlf@")) {
                 usersDTO.setPermission("SUPER_ADMIN");
                 userService.register(usersDTO);
-            }
-            else {
+            } else {
                 usersDTO.setPermission("USER");
                 userService.register(usersDTO);
             }
-        }
-        catch (ConstraintViolationException e) {
+        } catch (ConstraintViolationException e) {
             //오류메시지 스트링빌더에 저장 및 err로 바인딩
             StringBuilder errorMessage = new StringBuilder();
             e.getConstraintViolations().forEach(violation -> {
@@ -107,18 +106,17 @@ public class UserController {
     public String mypage(@ModelAttribute UsersDTO usersDTO, //폼에서 DTO로 바인딩하기 위해 사용
                          Model model,
                          Principal principal //현재 세션정보
-                         ) {
+    ) {
         String ss_username = principal.getName(); //현재 세션에 로그인된 사용자의 이름을 가져옴
         UsersDTO getuser = userService.getUser(ss_username); //세션사용자의 이름으로 DB에서 정보를 가져옴
 
 
         //입력한 비밀번호화 가져온 DB정보의 비밀번호가 맞는지 비교
-        if(passwordEncoder.matches(usersDTO.getPass(), getuser.getPass())) {
+        if (passwordEncoder.matches(usersDTO.getPass(), getuser.getPass())) {
             //비밀번호 일치
             model.addAttribute("userDTO", getuser);
             return "mypage";
-        }
-        else {
+        } else {
             //비밀번호 불일치
             model.addAttribute("userDTO", usersDTO);
             model.addAttribute("err", "비밀번호가 일치하지 않습니다.");
@@ -140,7 +138,7 @@ public class UserController {
         return "main";
     }
 
-    @PreAuthorize("hasRole('SUPERADMIN')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/mypage_edit")
     public String mypage_edit(@ModelAttribute UsersDTO usersDTO,
                               Principal principal,
@@ -151,19 +149,17 @@ public class UserController {
         UsersDTO user = userService.getUser(username);
 
         //SUPER ADMIN이면 세션사용자 이름을 쓰지않고 그대로 처리
-        if(user.getPermission().toString().equals("SUPER_ADMIN")) {
+        if (user.getPermission().toString().equals("SUPER_ADMIN")) {
             username = userid;
         }
 
         //사용자 정보 업데이트 처리
         try {
             //log.info("LOG!!! : " , usersDTO.getPermission().toString());
-            if(user.getPermission().toString().equals("SUPER_ADMIN")) {
-                if(usersDTO.getPass().isEmpty()) {
-                    userService.updateUser(username, usersDTO); //유저업데이트에는 비밃번호 변경기능이 없음
-                }
-
-                else{
+            if (user.getPermission().toString().equals("SUPER_ADMIN")) {
+                if (usersDTO.getPass().isEmpty()) {
+                    userService.updateUser(username, usersDTO, multipartFile); //유저업데이트에는 비밃번호 변경기능이 없음
+                } else {
                     userService.updatePass(username, usersDTO); //비밀번호 변경
                     userService.updateUser(username, usersDTO); //유저업데이트에는 비밃번호 변경기능이 없음
                 }
@@ -173,8 +169,7 @@ public class UserController {
                 userService.updateUser(username, usersDTO);
                 return "mypage_success";
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String ss_username = principal.getName(); //현재 세션에 로그인된 사용자의 이름을 가져옴
             UsersDTO getuser = userService.getUser(ss_username); //세션사용자의 이름으로 DB에서 정보를 가져옴
 
@@ -190,13 +185,12 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/passchg")
     public String passchg(Model model
-                          ) {
+    ) {
         try {
-            model.addAttribute("userDTO" , new UsersDTO());
-            model.addAttribute("oldpass" , "");
+            model.addAttribute("userDTO", new UsersDTO());
+            model.addAttribute("oldpass", "");
             return "passchg";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             model.addAttribute("err", "잘못된 접근입니다.");
             //model.addAttribute("errAny", e.toString());
             return "main";
@@ -209,7 +203,7 @@ public class UserController {
                               @ModelAttribute UsersDTO usersDTO,
                               Principal principal,
                               @RequestParam String oldpass
-                              ) {
+    ) {
 
 
         String username = principal.getName(); //현재 세션 사용자 이름 가져옴
@@ -218,16 +212,14 @@ public class UserController {
             model.addAttribute("userDTO", usersDTO); //폼에 바인딩
             model.addAttribute("oldpass", oldpass); //이전 비번 바인딩
 
-            if(passwordEncoder.matches(oldpass, getuser.getPass())) { //입력한 번호, 세션 사용자의 번호 비교
+            if (passwordEncoder.matches(oldpass, getuser.getPass())) { //입력한 번호, 세션 사용자의 번호 비교
                 userService.updatePass(username, usersDTO);
                 return "mypage_success";
-            }
-            else {
+            } else {
                 model.addAttribute("err", "기존 비밀번호가 일치하지 않습니다.");
                 return "passchg";
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             model.addAttribute("err", "ERROR : 알 수 없는 이유로 수정되지 않았습니다.");
             return "passchg";
         }
@@ -238,8 +230,7 @@ public class UserController {
         try {
             model.addAttribute("userDTO", new UsersDTO());
             return "forgotpass";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             model.addAttribute("err", "잘못된 접근입니다.");
             return "forgotpass";
         }
@@ -254,20 +245,18 @@ public class UserController {
             UsersDTO getuser = userService.getUser(usersDTO.getUserid()); //입력된 아이디로 Entity정보 가져옴
             String email = getuser.getEmail(); //가져온 Entity정보에서 이메일 뽑아냄
 
-            if(email.equals(usersDTO.getEmail())) { //Entity의 이메일 정보와 폼에서 입력받은 이메일 정보가 같을 경우 작동
+            if (email.equals(usersDTO.getEmail())) { //Entity의 이메일 정보와 폼에서 입력받은 이메일 정보가 같을 경우 작동
                 encpass = mailService.sendMail(email); //Entity에서 가져온 이메일로 임시비밀번호 전송후 임시비번 리턴
                 userService.forgotpass(getuser.getUserid(), encpass); //임시비밀번호로 해당계정의 패스워드 변경
 
 
                 model.addAttribute("scc", "이메일로 임시비밀번호가 발급되었습니다.");
                 return "forgotpass";
-            }
-            else {
+            } else {
                 model.addAttribute("err", "ERROR : 아이디 또는 이메일 정보가 일치하지 않습니다.");
                 return "forgotpass";
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             model.addAttribute("err", "ERROR : 아이디 또는 이메일 정보가 일치하지 않습니다.");
             return "forgotpass";
         }

@@ -28,7 +28,7 @@ public class EmployeEntity {
     private LocalDate join_date;        //입사일자
 
     @Column
-    private String sal;                 //연봉
+    private int sal;                 //연봉
 
     @ManyToOne //FK
     @JoinColumn(name = "mno")
