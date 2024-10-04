@@ -158,18 +158,16 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/mypage_edit")
     public String mypage_edit(@ModelAttribute UsersDTO usersDTO,
-                              Principal principal,
+                              Principal principal,EimgDTO eimgDTO,
                               Model model, MultipartFile multipartFile,
                               @RequestParam String userid
     ) {
         String username = principal.getName(); //현재 세션의 사용자 이름을 가져옴
         UsersDTO user = userService.getUser(username);
-
+        log.info("그 이미지 들갔나?"+eimgDTO);
         if (multipartFile != null) {
             log.info(multipartFile.getOriginalFilename());
-            log.info(multipartFile.getOriginalFilename());
-            log.info(multipartFile.getOriginalFilename());
-            log.info(multipartFile.getOriginalFilename());
+
         }
 
 

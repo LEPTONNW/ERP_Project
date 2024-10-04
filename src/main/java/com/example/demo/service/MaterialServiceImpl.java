@@ -1,9 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.BoardDTO;
-import com.example.demo.dto.MaterialDTO;
-import com.example.demo.dto.PageRequestDTO;
-import com.example.demo.dto.PageResponesDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BimgEntity;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.MaterialEntity;
@@ -34,7 +31,6 @@ public class MaterialServiceImpl implements MaterialService {
 
 
     @Value("${materialImgLocation}")
-
     private String MaterialImgLocation;
 
     private final MaterialRepository materialRepository;
@@ -89,7 +85,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public void update(MaterialDTO materialDTO) {
+    public void update(MaterialDTO materialDTO , MultipartFile multipartFile , BimgDTO bimgDTO) {
 
         if (materialDTO.getNum() == null) {
             throw new IllegalArgumentException("아 혹시 이부분인가요?");
@@ -106,6 +102,27 @@ public class MaterialServiceImpl implements MaterialService {
         materialEntity.setMatBuyNum(materialDTO.getMatBuyNum());
         materialEntity.setMatText(materialDTO.getMatText());
         materialEntity.setMatBuyDate(materialDTO.getMatBuyDate());
+
+
+        log.info(multipartFile.getOriginalFilename());
+        log.info(multipartFile.getOriginalFilename());
+        log.info(multipartFile.getOriginalFilename());
+        log.info(multipartFile.getOriginalFilename());
+        log.info(multipartFile.getOriginalFilename());
+        if (bimgDTO.getBino() != null) {
+            bimgSerivce.dele(bimgDTO.getBino());
+
+            if(multipartFile != null && multipartFile.getSize() != 0){
+                bimgSerivce.Bimgregister(materialEntity, multipartFile, MaterialImgLocation);
+            }
+
+        }else {
+            if(multipartFile != null && multipartFile.getSize() != 0){
+                bimgSerivce.Bimgregister(materialEntity, multipartFile, MaterialImgLocation);
+            }
+
+        }
+
 
 
 

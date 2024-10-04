@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.dto.AdminSearchDTO;
-import com.example.demo.dto.EmployeDTO;
-import com.example.demo.dto.EmployeMergeDTO;
-import com.example.demo.dto.UsersDTO;
+import com.example.demo.dto.*;
 import com.example.demo.service.EmployeService;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.AdminSearchDTO;
+import com.example.demo.dto.EimgDTO;
 import com.example.demo.dto.UsersDTO;
 import com.example.demo.entity.UsersEntity;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.EimgService;
 import com.example.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -33,6 +37,9 @@ import java.util.List;
 public class MainController {
 
     private final UserService userService;
+
+    private final EimgService eimgService;
+    private final UserRepository userRepository;
 
 
     //메인페이지

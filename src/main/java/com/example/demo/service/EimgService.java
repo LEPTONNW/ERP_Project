@@ -5,12 +5,14 @@ import com.example.demo.dto.UsersDTO;
 import com.example.demo.entity.EimgEntity;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.EimgRepository;
+import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +24,11 @@ import java.util.stream.Collectors;
 public class EimgService {
     private final EfileService efileService;
     private final EimgRepository eimgRepository;
+    private final UserRepository userRepository;
     private ModelMapper mapper = new ModelMapper();
 
     public void eimgregister2(UsersEntity usersEntity, MultipartFile multipartFile, String employeImgLocation) {
+
         UUID uuid = UUID.randomUUID();
         String originalFilename = multipartFile.getOriginalFilename();
         String newSaveName = originalFilename
@@ -43,6 +47,13 @@ public class EimgService {
 
     }
     public EimgDTO read(Long mno){
+        //Optional<UsersEntity> usersEntity = userRepository.findByMno(mno);
+        //UsersEntity usersEntity1 = usersEntity.get();
+
+        //UsersDTO usersDTO = mapper.map(usersEntity1, UsersDTO.class);
+
+        //Long u_mno = usersDTO.getMno();
+
         EimgEntity eimgEntity = eimgRepository.findPK(mno);
         log.info("여기 달린 이미지에요 엔튀리"+eimgEntity);
         if(eimgEntity != null){
@@ -53,6 +64,10 @@ public class EimgService {
             return  null;
         }
 
+
+    }
+    public void  deleEimg(Long mno){
+        
 
     }
     public List<EimgDTO> allread(){

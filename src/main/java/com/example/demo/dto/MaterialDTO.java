@@ -30,12 +30,4 @@ public class MaterialDTO {
     private String imgUrl;
 
 
-
-
-
-
-
-    private String userid;//==userid
-    private LocalDate regidate;
-    private LocalDate modDate;
 }

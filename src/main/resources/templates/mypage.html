@@ -38,7 +38,6 @@
                         <th:block th:unless="${#strings.isEmpty(eimgDTO.eino)}">
                             <img id="previewImage" th:src="@{ '/images/employe/' + ${eimgDTO.picname} }" class="img-fluid " alt="프로필 사진" style="max-width:100%;">
                         </th:block>
-
                         <th:block th:if="${#strings.isEmpty(eimgDTO.eino)}">
                             <img src="" id="previewImage"  class="img-fluid " alt="프로필 사진" style="max-width:100%;">
                         </th:block>
@@ -73,6 +72,8 @@
                 <td> <label for="uploadFile" class="btn btn-dark">사진 업로드</label>
                     <input type="file" id="uploadFile" class="upload " name="multipartFile" style="display:none;" accept="image/*">
                 </td>
+
+
                 <td>성별</td>
                 <td>
                     <input type="radio" name="gender" value="male" th:checked="${userDTO.gender == 'male'}" > 남성
@@ -233,8 +234,11 @@
                 }
             }).open();
         }
-        let eino = [[${eimgDTO.eino}]]
+        let eino = [[${eimgDTO}]]
         document.getElementById('uploadFile').addEventListener('change', function(event) {
+            if (eino != null) {
+                console.log(eino.eino)
+            }
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -245,11 +249,10 @@
                 reader.readAsDataURL(file); // 파일을 Data URL로 읽어 이미지 미리보기로 사용
             }
             if(eino != null && eino ==""){
-                let str = `<input name="delino" value="${eino}">`
+                let str = `<input name="delino" value="${eino.eino}">`
                 $(".formObjjjj").append(str)
             }
         });
-
 
 
         //사업자등록번호 찾기 API

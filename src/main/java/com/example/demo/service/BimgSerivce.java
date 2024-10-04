@@ -66,4 +66,23 @@ public class BimgSerivce {
         return bimgDTOList;
     }
 
+    public void dele(Long num){
+        BimgEntity bimgEntity = bimgRepository.findById(num).get();
+
+        log.info(bimgEntity);
+        String fullurl = bimgEntity.getImg_url() + File.separator + bimgEntity.getImgname();
+
+        //물리적인 파일 삭제
+        File file = new File(fullurl);
+        if( file.exists() ){
+            log.info("삭제함함함");
+
+            //파일존재여부확인
+            file.delete();
+        }
+
+        bimgRepository.deleteById(bimgEntity.getBino());
+    }
+
+
 }

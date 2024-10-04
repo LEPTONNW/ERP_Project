@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 
+import com.example.demo.dto.EimgDTO;
 import com.example.demo.dto.UsersDTO;
 import com.example.demo.entity.BimgEntity;
 import com.example.demo.entity.EmployeEntity;
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService{
     private final EimgService eimgService;
     private final EmployeRepository employeRepository;
     private final BimgRepository bimgRepository;
+
 
 
     //회원가입 처리

@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @Setter
 public class MaterialEntity {
     @Id
+    @Column(name = "mat_num")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long num;
 
@@ -35,17 +36,9 @@ public class MaterialEntity {
     private LocalDate matBuyDate;//매입일자
     @Column(length = 50,nullable = false)
     private String matText;//메모
-    @Column(columnDefinition = "text")
-    private String content;
 
 
-    @ManyToOne
-    @JoinColumn(name = "mno")
-    private UsersEntity usersEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "userid")
-    private  UsersEntity userid;
 
 
 

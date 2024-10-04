@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
+import com.example.demo.entity.MaterialEntity;
+import com.example.demo.repository.BimgRepository;
 import com.example.demo.service.BimgSerivce;
 import com.example.demo.service.MaterialService;
 import jakarta.validation.Valid;
@@ -92,7 +94,8 @@ public class MaterialController {
         return "material/modify";
     }
     @PostMapping("/modify")
-    public String modify(@Valid MaterialDTO materialDTO, BindingResult bindingResult)
+    public String modify(@Valid MaterialDTO materialDTO, BindingResult bindingResult, MultipartFile multipartFile
+            ,BimgDTO bimgDTO)
     {
 
         if (materialDTO.getNum() == null) {
@@ -102,12 +105,16 @@ public class MaterialController {
         }
 
         log.info(materialDTO);
+        log.info(bimgDTO);
         if(bindingResult.hasErrors()){
             log.info("에러");
             log.info(bindingResult.getAllErrors());
             return "material/modify";
         }
-        materialService.update(materialDTO);
+
+        materialService.update(materialDTO,  multipartFile , bimgDTO);
+
+
         return "redirect:/material/list";
     }
     @GetMapping("/del")
