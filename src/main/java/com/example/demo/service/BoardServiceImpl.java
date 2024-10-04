@@ -23,6 +23,7 @@ import java.util.Collections;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,19 +44,15 @@ public class BoardServiceImpl implements BoardService {
     public Long register(BoardDTO boardDTO, Principal principal) {
         log.info("서비스로 들어온 dto: " + boardDTO);
         //등록
-        UsersDTO usersDTO = userService.getUser(principal.getName());
-
-        //UsersEntity usersEntity = mapper.map(usersDTO, UsersEntity.class);
 
         UsersEntity usersEntity = userRepository.findByUserid(principal.getName()).get();
 
-        log.info("유저객체 : " +usersEntity);
+        // DTO를 엔티티로 변환
         Board board = mapper.map(boardDTO, Board.class);
         board.setUsersEntity(usersEntity);
-        log.info("서비스에서 변환된 dto > entity : " + board);
+
+        // 엔티티로 변환된 값을 저장
         boardRepository.save(board);
-
-
 
         return null;
     }
@@ -138,13 +135,23 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    @Transactional
     public void delete(Long bno) {
         if (boardRepository.existsById(bno)) {
             boardRepository.deleteById(bno); // 게시글 삭제
         } else {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다."); // 예외 처리
         }
+    }
+
+    @Override
+    public List<BoardDTO> boardDTOList() {
+        List<Board> boardEntity = boardRepository.findAll();
+
+
+        //매퍼와 Collectors 이용해서 DTO로 변환하여 반환
+        return boardEntity.stream()
+                .map(user -> mapper.map(user, BoardDTO.class))
+                .collect(Collectors.toList());
     }
 
 }

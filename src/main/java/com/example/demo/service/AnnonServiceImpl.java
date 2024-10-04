@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.*;
 import com.example.demo.entity.Annon;
+import com.example.demo.entity.Board;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.AnnonRepository;
 import com.example.demo.repository.UserRepository;
@@ -38,6 +39,17 @@ public class AnnonServiceImpl implements AnnonService {
 
     private ModelMapper mapper = new ModelMapper();
 
+
+    @Override
+    public List<AnnonDTO> getallAnnon() {
+        List<Annon> AnnonEntity = annonRepository.findAll();
+
+
+        //매퍼와 Collectors 이용해서 DTO로 변환하여 반환
+        return AnnonEntity.stream()
+                .map(user -> mapper.map(user, AnnonDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Long create(@Valid AnnonDTO annonDTO, Principal principal){
@@ -144,7 +156,6 @@ public class AnnonServiceImpl implements AnnonService {
     }
 
 
-    @Transactional
     @Override
     public void delete(Long bno) {
         if (annonRepository.existsById(bno)) {

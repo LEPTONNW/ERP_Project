@@ -13,11 +13,7 @@ public interface UserRepository  extends JpaRepository<UsersEntity, Long> {
     Optional<UsersEntity> findByUserid(String userid); //아이디로 조회
 
     List<UsersEntity> findByUseridLike(String userid); //아이디로 조회
-    // 'leptonw'
-    // "%"leptonw"%"
-
     List<UsersEntity> findByEmailLike(String email); //이메일로 조회
-
     List<UsersEntity> findByB2bnumberLike(String b2bnumber); //사업자번호로 조회
 
     boolean existsByEmail(String email); //이메일 중복확인용

@@ -16,9 +16,6 @@ public class Reply extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rno;   // 답변글 번호 pk
 
-    @Column(length = 255, nullable = false)
-    private String rtitle;   // 답변 제목
-
     @Column(columnDefinition = "text")
     private String rcontent;   // 답변 내용
 

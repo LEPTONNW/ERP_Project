@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AnnonDTO;
-import com.example.demo.dto.PageRequestDTO;
-import com.example.demo.dto.PageResponesDTO;
-import com.example.demo.dto.UsersDTO;
+import com.example.demo.dto.*;
 import com.example.demo.service.AnnonService;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -17,7 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/annon")
@@ -61,50 +61,94 @@ public class AnnonController {
 
 
     @GetMapping("/main")
-    public String main(@ModelAttribute PageRequestDTO pageRequestDTO, Model model) {
-        // 페이지 번호가 1 미만일 경우 1로 설정
-        if (pageRequestDTO.getPage() < 1) {
-            pageRequestDTO.setPage(1);
+    public String main(@ModelAttribute PageRequestDTO pageRequestDTO, @ModelAttribute AdminSearchDTO adminSearchDTO,
+                       Model model, @RequestParam(value = "page", defaultValue = "1") int page) {
+
+
+        //초기화
+        List<AnnonDTO> list = new ArrayList<>();
+
+        ///////////////////////////
+        // 검색 처리구간 ////////////
+        ///////////////////////////
+        ///////////////////////////
+        model.addAttribute("seDTO", adminSearchDTO); //검색폼 바인딩
+        try {
+            //제목으로 검색
+            if(adminSearchDTO.getType().equals("t")) {
+                if(adminSearchDTO.getKeyword() != null || !adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(annonService.titlelike("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+            //내용으로 검색
+            else if(adminSearchDTO.getType().equals("c")) {
+                if(adminSearchDTO.getKeyword() != null || !adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(annonService.contentlike("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+            //작성자로 검색
+            else if(adminSearchDTO.getType().equals("w")) {
+                if(adminSearchDTO.getKeyword() != null || !adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(annonService.writerlike("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+            //아무값도 없으면 전체검색
+            else {
+                PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
+                list = new ArrayList<>(annonService.getallAnnon());
+            }
+        }
+        catch (Exception e) {
+            model.addAttribute("err" , "ERROR : 찾은 정보가 없습니다.");
+            return "annon/main";
         }
 
-        // 게시물 목록 조회
-        PageResponesDTO<AnnonDTO> annonDTOPageResponesDTO = annonService.main(pageRequestDTO);
 
-        // 게시물 리스트가 비어있으면 빈 리스트 설정
-        if (annonDTOPageResponesDTO.getDtoList() == null || annonDTOPageResponesDTO.getDtoList().isEmpty()) {
-            annonDTOPageResponesDTO.setDtoList(Collections.emptyList());
-        } else {
-            // 게시물 제목 및 내용 길이 제한
-            annonDTOPageResponesDTO.getDtoList().forEach(annonDTO -> {
-                if (annonDTO.getTitle() != null && annonDTO.getTitle().length() > 10) {
-                    annonDTO.setTitle(annonDTO.getTitle().substring(0, 10) + "...");
-                }
-                if (annonDTO.getContent() != null && annonDTO.getContent().length() > 10) {
-                    annonDTO.setContent(annonDTO.getContent().substring(0, 10) + "...");
-                }
-                //log.info(annonDTO);
-            });
+        PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
+        list = new ArrayList<>(annonService.getallAnnon());
+
+        log.info(list.toArray());
+        log.info(list.toArray());
+        log.info(list.toArray());
+        ///////////////////////////
+        //페이징 처리구간 ////////////
+        ///////////////////////////
+        ///////////////////////////
+        List<AnnonDTO[]> paginatedUserList = getPaginatedUserList(list, 10);
+        try {
+            // 현재 페이지에 해당하는 데이터를 모델로 바인딩
+            if (page <= paginatedUserList.size()) {
+                model.addAttribute("userDTOList", paginatedUserList.get(page - 1));
+            } else {
+                model.addAttribute("err", "ERROR: 유효하지 않은 페이지 접근입니다.");
+            }
+
+            // 총 페이지 수와 현재 페이지 정보를 모델에 추가
+            model.addAttribute("totalPages", paginatedUserList.size());
+            model.addAttribute("currentPage", page);
+
+            return "annon/main";
+        } catch (Exception e) {
+            model.addAttribute("err", "ERROR : 유효하지 않은 페이지 접근입니다.");
+            return "annon/main";
         }
-
-        // 현재 페이지 및 총 페이지 수
-        int currentPage = pageRequestDTO.getPage();
-        int totalPages = annonDTOPageResponesDTO.getTotalPages();
-
-        // 모델에 게시물 리스트와 첫/마지막 페이지 정보를 추가
-        model.addAttribute("annonDTOPageResponesDTO", annonDTOPageResponesDTO); // 모델에 annonDTO 추가
-        model.addAttribute("firstPage", 1); // 첫 페이지
-        model.addAttribute("lastPage", totalPages); // 마지막 페이지
-        //log.info("들어가짐?");
-
-        return "annon/main"; // 반환되는 뷰 이름
     }
 
 
     @GetMapping("/load")
     public String load(Model model, Long bno, Principal principal) {
+
+        // 공지사항 번호를 통해 상세 정보를 가져옴
         AnnonDTO annonDTO = annonService.load(bno);
 
+        if (principal == null) {
+            // 인증되지 않은 사용자의 경우
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+        }
+
+        // 유저DTO에서 사용자 정보를 가져옴
         UsersDTO usersDTO = userService.getUser(principal.getName());
+
         annonDTO.setWriter(usersDTO.getName());
 
         model.addAttribute("annonDTO", annonDTO);
@@ -134,9 +178,29 @@ public class AnnonController {
     @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/delete")
     public String deletePost(@RequestParam Long bno) {
+        //
         annonService.delete(bno);
         return "redirect:/board/list"; // 삭제 후 목록 페이지로 리다이렉트
     }
 
+    //페이징처리를 컨트롤러에서 직접 할 것임
+    public List<AnnonDTO[]> getPaginatedUserList(List<AnnonDTO> usersDTOList, int itemsPerPage) {
+        int totalRecords = usersDTOList.size();         //UserEntity 가 가진 유저의 총 레코드 수
+        int totalPages = totalRecords / itemsPerPage;   //10으로 나눈 몫 || 한 화면에 10개씩 페이지 이동버튼을 보이기위함
+        int remainder = totalRecords % itemsPerPage;    //10으로 나눈 나머지
+
+        if (remainder != 0) { //나머지가 0이 아닐 경우 작동
+            totalPages += 1; // 총 페이지 수 +1 은 2차원 배열의 크기를 지정하기 위함임 0부터 시작하기 때문
+        }
+
+        AnnonDTO[][] paginatedArray = new AnnonDTO[totalPages][]; //UsesDTO 타입인 2차원 배열 생성
+        for (int i = 0; i < totalPages; i++) {
+            int start = i * itemsPerPage; //배열 시작점
+            int end = Math.min(start + itemsPerPage, totalRecords); //배열 끝점
+            paginatedArray[i] = usersDTOList.subList(start, end).toArray(new AnnonDTO[0]); //2차원 배열 최대크기 지정 및 값저장
+        }
+
+        return Arrays.asList(paginatedArray); //가공된 2차원 배열 정보 리턴
+    }
 
 }

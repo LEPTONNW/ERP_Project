@@ -1,11 +1,15 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Reply;
-import com.example.demo.entity.UsersEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
+
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
+
+    List<Reply> findByBoardBno(Long bno);
+
+
 
 }

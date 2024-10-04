@@ -29,5 +29,7 @@ public interface BoardService {
 
     String list(Principal principal);
 
+    public List<BoardDTO> boardDTOList();
+
 
 }

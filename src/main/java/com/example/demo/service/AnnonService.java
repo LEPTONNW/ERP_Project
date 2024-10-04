@@ -28,6 +28,7 @@ public interface AnnonService {
 
     public Long alter(AnnonDTO annonDTO);
 
+    public List<AnnonDTO> getallAnnon();
 
     void delete(Long bno);
 

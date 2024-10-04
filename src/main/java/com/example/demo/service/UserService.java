@@ -25,7 +25,6 @@ public interface UserService {
     List<UsersDTO> getAllUser(); //모든 유저 정보 담아오기
 
     List<UsersDTO> getIdUser(String userid); //관리자페이지 이메일로 검색
-
     List<UsersDTO> getEaUser(String b2bnumber); //관리자페이지 이메일로 검색
     List<UsersDTO> getB2User(String email); //관리자페이지 사업자번호로 검색
 

@@ -27,6 +27,31 @@
             <button type="submit" class="btn btn-danger">삭제</button>
         </form>
     </div>
+    <!-- 답변 리스트 추가 -->
+    <h4>답변 목록</h4>
+    <div th:if="${#lists.isEmpty(replyDTOList)}">
+        <p>답변이 없습니다.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(replyDTOList)}">
+        <div th:each="replyDTO : ${replyDTOList}">
+            <div class="reply-item">
+                <p><strong>작성자:</strong> <span th:text="${replyDTO.Rwriter != null ? replyDTO.Rwriter : '익명'}"></span></p>
+                <p><strong>내용:</strong> <span th:text="${replyDTO.rcontent}"></span></p>
+                <p><strong>작성 날짜:</strong> <span th:text="${#temporals.format(replyDTO.regidate)}"></span></p>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <a th:href="@{/reply/modify(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}" type="button" class="btn btn-primary me-2">답변 수정</a>
+                    <form th:action="@{/reply/delete(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" class="d-inline">
+                        <button type="submit" class="btn btn-danger">삭제</button>
+                    </form>
+                </div>
+                <hr/>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>
+
+
