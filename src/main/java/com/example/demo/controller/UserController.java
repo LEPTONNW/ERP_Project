@@ -261,10 +261,18 @@ public class UserController {
     }
 
     @PostMapping("/forgotpass_pro")
-    public String forgotpass_pro(Model model, @ModelAttribute UsersDTO usersDTO) {
+    public String forgotpass_pro(Model model, @ModelAttribute UsersDTO usersDTO, @RequestParam("userid") String userid) {
         try {
-            model.addAttribute("userDTO", usersDTO); //폼에 바인딩
-
+            //userid 값이 있을경우 이메일정보도 가져옴\
+            UsersDTO userDTO = userService.getUser(userid);
+            String us_email = userDTO.getEmail();
+            if(userid != null){
+                userDTO.setName(userDTO.getName());
+                usersDTO.setEmail(userDTO.getEmail());
+            }
+            else {
+                model.addAttribute("userDTO", usersDTO); //폼에 바인딩
+            }
             //입력된 아이디, 이메일 정보 확인
             UsersDTO getuser = userService.getUser(usersDTO.getUserid()); //입력된 아이디로 Entity정보 가져옴
             String email = getuser.getEmail(); //가져온 Entity정보에서 이메일 뽑아냄
@@ -319,7 +327,6 @@ public class UserController {
             model.addAttribute("err", result);
             return "redirect:" + referer; // 이전 페이지로 리디렉션
         }
-
-
     }
+
 }

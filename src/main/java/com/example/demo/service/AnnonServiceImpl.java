@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -41,12 +42,19 @@ public class AnnonServiceImpl implements AnnonService {
     @Override
     public Long create(@Valid AnnonDTO annonDTO, Principal principal){
 
-        UsersEntity usersEntity = userRepository.findByUserid(principal.getName()).get();
+        //UsersEntity usersEntity = userRepository.findByUserid(principal.getName()).get();
 
-        log.info("유저객체 : " + usersEntity);
+        Optional<UsersEntity> usersEntity = userRepository.findByUserid(principal.getName());
+        UsersEntity usersEntity1 = usersEntity.get();
+
+        UsersDTO usersDTO = mapper.map(usersEntity1, UsersDTO.class);
+        //이름 저장
+        annonDTO.setWriter(usersDTO.getName());
         Annon annon = mapper.map(annonDTO, Annon.class);
-        annon.setUsersEntity(usersEntity);
-        log.info("서비스에서 변환된 dto > entity : " + annon);
+
+
+        //유저 엔티티와 연결하여 Mno지정
+        annon.setUsersEntity(usersEntity1);
         annonRepository.save(annon);
 
 
@@ -145,6 +153,39 @@ public class AnnonServiceImpl implements AnnonService {
         } else {
             throw new EntityNotFoundException("공지사항이 존재하지 않습니다."); // 예외 처리
         }
+    }
+
+    //제목으로 찾기
+    @Override
+    public List<AnnonDTO> titlelike(String title) {
+        List<Annon> annonList = annonRepository.findByTitleLike(title);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return annonList.stream()
+                .map(user -> mapper.map(user, AnnonDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //내용으로 찾기
+    @Override
+    public List<AnnonDTO> contentlike(String content) {
+        List<Annon> annonList = annonRepository.findByContentLike(content);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return annonList.stream()
+                .map(user -> mapper.map(user, AnnonDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //작성자로 찾기
+    @Override
+    public List<AnnonDTO> writerlike(String writer) {
+        List<Annon> annonList = annonRepository.findByWriterLike(writer);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return annonList.stream()
+                .map(user -> mapper.map(user, AnnonDTO.class))
+                .collect(Collectors.toList());
     }
 
 }

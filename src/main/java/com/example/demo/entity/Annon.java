@@ -22,8 +22,8 @@ public class Annon extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "mno")
-
     private UsersEntity usersEntity;
+
     private String writer;
 
 }

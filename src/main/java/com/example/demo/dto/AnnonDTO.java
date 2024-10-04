@@ -29,6 +29,8 @@ public class AnnonDTO {
 
     private UsersDTO usersDTO;
 
+    private Long mno; //유저에서 가져온값임
+
     public AnnonDTO setUsersDTO(UsersDTO usersDTO) {
         this.usersDTO = usersDTO;
         return this;

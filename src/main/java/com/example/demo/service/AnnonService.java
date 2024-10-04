@@ -31,4 +31,8 @@ public interface AnnonService {
 
     void delete(Long bno);
 
+    public List<AnnonDTO> titlelike(String title);
+    public List<AnnonDTO> contentlike(String content);
+    public List<AnnonDTO> writerlike(String writer);
+
 }

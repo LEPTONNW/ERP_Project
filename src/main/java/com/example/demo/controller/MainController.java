@@ -37,13 +37,33 @@ public class MainController {
 
     //메인페이지
     @GetMapping("/")
-    public String home() {
+    public String home(Principal principal, Model model) {
+        try {
+            String name = principal.getName();
+            model.addAttribute("name", name);
+        }
+        catch (Exception e) {
+
+        }
         return "main";
     }
 
     @GetMapping("/main")
-    public String home2() {
+    public String home2(Principal principal, Model model) {
+        try {
+            String name = principal.getName();
+            model.addAttribute("name", name);
+        }
+        catch (Exception e) {
+
+        }
         return "main";
+    }
+
+    //회사 소개
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "welcome";
     }
 
     //로그인 페이지 전환
@@ -132,7 +152,7 @@ public class MainController {
             }
 
             //사업자등록번호로 검색
-            else if(adminSearchDTO.getType().equals("ea")) {
+            else if(adminSearchDTO.getType().equals("b2")) {
                 if(adminSearchDTO.getKeyword().isEmpty()) {
                     list = new ArrayList<>(userService.getAllUser());
                 }
@@ -193,17 +213,36 @@ public class MainController {
         return Arrays.asList(paginatedArray); //가공된 2차원 배열 정보 리턴
     }
 
+
+    //유저정보 불러온 페이지
     @PreAuthorize("hasRole('SUPERADMIN')")
-    @GetMapping("/adminpage_chg")
-    public String adminpage_chg(@RequestParam String userid, Model model) {
+    @GetMapping("/adminpage_chg")//정보 가져오기
+    public String adminpage_chg(@RequestParam String userid, Model model
+            , MultipartFile multipartFile) {
+       log.info(userid);
+       log.info(userid);
+       log.info(userid);
+       log.info(userid);
+        Long u_mno = userRepository.findByUserid(userid).get().getMno();
+       EimgDTO eimgDTO = eimgService.read(u_mno);
+        if(multipartFile != null){
+            log.info(multipartFile.getOriginalFilename());
+        }else {
+            log.info("암것두 없다,,,,",eimgDTO);
+        }
 
         try {
             UsersDTO usersDTO = userService.getUser(userid);
+
+
+            model.addAttribute("eimgDTO",eimgDTO);
             model.addAttribute("userDTO", usersDTO);
             return "adminpage_pro";
         }
         catch (Exception e) {
+
             model.addAttribute("userDTO", new UsersDTO());
+            model.addAttribute("eimgDTO", new EimgDTO());
             model.addAttribute("err", "유저 정보를 찾을 수 없습니다.");
             return "adminpage_pro";
         }

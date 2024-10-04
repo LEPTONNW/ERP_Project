@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Data
+//근데 이걸 다른 게시판 검색에도 쓸 것임 (제목, 내용, 작성자) 로
 public class AdminSearchDTO {
     private String type;    //검색 타입 (아이디, 이메일, 사업자 등록번호)
 

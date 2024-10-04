@@ -37,21 +37,48 @@ public class EmployeController {
     public String employe_main(Model model,
                                @RequestParam(value = "page", defaultValue = "1") int page,
                                Principal principal,
+                               @ModelAttribute AdminSearchDTO adminSearchDTO, //유저정보
                                @RequestParam(value = "userid", required = false) String userid) {
 
-
-
-        /////////////////////////////////////////////////////////////////////////
-        /////////////////////// 유저 정보 및 페이징 처리구간 /////////////////////////
-        /////////////////////////////////////////////////////////////////////////
-        String username = principal.getName(); //세션 사용자의 이름을 가져옴
-        UsersDTO userDTO = userService.getUser(username); //세션 사용자의 이름으로 사용자 정보를 담아냄
-        String CompanyNumber = userDTO.getB2bnumber(); //사업자번호
-
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////// 각종 초기화 ///////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
         List<UsersDTO> list = new ArrayList<>(); //list 초기화
+        model.addAttribute("usDTO", adminSearchDTO); //검색폼 바인딩
 
-        //리스트에 세션사용자의 사업자번호로 되어있는 모든 사람의 정보를 리스트에 담아냄
-        list = new ArrayList<>(userService.getB2User(CompanyNumber));
+        //log.info(adminSearchDTO);
+
+        ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////// 검색 구간 /////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+
+        if(adminSearchDTO.getKeyword() != null) {
+            try {
+                if (adminSearchDTO.getType().equals("id_se")) {
+                        list = new ArrayList<>(userService.getIdUser("%" + adminSearchDTO.getKeyword() + "%"));
+                } else if (adminSearchDTO.getType().equals("ea_se")) {
+                        list = new ArrayList<>(userService.getEaUser("%" + adminSearchDTO.getKeyword() + "%"));
+                } else if (adminSearchDTO.getType().equals("bnu_se")) {
+                        list = new ArrayList<>(userService.getB2User("%" + adminSearchDTO.getKeyword() + "%"));
+                } else {
+                    list = new ArrayList<>(userService.getAllUser());
+                }
+            } catch (Exception e) {
+                model.addAttribute("err", "유저 정보를 찾을 수 없습니다.");
+            }
+        }
+        else {
+
+            /////////////////////////////////////////////////////////////////////////
+            /////////////////////// 유저 정보 및 페이징 처리구간 /////////////////////////
+            /////////////////////////////////////////////////////////////////////////
+            String username = principal.getName(); //세션 사용자의 이름을 가져옴
+            UsersDTO userDTO = userService.getUser(username); //세션 사용자의 이름으로 사용자 정보를 담아냄
+            String CompanyNumber = userDTO.getB2bnumber(); //사업자번호
+
+            //리스트에 세션사용자의 사업자번호로 되어있는 모든 사람의 정보를 리스트에 담아냄
+            list = new ArrayList<>(userService.getB2User(CompanyNumber));
+        }
 
 
         try{
@@ -158,8 +185,11 @@ public class EmployeController {
                               @RequestParam(value = "userid", required = false) String userid,
                               @ModelAttribute EmployeMergeDTO bindingDTO,
                               MultipartFile multipartFile,
-                              BindingResult bindingResult
+                              @ModelAttribute AdminSearchDTO usDTO, //유저정보,
+                              BindingResult bindingResult, EimgDTO eimgDTO
                               ) {
+
+        model.addAttribute("usDTO", usDTO);//검색폼 바인딩
 
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////// 각종 초기화 ///////////////////////////////
@@ -253,7 +283,7 @@ public class EmployeController {
             if (page <= paginatedUserList.size()) {
                 model.addAttribute("userDTOList", paginatedUserList.get(page - 1));
             } else {
-                model.addAttribute("err", "ERROR: 유효하지 않은 페이지 번호입니다.");
+                model.addAttribute("err", "ERROR: 유저 정보를 찾을 수 없습니다.");
             }
 
             // 총 페이지 수와 현재 페이지 정보를 모델에 추가

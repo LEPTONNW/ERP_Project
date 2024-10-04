@@ -28,15 +28,15 @@
     <hr style="border: 2px solid black;">
 
     <!-- 검색 폼 -->
-    <form>
+    <form th:action="@{/employe/main}" method="get" th:object="${usDTO}">
         <div class="d-flex">
-            <select style="text-align-last: left;">
-                <option value="a">1</option>
-                <option value="b">2</option>
-                <option value="c">3</option>
+            <select th:field="*{type}" style="text-align-last: left;">
+                <option value="id_se">아이디</option>
+                <option value="ea_se">이메일</option>
+                <option value="bnu_se">사업자번호</option>
             </select>
             &nbsp;
-            <input type="text">
+            <input th:field="*{keyword}" type="text">
             &nbsp;
             <button class="btn btn-dark">검색</button>
         </div>
@@ -77,23 +77,27 @@
     <div class="pagination justify-content-center">
         <ul class="pagination">
             <!-- 이전 페이지 버튼 -->
-            <li th:class="${currentPage == 1 ? 'disabled' : ''}" class="page-item">
-                <a class="page-link" th:href="@{/adminPage(page=${currentPage - 1})}">이전</a>
+            <li th:class="${(currentPage != null && currentPage == 1) ? 'disabled' : ''}" class="page-item">
+                <a class="page-link" th:href="@{/adminPage(page=${(currentPage != null && currentPage > 1) ? currentPage - 1 : 1})}">이전</a>
             </li>
 
             <!-- 페이지 번호 출력 -->
-            <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
-                <li th:class="${currentPage == i ? 'active' : ''}" class="page-item">
-                    <a class="page-link" th:href="@{/adminPage(page=${i})}" th:text="${i}">1</a>
-                </li>
+            <th:block th:if="${totalPages != null && totalPages > 0}">
+                <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <li th:class="${(currentPage != null && currentPage == i) ? 'active' : ''}" class="page-item">
+                        <a class="page-link" th:href="@{/adminPage(page=${i})}" th:text="${i}">1</a>
+                    </li>
+                </th:block>
             </th:block>
 
             <!-- 다음 페이지 버튼 -->
-            <li th:class="${currentPage == totalPages ? 'disabled' : ''}" class="page-item">
-                <a class="page-link" th:href="@{/adminPage(page=${currentPage + 1})}">다음</a>
+            <li th:class="${(currentPage != null && currentPage == totalPages) ? 'disabled' : ''}" class="page-item">
+                <a class="page-link" th:href="@{/adminPage(page=${(currentPage != null && currentPage < totalPages) ? currentPage + 1 : totalPages})}">다음</a>
             </li>
         </ul>
     </div>
+
+
     <!-- ------------- ------------- ------------- -->
     <!-- 페이징 처리 -->
     <!-- ------------- ------------- ------------- -->
@@ -116,7 +120,7 @@
                 <tr>
                     <td>비밀번호 :</td>
                     <td>
-                        <input type="button" class="btn btn-dark" value="임시비밀번호발급">
+                        <a type="button" th:href="@{/forgotpass_pro(userid=${bindingDTO.userid})}" class="btn btn-dark">임시비밀번호발급</a>
                     </td>
                 </tr>
 
@@ -257,6 +261,14 @@
 
         </form>
     </div>
+    <div>
+        <form th:action="@{/delete_user}" method="get">
+            <input type="hidden" name="userid" th:value="${bindingDTO.userid}" />
+            <div class="d-flex justify-content-center mt-3" style="width: 100%;">
+                <button type="submit" class="btn btn-danger" style="width: 563px;">유저 삭제</button>
+            </div>
+        </form>
+    </div>
 
     <script>
         //주소분리기
@@ -379,8 +391,6 @@
                 }
             });
         }
-
-        $()
     </script>
 </div>
 </body>

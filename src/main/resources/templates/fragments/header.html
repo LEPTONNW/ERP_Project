@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
->
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -22,13 +21,11 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            회사소개
+                            회사
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">인사말</a></li>
-                            <li><a class="dropdown-item" href="#">회사 연혁</a></li>
+                            <li><a class="dropdown-item" th:href="@{/welcome}">회사 소개</a></li>
                             <li><a class="dropdown-item"  th:href="@{/map}">오시는 길</a></li>
-                            <li><a class="dropdown-item" href="#">회사</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -46,6 +43,11 @@
                         <a class="nav-link" th:href="@{/login}" sec:authorize="isAnonymous()">로그인</a>
                         <a class="nav-link" th:href="@{/logout}" sec:authorize="isAuthenticated()">로그아웃</a>
 
+                    </li>
+                    <li class="nav-item ">
+                        <!--
+                        <b><p class="nav-link" th:text="환영합니다 + ${name} + 님" sec:authorize="isAuthenticated()"></p></b>
+                        -->
                     </li>
 
                     <li>

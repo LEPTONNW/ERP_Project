@@ -44,8 +44,8 @@ public class AnnonController {
     @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/create")
     public String Create(@Valid AnnonDTO annonDTO, BindingResult bindingResult, Model model, Principal principal) {
-        log.info("파라미터로 입력된 : " + annonDTO);
-        log.info("파라미터로 입력된 : " + principal.getName());
+        //log.info("파라미터로 입력된 : " + annonDTO);
+        //log.info("파라미터로 입력된 : " + principal.getName());
 
         if(bindingResult.hasErrors()){
             log.info(bindingResult.getAllErrors());
