@@ -11,6 +11,10 @@
 <div layout:fragment="content">
     <form th:action="@{/annon/create}" method="post" th:object="${annonDTO}">
         <div class="row mt-5">
+            <div class="d-flex justify-content-center">
+                <h2>공지사항 내용 작성</h2>
+                <hr>
+            </div>
             <div class="col shadow">
                 <div class="mb-3 mt-3">
                     <input type="hidden" name="bno" th:value="${annonDTO.bno}">

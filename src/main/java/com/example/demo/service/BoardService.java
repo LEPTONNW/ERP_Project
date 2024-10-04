@@ -31,5 +31,11 @@ public interface BoardService {
 
     public List<BoardDTO> boardDTOList();
 
+    public List<BoardDTO> titlelike(String title);
+    public List<BoardDTO> contentlike(String content);
+    public List<BoardDTO> writerlike(String writer);
+
+
+
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MaterialService {
 
-    public boolean register(MaterialDTO materialDTO, MultipartFile multipartFile);
+    public boolean register(MaterialDTO materialDTO, MultipartFile multipartFile, String userid);
     public List<MaterialDTO> selectAll();
     public MaterialDTO read(Long num);
     public void update(MaterialDTO materialDTO , MultipartFile multipartFile, BimgDTO bimgDTO);

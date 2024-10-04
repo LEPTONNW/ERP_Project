@@ -30,6 +30,8 @@ public class BoardDTO {
 
     private UsersDTO usersDTO;
 
+    private Long mno;
+
     public BoardDTO setUsersDTO(UsersDTO usersDTO) {
         this.usersDTO = usersDTO;
         return this;

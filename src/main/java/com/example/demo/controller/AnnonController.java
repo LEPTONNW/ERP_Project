@@ -99,17 +99,22 @@ public class AnnonController {
             }
         }
         catch (Exception e) {
+            PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
+            list = new ArrayList<>(annonService.getallAnnon());
             model.addAttribute("err" , "ERROR : 찾은 정보가 없습니다.");
-            return "annon/main";
+            //return "annon/main";
         }
 
 
-        PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
-        list = new ArrayList<>(annonService.getallAnnon());
+        //PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
+        //list = new ArrayList<>(annonService.getallAnnon());
 
-        log.info(list.toArray());
-        log.info(list.toArray());
-        log.info(list.toArray());
+        log.info("LOG!!!" + list.toArray());
+        log.info("LOG!!!" + list.toArray());
+        log.info("LOG!!!" + list.toArray());
+        log.info("LOG!!!" + list.toArray());
+        log.info("LOG!!!" + list.toArray());
+
         ///////////////////////////
         //페이징 처리구간 ////////////
         ///////////////////////////
@@ -149,7 +154,7 @@ public class AnnonController {
         // 유저DTO에서 사용자 정보를 가져옴
         UsersDTO usersDTO = userService.getUser(principal.getName());
 
-        annonDTO.setWriter(usersDTO.getName());
+        //annonDTO.setWriter(usersDTO.getName());
 
         model.addAttribute("annonDTO", annonDTO);
 
@@ -176,11 +181,11 @@ public class AnnonController {
 
 
     @PreAuthorize("hasRole('SUPERADMIN')")
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     public String deletePost(@RequestParam Long bno) {
         //
         annonService.delete(bno);
-        return "redirect:/board/list"; // 삭제 후 목록 페이지로 리다이렉트
+        return "redirect:/annon/main"; // 삭제 후 목록 페이지로 리다이렉트
     }
 
     //페이징처리를 컨트롤러에서 직접 할 것임

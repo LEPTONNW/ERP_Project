@@ -76,17 +76,49 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    public String list(@ModelAttribute PageRequestDTO pageRequestDTO,
+    public String boardList(@ModelAttribute PageRequestDTO pageRequestDTO, @ModelAttribute AdminSearchDTO adminSearchDTO,
                        Model model, @RequestParam(value = "page", defaultValue = "1") int page) {
 
-
-
-        PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
-
-
-        // 게시물 목록 조회
+        //초기화
         List<BoardDTO> list = new ArrayList<>();
-        list = new ArrayList<>(boardService.boardDTOList()); //모든 보드 레코드 가져옴
+        ///////////////////////////
+        // 검색 처리구간 ////////////
+        ///////////////////////////
+        ///////////////////////////
+        model.addAttribute("seDTO", adminSearchDTO); //검색폼 바인딩
+        try {
+            //제목으로 검색
+            if(adminSearchDTO.getType().equals("t")) {
+                if(adminSearchDTO.getKeyword() != null || !adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(boardService.titlelike("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+            //내용으로 검색
+            else if(adminSearchDTO.getType().equals("c")) {
+                if(adminSearchDTO.getKeyword() != null || !adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(boardService.contentlike("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+            //작성자로 검색
+            else if(adminSearchDTO.getType().equals("w")) {
+                if(adminSearchDTO.getKeyword() != null || !adminSearchDTO.getKeyword().isEmpty()) {
+                    list = new ArrayList<>(boardService.writerlike("%" + adminSearchDTO.getKeyword() + "%"));
+                }
+            }
+            //아무값도 없으면 전체검색
+            else {
+                PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
+                list = new ArrayList<>(boardService.boardDTOList()); //모든 보드 레코드 가져옴
+            }
+        }
+        //아무값도 없으면 전체검색
+        catch (Exception e) {
+            PageResponesDTO<BoardDTO> boardDTOPageResponesDTO = boardService.list(pageRequestDTO);
+            list = new ArrayList<>(boardService.boardDTOList()); //모든 보드 레코드 가져옴
+            model.addAttribute("err" , "ERROR : 찾은 정보가 없습니다.");
+            //return "annon/main";
+        }
+
 
         // 페이징 처리 구간
         List<BoardDTO[]> paginatedUserList = getPaginatedUserList(list, 10);
@@ -117,13 +149,21 @@ public class BoardController {
                        Principal principal,
                        ReplyDTO replyDTO) {
 
-        // 게시글 번호를 통해 상세 정보를 가져옴
-        BoardDTO boardDTO = boardService.read(bno);
-
         if (principal == null) {
             // 인증되지 않은 사용자의 경우
             return "redirect:/login"; // 로그인 페이지로 리다이렉트
         }
+
+        model.addAttribute("logUser", principal.getName());
+        UsersDTO uDTO = userService.getUser(principal.getName());
+        String usname = uDTO.getName();
+        model.addAttribute("logName", usname);
+
+
+        // 게시글 번호를 통해 상세 정보를 가져옴
+        BoardDTO boardDTO = boardService.read(bno);
+
+
 
         // 유저DTO에서 사용자 정보를 가져옴
         UsersDTO usersDTO = userService.getUser(principal.getName());
@@ -142,12 +182,10 @@ public class BoardController {
         }
 
         // 게시글 작성자 설정
-        boardDTO.setWriter(usersDTO.getName());
 
         // 모델에 담아 뷰로 전달
         model.addAttribute("boardDTO", boardDTO);
         model.addAttribute("replyDTOList", replyDTOList);
-
 
         // 상세 페이지 뷰로 이동
         return "board/boardread";

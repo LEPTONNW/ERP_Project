@@ -240,17 +240,23 @@
                 console.log(eino.eino)
             }
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewImage = document.getElementById('previewImage');
-                    previewImage.src = e.target.result;
-                };
-                reader.readAsDataURL(file); // 파일을 Data URL로 읽어 이미지 미리보기로 사용
+            var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp|jfif)$/;
+            if(file.name.match(reg)) {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewImage = document.getElementById('previewImage');
+                        previewImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file); // 파일을 Data URL로 읽어 이미지 미리보기로 사용
+                }
+                if(eino != null && eino ==""){
+                    let str = `<input name="delino" value="${eino.eino}">`
+                    $(".formObjjjj").append(str)
+                }
             }
-            if(eino != null && eino ==""){
-                let str = `<input name="delino" value="${eino.eino}">`
-                $(".formObjjjj").append(str)
+            else {
+                alert("사진만 업로드 가능합니다.");
             }
         });
 

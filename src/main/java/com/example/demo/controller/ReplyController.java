@@ -27,7 +27,7 @@ public class ReplyController {
 
 
     @GetMapping("/create")
-    public String replyCreate(@ModelAttribute ReplyDTO replyDTO ) {
+    public String replyCreate(@ModelAttribute ReplyDTO replyDTO) {
 
         return "/reply/create";
     }

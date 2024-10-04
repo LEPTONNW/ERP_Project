@@ -181,14 +181,14 @@ public class UserController {
             //log.info("LOG!!! : " , usersDTO.getPermission().toString());
             if (user.getPermission().toString().equals("SUPER_ADMIN")) {
                 if (usersDTO.getPass().isEmpty()) {
-                    userService.updateUser(username, usersDTO, multipartFile); //유저업데이트에는 비밃번호 변경기능이 없음
+                    userService.updateUser(username, usersDTO, multipartFile,eimgDTO); //유저업데이트에는 비밃번호 변경기능이 없음
                 } else {
                     userService.updatePass(username, usersDTO); //비밀번호 변경
-                    userService.updateUser(username, usersDTO, multipartFile); //유저업데이트에는 비밃번호 변경기능이 없음
+                    userService.updateUser(username, usersDTO, multipartFile,eimgDTO); //유저업데이트에는 비밃번호 변경기능이 없음
                 }
                 return "redirect:/adminPage";
             } else {
-                userService.updateUser(username, usersDTO, multipartFile);
+                userService.updateUser(username, usersDTO, multipartFile,eimgDTO);
                 return "mypage_success";
             }
         } catch (Exception e) {
@@ -315,7 +315,7 @@ public class UserController {
         String referer = request.getHeader("Referer"); // 이전 페이지 URL을 가져옴
 
         try {
-             result = userService.delete_user(userid);
+            result = userService.delete_user(userid);
             model.addAttribute("err", result);
             return "mypage_success";
         }

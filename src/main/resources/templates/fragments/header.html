@@ -45,9 +45,9 @@
 
                     </li>
                     <li class="nav-item ">
-                        <!--
-                        <b><p class="nav-link" th:text="환영합니다 + ${name} + 님" sec:authorize="isAuthenticated()"></p></b>
-                        -->
+
+                        <b><p class="nav-link" th:text="환영합니다 + ${#authentication.name} + 님" sec:authorize="isAuthenticated()"></p></b>
+
                     </li>
 
                     <li>

@@ -18,9 +18,8 @@
 
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
-
             <!-- 검색 폼 -->
-            <form th:action="@{/main}" method="post" th:object="${seDTO}">
+            <form th:action="@{/annon/main}" method="get" th:object="${seDTO}">
                 <div class="d-flex">
                     <select th:field="*{type}" style="text-align-last: left;">
                         <option value="t">제목</option>
@@ -33,7 +32,6 @@
                     <button class="btn btn-dark">검색</button>
                 </div>
             </form>
-
             <a th:href="@{/annon/create}" type="button" class="btn btn-dark">등록</a>
         </div>
     </nav>
@@ -54,8 +52,8 @@
         <th:block th:each="list : ${userDTOList}">
             <tr>
                 <td scope="row" th:text="${list.bno}"></td>
-                <td><a th:href="@{/annon/load(bno=${list.bno})}" th:text="${list.title}">제목</a></td>
-                <td th:text="${list.content}"></td>
+                <td><a th:href="@{/annon/load(bno=${list.bno})}" th:text="${list.title != null && !list.title.isEmpty() ? list.title : '제목없음'}">제목</a></td>
+                <td th:text="${#strings.length(list.content) > 10 ? #strings.substring(list.content, 0, 10) + '...' : list.content}"></td>
                 <td th:text="${list.writer != null ? list.writer : '익명'}"></td>
                 <td th:text="${list.regidate}"></td>
             </tr>

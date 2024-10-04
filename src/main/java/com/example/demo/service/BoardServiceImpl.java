@@ -1,13 +1,12 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dto.BoardDTO;
-import com.example.demo.dto.PageRequestDTO;
-import com.example.demo.dto.PageResponesDTO;
-import com.example.demo.dto.UsersDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.Reply;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.ReplyRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -37,6 +36,8 @@ public class BoardServiceImpl implements BoardService {
     private final UserService userService;
 
     private final UserRepository userRepository;
+
+    private final ReplyRepository repository;
 
     private ModelMapper mapper = new ModelMapper();
 
@@ -136,6 +137,15 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void delete(Long bno) {
+        //게시글의 번호로된 모든 답변 리스트에 담아냄
+        List<Reply> R_list = repository.findByBoardBno(bno);
+
+        //모든 답변 삭제
+        for(Reply r_list : R_list) {
+            repository.delete(r_list);
+        }
+
+
         if (boardRepository.existsById(bno)) {
             boardRepository.deleteById(bno); // 게시글 삭제
         } else {
@@ -153,6 +163,41 @@ public class BoardServiceImpl implements BoardService {
                 .map(user -> mapper.map(user, BoardDTO.class))
                 .collect(Collectors.toList());
     }
+
+
+    //제목으로 검색
+    @Override
+    public List<BoardDTO> titlelike(String title) {
+        List<Board> boardList = boardRepository.findByTitleLike(title);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return boardList.stream()
+                .map(user -> mapper.map(user, BoardDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //내용으로 검색
+    @Override
+    public List<BoardDTO> contentlike(String content) {
+        List<Board> boardList = boardRepository.findByContentLike(content);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return boardList.stream()
+                .map(user -> mapper.map(user, BoardDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //작성자로 검색
+    @Override
+    public List<BoardDTO> writerlike(String writer) {
+        List<Board> boardList = boardRepository.findByWriterLike(writer);
+
+        //엔티티를 Collectors DTO로 변환하여 리턴
+        return boardList.stream()
+                .map(user -> mapper.map(user, BoardDTO.class))
+                .collect(Collectors.toList());
+    }
+
 
 }
 

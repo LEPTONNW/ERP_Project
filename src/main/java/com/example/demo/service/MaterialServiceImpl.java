@@ -4,8 +4,10 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.BimgEntity;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.MaterialEntity;
+import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.BimgRepository;
 import com.example.demo.repository.MaterialRepository;
+import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -19,7 +21,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,30 +42,53 @@ public class MaterialServiceImpl implements MaterialService {
     private final BimgRepository bimgRepository;
     private ModelMapper mapper = new ModelMapper();
     private final BimgSerivce bimgSerivce;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
-    public boolean register(MaterialDTO materialDTO, MultipartFile multipartFile) {
+    public boolean register(MaterialDTO materialDTO, MultipartFile multipartFile, String userid) {
 
-
+        Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
+        log.info("LOG!!! : "+ userid);
+        UsersEntity usersEntity1 = usersEntity.get();
 
 
         log.info("dto들어옴"+materialDTO);
 
-        MaterialEntity materialEntity =  materialRepository.findByMatCode(materialDTO.getMatCode());
+        MaterialEntity materialEntity = new MaterialEntity();
+        if(materialDTO.getMatCode() != null) {
+            materialEntity =  materialRepository.findByMatCode(materialDTO.getMatCode());
+        }
+
+        log.info("Mno들어옴"+usersEntity1.getMno());
 
         if(materialEntity == null){
             materialEntity = mapper.map(materialDTO, MaterialEntity.class);
-            materialRepository.save(materialEntity);
-            bimgSerivce.Bimgregister(materialEntity, multipartFile, MaterialImgLocation);
-            log.info("여기는 레지 진행완");
-            return true;
+
+            if(materialEntity.getMatBuyDate() != null) {
+                materialRepository.save(materialEntity);
+                bimgSerivce.Bimgregister(materialEntity, multipartFile, MaterialImgLocation);
+
+                //글쓰는 유저의 Mno저장
+                materialEntity.setMno(usersEntity1);
+                log.info("여기는 레지 진행완");
+                return true;
+            }
+            else {
+                materialEntity.setMatBuyDate(LocalDate.parse("2000-01-01"));
+                materialRepository.save(materialEntity);
+                bimgSerivce.Bimgregister(materialEntity, multipartFile, MaterialImgLocation);
+
+                //글쓰는 유저의 Mno저장
+                materialEntity.setMno(usersEntity1);
+                log.info("여기는 레지 진행완");
+                return true;
+            }
+
         }else {
             log.info("저장 불가중복");
             return false;
         }
-
-
-
     }
 
 
@@ -149,16 +177,16 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Override
     public PageResponesDTO<MaterialDTO> list(PageRequestDTO pageRequestDTO) {
+
+
         String[] types = pageRequestDTO.getTypes();
-        log.info("서비스에서 변환된 :  " + types);
+        log.info("서비스에서 변환된 :  " + pageRequestDTO);
 
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable("num");
         log.info(pageable.getSort());
 
         Page<MaterialDTO> materialDTOPage = materialRepository.searchAll(types, keyword, pageable);
-
-        log.info("레포지토리에서 값은 서비스로 받았니?");
 
 
         return PageResponesDTO.<MaterialDTO>withAll()

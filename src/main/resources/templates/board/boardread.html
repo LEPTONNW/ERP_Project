@@ -21,8 +21,8 @@
     <div class="d-flex justify-content-end mt-3 mb-3">
         <a href="/board/list" type="button" class="btn btn-dark me-2">목록으로 돌아가기</a>
         <a th:href="@{/reply/create(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">답변</a>
-        <a th:href="@{/board/modify(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
-        <form th:action="@{/board/delete}" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
+        <a th:if="${boardDTO.writer == logName}" th:href="@{/board/modify(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
+        <form th:if="${boardDTO.writer == logName}" th:action="@{/board/delete}" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
             <input type="hidden" name="bno" th:value="${boardDTO.bno}"/>
             <button type="submit" class="btn btn-danger">삭제</button>
         </form>
@@ -40,8 +40,15 @@
                 <p><strong>내용:</strong> <span th:text="${replyDTO.rcontent}"></span></p>
                 <p><strong>작성 날짜:</strong> <span th:text="${#temporals.format(replyDTO.regidate)}"></span></p>
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <a th:href="@{/reply/modify(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}" type="button" class="btn btn-primary me-2">답변 수정</a>
-                    <form th:action="@{/reply/delete(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}" method="post" onsubmit="return confirm('삭제하시겠습니까?');" class="d-inline">
+                    <a th:if="${replyDTO.Rwriter == logUser}"
+                            th:href="@{/reply/modify(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}"
+                       type="button"
+                       class="btn btn-primary me-2">답변 수정</a>
+                    <form th:if="${replyDTO.Rwriter == logUser}"
+                          th:action="@{/reply/delete(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}"
+                          method="post"
+                          onsubmit="return confirm('삭제하시겠습니까?');"
+                          class="d-inline">
                         <button type="submit" class="btn btn-danger">삭제</button>
                     </form>
                 </div>

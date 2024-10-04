@@ -5,9 +5,11 @@ import com.example.demo.entity.MaterialEntity;
 import com.example.demo.repository.BimgRepository;
 import com.example.demo.service.BimgSerivce;
 import com.example.demo.service.MaterialService;
+import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Console;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.io.File;
@@ -28,14 +31,20 @@ import java.io.File;
 public class MaterialController {
     private final MaterialService materialService;
     private final BimgSerivce bimgSerivce;
+    private final UserService userService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/register")
     public  void register(MaterialDTO materialDTO){
 
     }
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
     public  String registerPost(@Valid MaterialDTO materialDTO, BindingResult bindingResult, Model model,
-                                Principal Principal,  MultipartFile multipartFile){
+                                Principal principal,  MultipartFile multipartFile){
+
+        UsersDTO usDto = userService.getUser(principal.getName());
+
 
         log.info("파라미터로 입력된 : " +materialDTO);
 
@@ -50,7 +59,7 @@ public class MaterialController {
             log.info("크기다" + multipartFile.getSize());
         }
 
-        boolean result =  materialService.register(materialDTO, multipartFile);
+        boolean result =  materialService.register(materialDTO, multipartFile, usDto.getUserid());
         if(result == true){
             return "redirect:/material/list";
         }else {
@@ -59,9 +68,30 @@ public class MaterialController {
         }
 
     }
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public  String list(Model model, PageRequestDTO pageRequestDTO){
+    public  String list(Model model, PageRequestDTO pageRequestDTO, Principal principal){
+        //세션 유저정보 가져옴
+        UsersDTO usDTO = userService.getUser(principal.getName());
+
+        //모든 자재정보 가져옴
         PageResponesDTO<MaterialDTO> materialDTOPageResponesDTO = materialService.list(pageRequestDTO);
+        //모든 자재정보의 리스트를 리스트에 저장
+        List<MaterialDTO> newlist = materialDTOPageResponesDTO.getDtoList();
+        //materialDTOPageResponesDTO 의 DtoList를 비워줌
+        materialDTOPageResponesDTO.setDtoList(Collections.emptyList());
+        //초기화
+        List<MaterialDTO> filterList = new ArrayList<>();
+
+        //자신의 사업자번호로 되어있는것만 리스트에 저장하여 데이터를 가공한다.
+        newlist.forEach(materialDTO -> {
+            if(materialDTO.getMno().getMno().equals(usDTO.getMno())) {
+                filterList.add(materialDTO);
+            }
+        });
+
+        //가공된 값 저장
+        materialDTOPageResponesDTO.setDtoList(filterList);
 
 
         if (materialDTOPageResponesDTO.getDtoList() == null) {
@@ -77,6 +107,7 @@ public class MaterialController {
         model.addAttribute("bimgDTOList",bimgDTOList);
         return "material/list";
     }
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/read")
     public String readOne(Long num, Model model){
         MaterialDTO materialDTO = materialService.read(num);
@@ -88,11 +119,13 @@ public class MaterialController {
 
         return "material/read";
     }
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
     public String modify(Long num,Model model){
         model.addAttribute("materialDTO",materialService.read(num));
         return "material/modify";
     }
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify")
     public String modify(@Valid MaterialDTO materialDTO, BindingResult bindingResult, MultipartFile multipartFile
             ,BimgDTO bimgDTO)
@@ -117,6 +150,7 @@ public class MaterialController {
 
         return "redirect:/material/list";
     }
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/del")
     public String delete(Long num, Model model){
 
