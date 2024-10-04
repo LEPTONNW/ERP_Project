@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -31,11 +32,16 @@ public class MaterialEntity {
     @Column(nullable = false)
     private String matBuyPlace;//매입처
     @Column(nullable = false)
+
     private String matBuyNum;//매입처 사업자번호
     @Column(nullable = false)
     private LocalDate matBuyDate;//매입일자
     @Column(length = 50,nullable = false)
     private String matText;//메모
+
+    @ManyToOne
+    @JoinColumn(name = "mno")
+    private UsersEntity mno;
 
 
 

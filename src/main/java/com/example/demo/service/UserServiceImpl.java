@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 
+import com.example.demo.dto.BimgDTO;
 import com.example.demo.dto.EimgDTO;
 import com.example.demo.dto.UsersDTO;
 import com.example.demo.entity.BimgEntity;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.Element;
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
@@ -105,7 +107,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile) {
+    public UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile, EimgDTO eimgDTO) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
 
         if(usersEntity.isPresent()) {
@@ -129,15 +131,24 @@ public class UserServiceImpl implements UserService{
 
             //권한
             usersEntity1.setPermission(usersDTO.getPermission());
+            //사진 내용 전달되나?
+            log.info("여기는 유저 서비스 임플 사진 이름 받아왔나 확인",multipartFile.getOriginalFilename());
 
             //업데이트된 엔티티를 저장
             userRepository.save(usersEntity1);
-            if(multipartFile != null){
-                eimgService.eimgregister2(usersEntity1 , multipartFile, employeImgLocation);
-            }
-            return modelMapper.map(usersEntity1, UsersDTO.class);
+            log.info("여기는 유서임 : eimgDOT의eino 값 뭐로 들어왔나 확인",eimgDTO.getEino());
+            //해봐
 
-        }
+                if(multipartFile != null ){
+                    eimgService.eimgregister2(usersEntity1 , multipartFile, employeImgLocation);
+                }
+                return modelMapper.map(usersEntity1, UsersDTO.class);
+
+            }
+
+
+
+
         else {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
         }

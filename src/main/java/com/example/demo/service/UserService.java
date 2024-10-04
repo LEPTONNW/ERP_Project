@@ -17,7 +17,7 @@ public interface UserService {
 
     UsersDTO getUser(String userid); //내정보 가져오기용
 
-    UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile);//마이프로필 변경
+    UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile,EimgDTO eimgDTO);//마이프로필 변경
 
     UsersDTO updatePass(String userid, UsersDTO usersDTO); //비밀번호 변경
 
@@ -32,5 +32,7 @@ public interface UserService {
     public boolean register2(UsersDTO usersDTO, MultipartFile multipartFile);
 
     String delete_user(String userid);
+
+
 
 }

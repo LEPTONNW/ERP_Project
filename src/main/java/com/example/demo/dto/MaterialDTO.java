@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 
 import com.example.demo.entity.MaterialEntity;
+import com.example.demo.entity.UsersEntity;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class MaterialDTO {
 
     private MultipartFile imgFile;
     private String imgUrl;
+
+    private UsersEntity mno;
 
 
 }

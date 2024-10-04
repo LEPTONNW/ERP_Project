@@ -52,11 +52,11 @@ public class EmployeController {
         if(adminSearchDTO.getKeyword() != null) {
             try {
                 if (adminSearchDTO.getType().equals("id_se")) {
-                        list = new ArrayList<>(userService.getIdUser("%" + adminSearchDTO.getKeyword() + "%"));
+                    list = new ArrayList<>(userService.getIdUser("%" + adminSearchDTO.getKeyword() + "%"));
                 } else if (adminSearchDTO.getType().equals("ea_se")) {
-                        list = new ArrayList<>(userService.getEaUser("%" + adminSearchDTO.getKeyword() + "%"));
+                    list = new ArrayList<>(userService.getEaUser("%" + adminSearchDTO.getKeyword() + "%"));
                 } else if (adminSearchDTO.getType().equals("bnu_se")) {
-                        list = new ArrayList<>(userService.getB2User("%" + adminSearchDTO.getKeyword() + "%"));
+                    list = new ArrayList<>(userService.getB2User("%" + adminSearchDTO.getKeyword() + "%"));
                 } else {
                     list = new ArrayList<>(userService.getAllUser());
                 }
@@ -184,7 +184,7 @@ public class EmployeController {
                               MultipartFile multipartFile,
                               @ModelAttribute AdminSearchDTO usDTO, //유저정보,
                               BindingResult bindingResult, EimgDTO eimgDTO
-                              ) {
+    ) {
 
         model.addAttribute("usDTO", usDTO);//검색폼 바인딩
 
@@ -243,7 +243,8 @@ public class EmployeController {
 
                 //log.info("LOG!!! : " + bindingDTO.toString());
                 //유저 프로필 저장
-                userService.updateUser(getuserid, editDTO, multipartFile);
+                log.info("여기는employe 컨트롤러 eimg DTO 확인"+eimgDTO);
+                userService.updateUser(getuserid, editDTO, multipartFile,eimgDTO);
 
                 //현재 수정할 것의 Mno값
                 Long templong = userService.getUser(getuserid).getMno();

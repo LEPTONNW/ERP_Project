@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.EimgDTO;
 import com.example.demo.dto.UsersDTO;
+import com.example.demo.entity.BimgEntity;
 import com.example.demo.entity.EimgEntity;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.repository.EimgRepository;
@@ -13,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
@@ -80,6 +82,8 @@ public class EimgService {
 
 
     }
+
+    }
     public EimgDTO read(Long mno){
         //Optional<UsersEntity> usersEntity = userRepository.findByMno(mno);
         //UsersEntity usersEntity1 = usersEntity.get();
@@ -99,20 +103,6 @@ public class EimgService {
         }
 
 
-    }
-    public void  deleEimg(Long mno){
-        
-
-    }
-    public List<EimgDTO> allread(){
-
-        List<EimgEntity> eimgEntityList = eimgRepository.findallall();
-        log.info("여기 달린 이미지에요 엔튀리"+eimgEntityList);
-
-        List<EimgDTO> eimgDTOList =
-                eimgEntityList.stream().map(eimgEntity -> mapper.map(eimgEntity, EimgDTO.class).setUserSDTO(mapper.map(eimgEntity.getUsersEntity(), UsersDTO.class))).collect(Collectors.toList());
-        //
-        return eimgDTOList;
     }
 
 }
