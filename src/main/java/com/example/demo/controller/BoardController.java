@@ -39,7 +39,7 @@ public class BoardController {
     private final ReplyService replyService;
 
     @GetMapping("/register")
-    public void register(BoardDTO boardDTO,
+    public void boardRegister(BoardDTO boardDTO,
                          Principal principal,
                          Model model){
         // 유저정보를 가져오기
@@ -55,8 +55,7 @@ public class BoardController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
-    public String register(@Valid BoardDTO boardDTO, BindingResult bindingResult, Principal principal
-    ){
+    public String boardRegisterPost(@Valid BoardDTO boardDTO, BindingResult bindingResult, Principal principal){
 
         //유효성 검사간 에러가 있는지 확인
         if(bindingResult.hasErrors()){
@@ -144,7 +143,7 @@ public class BoardController {
 
 
     @GetMapping("/read")
-    public String read(Model model,
+    public String boardRead(Model model,
                        Long bno,
                        Principal principal,
                        ReplyDTO replyDTO) {
@@ -168,8 +167,8 @@ public class BoardController {
         // 유저DTO에서 사용자 정보를 가져옴
         UsersDTO usersDTO = userService.getUser(principal.getName());
 
-        // 댓글 작성자 지정
-        String writer = principal.getName();
+
+         String writer = principal.getName();
         replyDTO.setRwriter(writer);
 
         // 댓글 내용이 제대로 들어오는지 확인
@@ -193,7 +192,7 @@ public class BoardController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
-    public String modify(Model model, @RequestParam Long bno) {
+    public String boardModify(Model model, @RequestParam Long bno) {
         // bno(게시물 번호)로 조회후 boardDTO에 저장
         BoardDTO boardDTO = boardService.read(bno);
 
@@ -205,7 +204,7 @@ public class BoardController {
     @PreAuthorize("isAuthenticated()")
     // 수정된 내용 저장
     @PostMapping("/modify")
-    public String modifyPro(@ModelAttribute BoardDTO boardDTO,
+    public String boardModifyPost(@ModelAttribute BoardDTO boardDTO,
                             RedirectAttributes redirectAttributes) {
         // 수정된 내용을 서비스에서 처리
         Long num = boardService.modify(boardDTO);
@@ -217,7 +216,7 @@ public class BoardController {
 
 
     @PostMapping("/delete")
-    public String deletePost(@RequestParam Long bno) {
+    public String boardDelete(@RequestParam Long bno) {
 
         // 삭제한 게시물을 bno번호로 처리
         boardService.delete(bno);

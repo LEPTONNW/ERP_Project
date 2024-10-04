@@ -31,19 +31,19 @@ public class AnnonController {
 
     @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/create")
-    public void create(AnnonDTO annonDTO, Principal principal, Model model){
+    public void annonCreate(AnnonDTO annonDTO, Principal principal, Model model){
         UsersDTO usersDTO = userService.getUser(principal.getName());
 
         log.info(usersDTO);
         annonDTO.setWriter(usersDTO.getName());
 
         model.addAttribute("annonDTO", annonDTO);
-        log.info("get 공지 진입ㅇㅎ");
+        log.info("get 공지사항");
     }
 
     @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/create")
-    public String Create(@Valid AnnonDTO annonDTO, BindingResult bindingResult, Model model, Principal principal) {
+    public String annonCreatePost(@Valid AnnonDTO annonDTO, BindingResult bindingResult, Model model, Principal principal) {
         //log.info("파라미터로 입력된 : " + annonDTO);
         //log.info("파라미터로 입력된 : " + principal.getName());
 
@@ -61,7 +61,7 @@ public class AnnonController {
 
 
     @GetMapping("/main")
-    public String main(@ModelAttribute PageRequestDTO pageRequestDTO, @ModelAttribute AdminSearchDTO adminSearchDTO,
+    public String annonMain(@ModelAttribute PageRequestDTO pageRequestDTO, @ModelAttribute AdminSearchDTO adminSearchDTO,
                        Model model, @RequestParam(value = "page", defaultValue = "1") int page) {
 
 
@@ -141,7 +141,7 @@ public class AnnonController {
 
 
     @GetMapping("/load")
-    public String load(Model model, Long bno, Principal principal) {
+    public String annonLoad(Model model, Long bno, Principal principal) {
 
         // 공지사항 번호를 통해 상세 정보를 가져옴
         AnnonDTO annonDTO = annonService.load(bno);
@@ -164,7 +164,7 @@ public class AnnonController {
 
     @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/alter")
-    public String alter(Model model, @RequestParam Long bno) {
+    public String annonAlter(Model model, @RequestParam Long bno) {
         AnnonDTO annonDTO = annonService.load(bno);
         model.addAttribute("annonDTO", annonDTO);
         return "annon/alter"; // 수정 화면으로 이동
@@ -173,7 +173,7 @@ public class AnnonController {
     // 수정된 내용 저장
     @PreAuthorize("hasRole('SUPERADMIN')")
     @PostMapping("/alter")
-    public String alterPro(@ModelAttribute AnnonDTO annonDTO, RedirectAttributes redirectAttributes) {
+    public String annonAlterPost(@ModelAttribute AnnonDTO annonDTO, RedirectAttributes redirectAttributes) {
         Long bno = annonService.alter(annonDTO); // 수정된 내용을 서비스에서 처리
         redirectAttributes.addFlashAttribute("message", bno + "번 글이 수정이 완료되었습니다.");
         return "redirect:/annon/main"; // 목록 페이지로 리다이렉트
@@ -183,7 +183,7 @@ public class AnnonController {
     @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping("/delete")
     public String deletePost(@RequestParam Long bno) {
-        //
+
         annonService.delete(bno);
         return "redirect:/annon/main"; // 삭제 후 목록 페이지로 리다이렉트
     }

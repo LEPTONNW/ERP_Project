@@ -5,28 +5,32 @@
       layout:decorate="~{layouts/layout1.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>질문 게시판 생성</title>
 </head>
 <body>
 <div layout:fragment="content">
     <form th:action="@{/board/register}" method="post" th:object="${boardDTO}">
         <div class="row mt-5">
+            <div class="d-flex justify-content-center">
+                <h2>질문 내용 작성</h2>
+            </div>
+            <hr>
             <div class="col shadow">
                 <div class="mb-3 mt-3">
                     <label for="title" class="form-label">제목</label>
-                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="여기다가 제목을써봐">
+                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="여기에 제목을 작성해주세요">
                     <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 mt-3">
                     <label for="content" class="form-label">내용</label>
-                    <input type="text" class="form-control" th:field="*{content}" id="content" placeholder="여기다가 제목을써봐">
-                    <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                    <textarea class="form-control" cols="100" rows="10" th:field="*{content}" id="content" placeholder="여기에 내용을 작성해주세요"></textarea>
+                    <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-danger"></p>
                 </div>
             </div>
         </div>
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-dark">저장</button>
-            <a type="button" href="/board/list" class="btn btn-dark">목록</a>
+            <a type="button" th:href="@{/board/list}" class="btn btn-dark">목록</a>
         </div>
     </form>
 </div>

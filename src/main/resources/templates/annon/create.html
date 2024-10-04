@@ -24,13 +24,13 @@
                 </div>
                 <div class="mb-3">
                     <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" th:field="*{content}" id="content" rows="3" placeholder="공지사항 내용을 작성하세요"></textarea>
+                    <textarea class="form-control" th:field="*{content}" id="content" rows="10" placeholder="공지사항 내용을 작성하세요"></textarea>
                     <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
                 </div>
             </div>
         </div>
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary me-2">완료</button>
+            <button type="submit" class="btn btn-primary me-2">등록</button>
             <a type="button" href="/annon/main" class="btn btn-dark">취소</a>
         </div>
     </form>

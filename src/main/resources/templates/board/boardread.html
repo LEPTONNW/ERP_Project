@@ -10,13 +10,25 @@
 <body>
 <div layout:fragment="content">
 
-    <h4>제목</h4>
-    <h1 th:text="${boardDTO.title}">제목</h1>
+    <div class="container mt-2">
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th scope="row">제목 : <a th:text="${boardDTO.title}"></a></th>
+                <th scope="row">작성자 : <a th:text="${boardDTO.writer}"></a></th>
+                <th scope="row">등록 날짜 : <a th:text="${boardDTO.regidate}"></a></th>
 
-    <h4>내용</h4>
-    <p th:text="${boardDTO.content}">내용</p>
-    <p>작성자: <span th:text="${boardDTO.writer}"></span></p>
-    <p>등록 날짜: <span th:text="${boardDTO.regidate}"></span></p>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered">
+            <tr>
+                <td th:text="${boardDTO.content}"></td>
+            </tr>
+        </table>
+    </div>
+
 
     <div class="d-flex justify-content-end mt-3 mb-3">
         <a href="/board/list" type="button" class="btn btn-dark me-2">목록으로 돌아가기</a>
