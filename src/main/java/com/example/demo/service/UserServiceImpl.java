@@ -110,6 +110,8 @@ public class UserServiceImpl implements UserService{
     public UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile, EimgDTO eimgDTO) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
 
+
+
         if(usersEntity.isPresent()) {
             UsersEntity usersEntity1 = usersEntity.get();
 
@@ -132,11 +134,11 @@ public class UserServiceImpl implements UserService{
             //권한
             usersEntity1.setPermission(usersDTO.getPermission());
             //사진 내용 전달되나?
-            log.info("여기는 유저 서비스 임플 사진 이름 받아왔나 확인",multipartFile.getOriginalFilename());
+            log.info("여기는 유저 서비스 임플 사진 이름 받아왔나 확인"+multipartFile.getOriginalFilename());
 
             //업데이트된 엔티티를 저장
             userRepository.save(usersEntity1);
-            log.info("여기는 유서임 : eimgDOT의eino 값 뭐로 들어왔나 확인",eimgDTO.getEino());
+            log.info("여기는 유서임 : eimgDOT의eino 값 뭐로 들어왔나 확인"+eimgDTO.getEino());
             //해봐
 
                 if(multipartFile != null ){
