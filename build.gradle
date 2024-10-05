@@ -58,6 +58,9 @@ dependencies {
 
     // Thymeleaf와 Spring Security 통합을 위한 추가 의존성
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    //이메일 인증기능
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {

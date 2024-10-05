@@ -28,7 +28,12 @@ public class BoardDTO {
 
     private LocalDate regidate;
 
-    private LocalDate modDate;
+    private UsersDTO usersDTO;
 
+    private Long mno;
 
+    public BoardDTO setUsersDTO(UsersDTO usersDTO) {
+        this.usersDTO = usersDTO;
+        return this;
+    }
 }

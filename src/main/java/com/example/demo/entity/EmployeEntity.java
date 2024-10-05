@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,27 +13,24 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class EmployeEntity {
 
-    @Id
+    @Id //PK
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eno;                   //번호
-    @Column
-    private String name;                //이름
-    @Column
-    private LocalDate age;                    //나이
-    @Column
-    private String gender;              //성별
-    @Column
-    private String email;               //이메일
+
     @Column
     private String job;                 //직무
+
     @Column
     private String rank;                //직급
-    @Column
-    private LocalDate join_date;        //입사일자
-    @Column
-    private String sal;                 //연봉
 
-    @ManyToOne
+    @Column
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate join_date;        //입사일자
+
+    @Column
+    private int sal;                 //연봉
+
+    @ManyToOne //FK
     @JoinColumn(name = "mno")
-    private UsersEntity usersEntity;
+    private UsersEntity mno;
 }

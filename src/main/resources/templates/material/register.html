@@ -10,67 +10,74 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <form action="/material/register" method="post" th:object="${materialDTO}">
+    <form th:action="@{/material/register}" method="post" th:object="${materialDTO}" enctype="multipart/form-data">
         <div class="row mt-5">
             <div class="col shadow">
                 <div class="mb-3 mt-3">
-                    <label for="title" class="form-label">제목</label>
-                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="여기다가 제목을써봐">
-                    <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
-                </div>
-                <div class="mb-3">
-                    <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" th:field="*{content}" id="content" rows="3"></textarea>
-                    <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
-                </div>
-            </div>
-        </div>
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-dark">저장</button>
-            <a type="button" href="/board/list" class="btn btn-dark">목록</a>
-        </div>
-    </form>
+                    <label for="matName" class="form-label">자재명</label>
+                    <input type="text" class="form-control" th:field="*{matName}" id="matName" placeholder="자재명을 입력하시오">
+                    <p th:if="${#fields.hasErrors('matName')}" th:errors="*{matName}" class="fieldError"></p>
 
+                    <label for="matCode" class="form-label">자재 코드</label>
+                    <input type="text" class="form-control" size="15" th:field="*{matCode}" id="matCode" placeholder="">
+                    <p th:if="${#fields.hasErrors('matCode')}" th:errors="*{matCode}" class="fieldError"></p>
 
-    여기에 등록작성할꺼임
-</div>
-</body>
-=======
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      layout:decorate="~{layouts/layout1.html}">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div layout:fragment="content">
-    <form action="/material/register" method="post" th:object="${materialDTO}">
-        <div class="row mt-5">
-            <div class="col shadow">
-                <div class="mb-3 mt-3">
-                    <label for="title" class="form-label">제목</label>
-                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="여기다가 제목을써봐">
-                    <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="fieldError"></p>
-                </div>
-                <div class="mb-3">
-                    <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" th:field="*{content}" id="content" rows="3"></textarea>
-                    <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
+                    <label for="matAmount" class="form-label">자재 수량</label>
+                    <input type="number" min="1" max="10000000" required class="form-control" th:field="*{matAmount}" id="matAmount" placeholder="">
+                    <p th:if="${#fields.hasErrors('matAmount')}" th:errors="*{matAmount}" class="fieldError"></p>
+
+                    <label for="matPrice" class="form-label">자재 가격</label>
+                    <input type="number" min="1" max="150000000" required class="form-control" th:field="*{matPrice}" id="matPrice" placeholder="">
+                    <p th:if="${#fields.hasErrors('matPrice')}" th:errors="*{matPrice}" class="fieldError"></p>
+
+                    <label for="matBuyPlace" class="form-label">매입처</label>
+                    <input type="text" class="form-control" th:field="*{matBuyPlace}" id="matBuyPlace" placeholder="">
+                    <p th:if="${#fields.hasErrors('matBuyPlace')}" th:errors="*{matBuyPlace}" class="fieldError"></p>
+
+                    <label for="matBuyNum" class="form-label">매입처 사업자 번호</label>
+                    <input type="number" class="form-control"  th:field="*{matBuyNum}" id="matBuyNum" placeholder="">
+                    <p th:if="${#fields.hasErrors('matBuyNum')}" th:errors="*{matBuyNum}" class="fieldError"></p>
+
+                    <label for="matBuyDate" class="form-label">매입 일자</label>
+                    <input type="date" class="form-control" th:field="*{matBuyDate}" id="matBuyDate" placeholder="">
+                    <p th:if="${#fields.hasErrors('matBuyDate')}" th:errors="*{matBuyDate}" class="fieldError"></p>
+
+                    <div class="mb-3">
+                        <label for="matText" class="form-label">메모</label>
+                        <textarea class="form-control" th:field="*{matText}" id="matText" rows="3"></textarea>
+                        <p th:if="${#fields.hasErrors('matText')}" th:errors="*{matText}" class="fieldError"></p>
+                    </div>
                 </div>
             </div>
         </div>
+        <label for="matName" class="form-label">사진</label>
+        <input class="form-control" type="file" name="multipartFile" id="uploadFile" >
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-dark">저장</button>
-            <a type="button" href="/board/list" class="btn btn-dark">목록</a>
+            <a type="button" href="/material/list" class="btn btn-dark">목록</a>
         </div>
     </form>
+    <script th:inline="javascript">
+        let msg = [[${msg}]]
+        if (msg !== null){
+            alert(msg)
+        }
+        document.getElementById('uploadFile').addEventListener('change', function(event) {
+
+            const file = event.target.files[0];
+            var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp|jfif)$/;
+            if(file.name.match(reg)) {
+                if (file) {
+
+                }
+            }
+            else {
+                alert("사진만 업로드 가능합니다.");
+            }
+        });
+    </script>
 
 
-    여기에 등록작성할꺼임
 </div>
 </body>
-
 </html>

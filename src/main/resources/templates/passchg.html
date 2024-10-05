@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>비밀번호 변경</title>
+    <!-- CDN List -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="content mt-5" layout:fragment="content" onsubmit="return pass_chk()">
+    <form th:action="@{/passchg_pro}" method="post" th:object="${userDTO}">
+        <!-- 오류메시지 출력 -->
+        <div class="d-flex justify-content-center mt-3" th:if="${err}">
+            <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+        </div>
+        <!-- 오류 메시지 출력 끝 -->
+
+        <div class="d-flex justify-content-center">
+            <h3>비밀번호 변경</h3>
+        </div>
+        <hr>
+        <table cellspacing="5" cellpadding="5" align="center">
+            <tr>
+                <td>현재 비밀번호</td>
+            </tr>
+
+            <tr>
+                <td><input type="password" id="oldpass" name="oldpass" class="form-control" th:value="${oldpass}" placeholder="이전 비밀번호 입력"></td>
+            </tr>
+
+
+            <tr>
+                <td>새 비밀번호</td>
+            </tr>
+
+            <tr>
+                <td><input type="password" id="pass" name="pass" class="form-control" th:field="*{pass}" placeholder="비밀번호 입력"></td>
+            </tr>
+
+            <tr>
+                <td>새 비밀번호 확인</td>
+            </tr>
+
+            <tr>
+                <td><input type="password" id="pass2" name="pass2" class="form-control" placeholder="비밀번호 확인 입력"></td>
+            </tr>
+
+            <tr>
+                <td colspan="2"><input type="submit" class="btn btn-dark" value="완료" style="width: 100%"></td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+        let pass;
+        let pass2;
+
+        //비밀번호, 비밀번호 확인 비교 확인
+        function pass_chk() {
+            pass = document.getElementById("pass").value;
+            pass2 = document.getElementById("pass2").value;
+
+            if(pass === pass2) {
+                return true;
+            }
+            else { //비밀번호 불일치
+                alert("비밀번호가 일치하지 않습니다.")
+                $('#pass').val('');     //입력필드 초기화
+                $('#pass2').val('');    //입력필드 초기화
+                $('#pass').focus();
+
+                pass = "";
+                pass2 = "";
+
+                return false;
+            }
+        }
+
+    </script>
+</div>
+</body>
+</html>

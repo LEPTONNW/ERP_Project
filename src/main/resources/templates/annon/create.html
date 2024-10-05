@@ -11,6 +11,10 @@
 <div layout:fragment="content">
     <form th:action="@{/annon/create}" method="post" th:object="${annonDTO}">
         <div class="row mt-5">
+            <div class="d-flex justify-content-center">
+                <h2>공지사항 내용 작성</h2>
+                <hr>
+            </div>
             <div class="col shadow">
                 <div class="mb-3 mt-3">
                     <input type="hidden" name="bno" th:value="${annonDTO.bno}">
@@ -20,13 +24,13 @@
                 </div>
                 <div class="mb-3">
                     <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" th:field="*{content}" id="content" rows="3" placeholder="공지사항 내용을 작성하세요"></textarea>
+                    <textarea class="form-control" th:field="*{content}" id="content" rows="10" placeholder="공지사항 내용을 작성하세요"></textarea>
                     <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError"></p>
                 </div>
             </div>
         </div>
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary me-2">완료</button>
+            <button type="submit" class="btn btn-primary me-2">등록</button>
             <a type="button" href="/annon/main" class="btn btn-dark">취소</a>
         </div>
     </form>

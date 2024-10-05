@@ -4,30 +4,31 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity //엔티티임을 명시
+@Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor // 기본생성자
-@AllArgsConstructor // 모든필드값을 가지고 있는 생성자
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reply extends BaseEntity {
-    //pk
-    //제목 내용 작성자 작성날짜
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long nno;   //글번호 pk
+    private Long rno;   // 답변글 번호 pk
 
-    @Column(length = 255, nullable = false)
-    private String textp;   //제목
+    @Column(columnDefinition = "text")
+    private String rcontent;   // 답변 내용
 
+    private String rwriter; // 답변자
 
     @ManyToOne
     @JoinColumn(name = "mno")
-    private UsersEntity usersEntity;
+    private UsersEntity mno; // 유저 이름
 
     @ManyToOne
     @JoinColumn(name = "bno")
-    private Board board;
+    private Board board; // 질문
+
+
 
 }

@@ -6,7 +6,6 @@ import com.example.demo.entity.MaterialEntity;
 import com.example.demo.entity.QMaterialEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class MaterialSearchImpl extends QuerydslRepositorySupport implements MaterialSearch {
-    public MaterialSearchImpl() { super(MaterialDTO.class);}
+    public MaterialSearchImpl() { super(MaterialEntity.class);}
 
     private ModelMapper mapper = new ModelMapper();
     @Override
@@ -50,7 +49,7 @@ public class MaterialSearchImpl extends QuerydslRepositorySupport implements Mat
 
             query.where(booleanBuilder);
         }
-        query.where(materialEntity.matNum.gt(0L));
+        query.where(materialEntity.num.gt(0L));
         System.out.println("where문 추가"+query);
         this.getQuerydsl().applyPagination(pageable,query);
 

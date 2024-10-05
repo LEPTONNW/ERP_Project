@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>답변 수정</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- 오류메시지 출력 -->
+    <div class="d-flex justify-content-center mt-3" th:if="${err}">
+        <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+    </div>
+    <!-- 오류 메시지 출력 끝 -->
+
+    <form th:action="@{/reply/modify(rno=${replyDTO.rno})}" method="post" th:object="${replyDTO}">
+        <input type="hidden" th:field="*{rno}"/>
+        <br><br><br>
+        <div class="d-flex justify-content-center">
+            <h2>답변 내용 수정</h2>
+        </div>
+        <hr>
+        <br>
+        <div class="d-flex justify-content-center">
+            <input name="rno" type="hidden" th:value="${replyDTO.rno}">
+            <table cellpadding="1" cellspacing="1" align="center">
+                <tr>
+                    <td>
+                        <textarea cols="100" rows="10" th:field="*{rcontent}"></textarea>
+                    </td>
+                </tr>
+
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+
+                <tr>
+                    <td>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-dark me-2">댓글 입력</button>
+                            <a th:href="@{/board/read(bno=${replyDTO.boardDTO.bno})}" class="btn btn-secondary">취소</a>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+    </form>
+</div>
+</body>
+</html>

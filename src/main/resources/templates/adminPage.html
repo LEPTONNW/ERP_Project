@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지 [SUPER ADMIN]</title>
+</head>
+<body>
+<div class="content mt-5" layout:fragment="content">
+
+    <!-- 오류메시지 출력 -->
+    <div class="d-flex justify-content-center mt-3" th:if="${err}">
+        <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+    </div>
+    <!-- 오류 메시지 출력 끝 -->
+
+    <div class="d-flex justify-content-center">
+        <a th:href="@{/adminPage}" style="text-decoration: none; color:black;"><h1>관리자 페이지</h1></a>
+    </div>
+    <hr style="border: 2px solid black;">
+
+    <!-- 검색 폼 -->
+    <form th:action="@{/admin_se}" method="post" th:object="${seDTO}">
+        <div class="d-flex">
+            <select th:field="*{type}" style="text-align-last: left;">
+                <option value="id">아이디</option>
+                <option value="ea">이메일</option>
+                <option value="b2">사업자번호</option>
+            </select>
+            &nbsp;
+            <input th:field="*{keyword}" type="text">
+            &nbsp;
+            <button class="btn btn-dark">검색</button>
+        </div>
+    </form>
+
+    <br><br>
+
+    <!-- 상단 컬럼 -->
+    <table cellpadding="5" cellspacing="5" align="center" class="table">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">아이디</th>
+            <th scope="col">이메일</th>
+            <th scope="col">사업장이름</th>
+            <th scope="col">사업자번호</th>
+        </tr>
+        </thead>
+
+        <!-- 리스트가 비어있지 않을때만 가져옴 -->
+        <th:block th:if="${userDTOList != null && userDTOList.length > 0}">
+            <tbody>
+            <tr th:each="user : ${userDTOList}">
+                <td scope="row" th:text="${user.mno}"></td>
+                <td><a th:href="@{/adminpage_chg(userid=${user.userid})}" th:text="${user.userid}"></a></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.b2bname}"></td>
+                <td th:text="${user.b2bnumber}"></td>
+            </tr>
+            </tbody>
+        </th:block>
+    </table>
+
+
+    <!-- ------------- ------------- ------------- -->
+    <!-- 페이지 처리 -->
+    <!-- ------------- ------------- ------------- -->
+    <div class="pagination justify-content-center">
+        <ul class="pagination">
+            <!-- 이전 페이지 버튼 -->
+            <li th:class="${currentPage == 1 ? 'disabled' : ''}" class="page-item">
+                <a class="page-link" th:href="@{/adminPage(page=${currentPage - 1})}">이전</a>
+            </li>
+
+            <!-- 페이지 번호 출력 -->
+            <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <li th:class="${currentPage == i ? 'active' : ''}" class="page-item">
+                    <a class="page-link" th:href="@{/adminPage(page=${i})}" th:text="${i}">1</a>
+                </li>
+            </th:block>
+
+            <!-- 다음 페이지 버튼 -->
+            <li th:class="${currentPage == totalPages ? 'disabled' : ''}" class="page-item">
+                <a class="page-link" th:href="@{/adminPage(page=${currentPage + 1})}">다음</a>
+            </li>
+        </ul>
+    </div>
+    <!-- ------------- ------------- ------------- -->
+    <!-- 페이징 처리 -->
+    <!-- ------------- ------------- ------------- -->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>답변 게시판 생성</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- 오류메시지 출력 -->
+    <div class="d-flex justify-content-center mt-3" th:if="${err}">
+        <div class="alert alert-danger" role="alert" th:text="${err}"></div>
+    </div>
+    <!-- 오류 메시지 출력 끝 -->
+
+    <form th:action="@{/reply/create}" method="post" th:object="${replyDTO}">
+        <input type="hidden" th:field="*{bno}"/> <!-- bno 값을 replyDTO로 바인딩 -->
+        <br><br><br>
+        <div class="d-flex justify-content-center">
+            <h2>댓글 내용 작성</h2>
+        </div>
+        <hr>
+        <br>
+        <div class="d-flex justify-content-center">
+            <table cellpadding="1" cellspacing="1" align="cetner">
+                <tr>
+                    <td>
+                    <textarea cols="100" rows="10" th:field="*{rcontent}">
+
+                    </textarea>
+                    </td>
+                </tr>
+
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+
+                <tr>
+                    <td>
+                        <button class="btn btn-dark" style="width: 100%">댓글 입력</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+
+
+    여기에 등록작성할꺼임
+</div>
+</body>
+</html>

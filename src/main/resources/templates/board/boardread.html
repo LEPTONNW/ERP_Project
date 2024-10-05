@@ -10,20 +10,67 @@
 <body>
 <div layout:fragment="content">
 
-    <h4>제목</h4>
-    <h1 th:text="${boardDTO.title}">제목</h1>
+    <div class="container mt-2">
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th scope="row">제목 : <a th:text="${boardDTO.title}"></a></th>
+                <th scope="row">작성자 : <a th:text="${boardDTO.writer}"></a></th>
+                <th scope="row">등록 날짜 : <a th:text="${boardDTO.regidate}"></a></th>
 
-    <h4>내용</h4>
-    <p th:text="${boardDTO.content}">내용</p>
-    <p>작성자: <span th:text="${boardDTO.writer}"></span></p>
-    <p>등록 날짜: <span th:text="${boardDTO.regidate}"></span></p>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered">
+            <tr>
+                <td th:text="${boardDTO.content}"></td>
+            </tr>
+        </table>
+    </div>
+
 
     <div class="d-flex justify-content-end mt-3 mb-3">
         <a href="/board/list" type="button" class="btn btn-dark me-2">목록으로 돌아가기</a>
-        <a th:href="@{/board/modify(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
-
-        <a th:href="@{/board/delete}" type="button" class="btn btn-danger">삭제</a>
+        <a th:href="@{/reply/create(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">답변</a>
+        <a th:if="${boardDTO.writer == logName}" th:href="@{/board/modify(bno=${boardDTO.bno})}" type="button" class="btn btn-primary me-2">수정</a>
+        <form th:if="${boardDTO.writer == logName}" th:action="@{/board/delete}" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
+            <input type="hidden" name="bno" th:value="${boardDTO.bno}"/>
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
     </div>
+    <!-- 답변 리스트 추가 -->
+    <h4>답변 목록</h4>
+    <div th:if="${#lists.isEmpty(replyDTOList)}">
+        <p>답변이 없습니다.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(replyDTOList)}">
+        <div th:each="replyDTO : ${replyDTOList}">
+            <div class="reply-item">
+                <p><strong>작성자:</strong> <span th:text="${replyDTO.Rwriter != null ? replyDTO.Rwriter : '익명'}"></span></p>
+                <p><strong>내용:</strong> <span th:text="${replyDTO.rcontent}"></span></p>
+                <p><strong>작성 날짜:</strong> <span th:text="${#temporals.format(replyDTO.regidate)}"></span></p>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <a th:if="${replyDTO.Rwriter == logUser}"
+                            th:href="@{/reply/modify(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}"
+                       type="button"
+                       class="btn btn-primary me-2">답변 수정</a>
+                    <form th:if="${replyDTO.Rwriter == logUser}"
+                          th:action="@{/reply/delete(rno=${replyDTO.rno},bno=${replyDTO.boardDTO.bno})}"
+                          method="post"
+                          onsubmit="return confirm('삭제하시겠습니까?');"
+                          class="d-inline">
+                        <button type="submit" class="btn btn-danger">삭제</button>
+                    </form>
+                </div>
+                <hr/>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>
+
+
