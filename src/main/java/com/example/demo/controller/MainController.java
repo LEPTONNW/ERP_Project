@@ -82,7 +82,7 @@ public class MainController {
     public  String map() {return "map";}
 
     @GetMapping("/login")
-    public String login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String login(HttpServletResponse response) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication(); //현재 인증된 사용자의 정보를 가져옴
 
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
@@ -226,10 +226,7 @@ public class MainController {
     @GetMapping("/adminpage_chg")//정보 가져오기
     public String adminpage_chg(@RequestParam String userid, Model model
             , MultipartFile multipartFile) {
-       log.info(userid);
-       log.info(userid);
-       log.info(userid);
-       log.info(userid);
+
         Long u_mno = userRepository.findByUserid(userid).get().getMno();
        EimgDTO eimgDTO = eimgService.read(u_mno);
         if(multipartFile != null){

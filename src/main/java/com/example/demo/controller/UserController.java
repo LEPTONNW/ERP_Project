@@ -78,7 +78,7 @@ public class UserController {
         return "redirect:/login"; //회원가입후 로그인 페이지로 이동
     }
 
-    @GetMapping("/chk-signup")//이메일, 사업자번호 중복체크용 API
+    @GetMapping("/chk-signup")//이메일 중복체크용 API
     public ResponseEntity checkInfo(@RequestParam("email") String email) {
         boolean exsists = userService.checkUserEmail(email);
         //log.info("INFO : {}",exsists);
