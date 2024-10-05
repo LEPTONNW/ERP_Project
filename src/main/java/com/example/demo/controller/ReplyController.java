@@ -22,9 +22,6 @@ import java.security.Principal;
 public class ReplyController {
 
     private final ReplyService replyService;
-    private  final BoardService boardService;
-
-
 
     @GetMapping("/create")
     public String replyCreate(@ModelAttribute ReplyDTO replyDTO) {

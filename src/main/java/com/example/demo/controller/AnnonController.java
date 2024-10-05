@@ -102,12 +102,7 @@ public class AnnonController {
             PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
             list = new ArrayList<>(annonService.getallAnnon());
             model.addAttribute("err" , "ERROR : 찾은 정보가 없습니다.");
-            //return "annon/main";
         }
-
-
-        //PageResponesDTO<AnnonDTO> boardDTOPageResponesDTO = annonService.main(pageRequestDTO);
-        //list = new ArrayList<>(annonService.getallAnnon());
 
         log.info("LOG!!!" + list.toArray());
         log.info("LOG!!!" + list.toArray());
@@ -133,6 +128,7 @@ public class AnnonController {
             model.addAttribute("currentPage", page);
 
             return "annon/main";
+
         } catch (Exception e) {
             model.addAttribute("err", "ERROR : 유효하지 않은 페이지 접근입니다.");
             return "annon/main";
