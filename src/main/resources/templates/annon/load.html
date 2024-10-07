@@ -33,7 +33,9 @@
 
         <table class="table table-bordered">
             <tr>
-                <td th:text="${annonDTO.content}"></td>
+                <td>
+                    <p style="white-space: pre-line;" th:utext="${annonDTO.content}"></p>
+                <td>
             </tr>
         </table>
     </div>

@@ -38,10 +38,10 @@ public class MaterialSearchImpl extends QuerydslRepositorySupport implements Mat
                     case "c" :
                         booleanBuilder.or(materialEntity.matCode.contains(keyword));
                         break;
-                    case "bp" :
+                    case "p" :
                         booleanBuilder.or(materialEntity.matBuyPlace.contains(keyword));
                         break;
-                    case "bn" :
+                    case "b" :
                         booleanBuilder.or(materialEntity.matBuyNum.contains(keyword));
                         break;
                 }

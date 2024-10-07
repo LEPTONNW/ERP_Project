@@ -6,16 +6,6 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 상세보기</title>
-
-    <style>
-        .break-text {
-            display: inline-block;
-            width: 70ch; /* 한 줄에 25글자 너비 */
-            word-break: break-all; /* 긴 단어를 잘라서 줄바꿈 */
-            white-space: pre-wrap; /* 공백 유지 및 줄바꿈 처리 */
-        }
-
-    </style>
 </head>
 
 <body>
@@ -60,7 +50,7 @@
         <div th:each="replyDTO : ${replyDTOList}">
             <div class="reply-item">
                 <p><strong>작성자:</strong> <span th:text="${replyDTO.Rwriter != null ? replyDTO.Rwriter : '익명'}"></span></p>
-                <p><strong>내용:</strong></p> <span th:text="${replyDTO.rcontent}" class="break-text"></span>
+                <p><strong>내용:</strong></p> <p  style="white-space: pre-line;" th:utext="${replyDTO.rcontent}"></p>
                 <p><br></p>
                 <p><strong>작성 날짜:</strong> <span th:text="${#temporals.format(replyDTO.regidate)}"></span></p>
                 <div class="btn-group" role="group" aria-label="Basic example">
