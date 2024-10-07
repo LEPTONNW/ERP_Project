@@ -6,6 +6,7 @@ import com.example.demo.service.BoardService;
 import com.example.demo.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,14 @@ public class ReplyController {
 
     private final ReplyService replyService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String replyCreate(@ModelAttribute ReplyDTO replyDTO) {
-
-        return "/reply/create";
+    public String replyCreate(@ModelAttribute ReplyDTO replyDTO, Model model) {
+        model.addAttribute("replyDTO", replyDTO);
+        return "reply/create";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String replyCreatePost(@ModelAttribute ReplyDTO replyDTO,
                                   Principal principal) {
@@ -49,7 +52,7 @@ public class ReplyController {
 
         model.addAttribute("replyDTO" , dto);
 
-        return "/reply/modify";
+        return "reply/modify";
     }
 
     @PostMapping("/modify")
