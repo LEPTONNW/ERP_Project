@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 @Log4j2
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService{
     private final EimgService eimgService;
     private final EmployeRepository employeRepository;
     private final BimgRepository bimgRepository;
-
 
 
     //회원가입 처리
@@ -68,24 +67,26 @@ public class UserServiceImpl implements UserService{
         //저장된 엔티티의 ID 반환
         return savedUser.getMno();
     }
-    @Override
-    public boolean register2(UsersDTO usersDTO, MultipartFile multipartFile){
-        log.info("dto들어옴"+usersDTO);
 
-        Optional<UsersEntity> usersEntity =  userRepository.findByUserid(usersDTO.getUserid());
+    @Override
+    public boolean register2(UsersDTO usersDTO, MultipartFile multipartFile) {
+        log.info("dto들어옴" + usersDTO);
+
+        Optional<UsersEntity> usersEntity = userRepository.findByUserid(usersDTO.getUserid());
 
         UsersEntity usersEntity2 = usersEntity.get();
-        if(usersEntity == null){
+        if (usersEntity == null) {
             usersEntity2 = modelMapper.map(usersDTO, UsersEntity.class);
             userRepository.save(usersEntity2);
-            eimgService.eimgregister2(usersEntity2, multipartFile ,employeImgLocation );
+            eimgService.eimgregister2(usersEntity2, multipartFile, employeImgLocation);
             log.info("여기는 레지 진행완");
             return true;
-        }else {
+        } else {
             log.info("저장 불가중복");
             return false;
         }
     }
+
     //중복확인
     @Override
     public boolean checkIfUserExsists(String userid) {
@@ -107,12 +108,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile, EimgDTO eimgDTO) {
+    public UsersDTO updateUser2(String userid, UsersDTO usersDTO) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
 
-
-
-        if(usersEntity.isPresent()) {
+        if (usersEntity.isPresent()) {
             UsersEntity usersEntity1 = usersEntity.get();
 
             //사용자 정보 업데이트
@@ -134,24 +133,59 @@ public class UserServiceImpl implements UserService{
             //권한
             usersEntity1.setPermission(usersDTO.getPermission());
             //사진 내용 전달되나?
-            log.info("여기는 유저 서비스 임플 사진 이름 받아왔나 확인"+multipartFile.getOriginalFilename());
 
             //업데이트된 엔티티를 저장
             userRepository.save(usersEntity1);
-            log.info("여기는 유서임 : eimgDOT의eino 값 뭐로 들어왔나 확인"+eimgDTO.getEino());
+
+            return modelMapper.map(usersEntity1, UsersDTO.class);
+
+        } else {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
+        }
+    }
+
+    @Override
+    public UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile, EimgDTO eimgDTO) {
+        Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
+
+
+        if (usersEntity.isPresent()) {
+            UsersEntity usersEntity1 = usersEntity.get();
+
+            //사용자 정보 업데이트
+            //개인정보
+            usersEntity1.setName(usersDTO.getName());
+            usersEntity1.setAge(usersDTO.getAge());
+            usersEntity1.setGender(usersDTO.getGender());
+            usersEntity1.setEmail(usersDTO.getEmail());
+            usersEntity1.setPhone(usersDTO.getPhone());
+
+            //회사정보
+            usersEntity1.setB2bname(usersDTO.getB2bname());
+            usersEntity1.setB2baddr(usersDTO.getB2baddr());
+            usersEntity1.setB2bexpont(usersDTO.getB2bexpont());
+            usersEntity1.setB2bemail(usersDTO.getB2bemail());
+            usersEntity1.setB2bcontact(usersDTO.getB2bcontact());
+            usersEntity1.setB2bnumber(usersDTO.getB2bnumber());
+
+            //권한
+            usersEntity1.setPermission(usersDTO.getPermission());
+            //사진 내용 전달되나?
+            log.info("여기는 유저 서비스 임플 사진 이름 받아왔나 확인" + multipartFile.getOriginalFilename());
+
+            //업데이트된 엔티티를 저장
+            userRepository.save(usersEntity1);
+            log.info("여기는 유서임 : eimgDOT의eino 값 뭐로 들어왔나 확인" + eimgDTO.getEino());
             //해봐
 
-                if(multipartFile != null ){
-                    eimgService.eimgregister2(usersEntity1 , multipartFile, employeImgLocation);
-                }
-                return modelMapper.map(usersEntity1, UsersDTO.class);
 
+            if (multipartFile != null) {
+                eimgService.eimgregister2(usersEntity1, multipartFile, employeImgLocation);
             }
 
+            return modelMapper.map(usersEntity1, UsersDTO.class);
 
-
-
-        else {
+        } else {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
         }
     }
@@ -162,7 +196,7 @@ public class UserServiceImpl implements UserService{
     public UsersDTO updatePass(String userid, UsersDTO usersDTO) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
 
-        if(usersEntity.isPresent()) {
+        if (usersEntity.isPresent()) {
             UsersEntity usersEntity1 = usersEntity.get();
 
             //암호화
@@ -176,9 +210,7 @@ public class UserServiceImpl implements UserService{
 
             //DTO로 변환하여 리턴
             return modelMapper.map(usersEntity1, UsersDTO.class);
-        }
-
-        else {
+        } else {
             throw new UsernameNotFoundException("사용자 찾을 수 없음, 잘못된 접근입니다.");
         }
     }
@@ -188,7 +220,7 @@ public class UserServiceImpl implements UserService{
     public String forgotpass(String userid, String pass) {
         Optional<UsersEntity> usersEntity = userRepository.findByUserid(userid);
 
-        if(usersEntity.isPresent()) {
+        if (usersEntity.isPresent()) {
             UsersEntity usersEntity1 = usersEntity.get();
 
             //암호화
@@ -201,8 +233,7 @@ public class UserServiceImpl implements UserService{
             userRepository.save(usersEntity1);
 
             return modelMapper.map(usersEntity1, String.class);
-        }
-        else  {
+        } else {
             throw new UsernameNotFoundException("사용자를 찾을 수 없음, 잘못된 접근입니다.");
         }
     }
@@ -263,10 +294,10 @@ public class UserServiceImpl implements UserService{
         Optional<BimgEntity> bimgEntity = bimgRepository.findById(usersEntity1.getMno());
 
 
-        if(usersEntity.isPresent()) {
-            if(employeEntity.isPresent()) {
+        if (usersEntity.isPresent()) {
+            if (employeEntity.isPresent()) {
                 //모든 데이터가 있을 경우 삭제
-                if(bimgEntity.isPresent()) {
+                if (bimgEntity.isPresent()) {
                     employeRepository.delete(employeEntity.get());
                     userRepository.delete(usersEntity.get());
                     bimgRepository.delete(bimgEntity.get());
@@ -280,22 +311,19 @@ public class UserServiceImpl implements UserService{
                     return "사용자가 정상적으로 삭제되었습니다.";
                 }
 
-            }
-            else {
+            } else {
                 //사진과 유저데이터만 있을 경우 삭제
-                if(bimgEntity.isPresent()) {
+                if (bimgEntity.isPresent()) {
                     bimgRepository.delete(bimgEntity.get());
                     userRepository.delete(usersEntity.get());
                     return "사용자가 정상적으로 삭제되었습니다.";
-                }
-                else {
+                } else {
                     //유저 데이터만 있을 경우 삭제
                     userRepository.delete(usersEntity.get());
                     return "사용자가 정상적으로 삭제되었습니다.";
                 }
             }
-        }
-        else {
+        } else {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.잘못된 사용자 입니다.");
         }
 

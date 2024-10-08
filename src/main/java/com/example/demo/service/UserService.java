@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.EimgDTO;
 import com.example.demo.dto.UsersDTO;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,8 @@ public interface UserService {
     UsersDTO getUser(String userid); //내정보 가져오기용
 
     UsersDTO updateUser(String userid, UsersDTO usersDTO, MultipartFile multipartFile,EimgDTO eimgDTO);//마이프로필 변경
+
+    UsersDTO updateUser2 (String userid, UsersDTO usersDTO); //인력관리 업데이트
 
     UsersDTO updatePass(String userid, UsersDTO usersDTO); //비밀번호 변경
 
