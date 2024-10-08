@@ -79,19 +79,21 @@ public class MaterialController {
         //모든 자재정보의 리스트를 리스트에 저장
         List<MaterialDTO> newlist = materialDTOPageResponesDTO.getDtoList();
         //materialDTOPageResponesDTO 의 DtoList를 비워줌
-        materialDTOPageResponesDTO.setDtoList(Collections.emptyList());
+        //materialDTOPageResponesDTO.setDtoList(Collections.emptyList());
+        //materialDTOPageResponesDTO.setDtoList(new ArrayList<>());
+
         //초기화
-        List<MaterialDTO> filterList = new ArrayList<>();
+        //List<MaterialDTO> filterList = new ArrayList<>();
 
         //자신의 사업자번호로 되어있는것만 리스트에 저장하여 데이터를 가공한다.
-        newlist.forEach(materialDTO -> {
-            if(materialDTO.getMno().getMno().equals(usDTO.getMno())) {
-                filterList.add(materialDTO);
-            }
-        });
+        //newlist.forEach(materialDTO -> {
+        //    if(materialDTO.getMno().getMno().equals(usDTO.getMno())) {
+        //        filterList.add(materialDTO);
+        //    }
+        //});
 
         //가공된 값 저장
-        materialDTOPageResponesDTO.setDtoList(filterList);
+        //materialDTOPageResponesDTO.setDtoList(filterList);
 
 
         if (materialDTOPageResponesDTO.getDtoList() == null) {

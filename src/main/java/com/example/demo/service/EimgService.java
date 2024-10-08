@@ -34,14 +34,17 @@ public class EimgService {
 
         String directoryPath = "C:\\uploads\\employe";
 
+        log.info(multipartFile);
+        log.info(multipartFile);
+        log.info(multipartFile);
+        log.info(multipartFile);
+        log.info(multipartFile);
+        log.info(multipartFile);
         // File 객체 생성
         File directory = new File(directoryPath);
-
-        // 폴더 존재 여부 확인 후 생성 시도
         if (!directory.exists()) {
             boolean created = directory.mkdirs();
-
-
+        }
         //사진을추가할 유저의 Mno값 받아옴
         Long delete_mno = usersEntity.getMno();
         //받은 Mno로 현재 등록되어있는 사진의 엔티티를 가져옴
@@ -60,7 +63,7 @@ public class EimgService {
                 eimgRepository.delete(eimgEntity2);
             }
         }
-
+        // 폴더 존재 여부 확인 후 생성 시도
 
         //랜덤으로 pic이름 정함
         UUID uuid = UUID.randomUUID();
@@ -79,9 +82,6 @@ public class EimgService {
         eimgEntity.setOripicname(newSaveName);
 
         eimgRepository.save(eimgEntity);
-
-
-    }
 
     }
     public EimgDTO read(Long mno){

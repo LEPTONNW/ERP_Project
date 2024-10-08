@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1.html}">
+<head>
+    <title>채팅방</title>
+</head>
+<body>
+<div class="content mt-5" layout:fragment="content">
+    <h2>채팅방</h2>
+    <div class="block">
+    <th:block th:each="message : ${messages}">
+        <span th:text="${message.content}"></span><br/>
+    </th:block>
+    </div>
+
+    <form th:action="@{/chat/send}" method="post" th:object="${chatMessage}">
+        <input type="text" th:value="${#authentication.name}" placeholder="Your name" required />
+        <input type="text" id="messageContent" th:field="*{content}" placeholder="Type a message..." required />
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        // 페이지가 로드된 후 메시지 입력란에 포커스를 설정합니다.
+        window.onload = function() {
+            document.getElementById("messageContent").focus();
+        };
+    </script>
+
+</div>
+
+</body>
+</html>

@@ -19,25 +19,25 @@
 
                 <input type="hidden" name="num" th:value="${materialDTO.num}">
                 <label for="title" class="form-label">자재명</label>
-                <input type="text" class="form-control" th:field="*{matName}" id="matName" placeholder="">
+                <input type="text" class="form-control" th:field="*{matName}" id="matName" placeholder="" required>
                 <p th:if="${#fields.hasErrors('matName')}" th:errors="*{matName}" class="fieldError"></p>
                 <label for="title" class="form-label">자재 코드</label>
-                <input type="text" class="form-control" th:field="*{matCode}" id="title" placeholder="">
+                <input type="text" class="form-control" th:field="*{matCode}" id="title" placeholder="" required>
                 <p th:if="${#fields.hasErrors('matCode')}" th:errors="*{matCode}" class="fieldError"></p>
                 <label for="title" class="form-label">자재 수량</label>
-                <input type="text" class="form-control" th:field="*{matAmount}" id="title" placeholder="">
+                <input type="text" class="form-control" th:field="*{matAmount}" id="title" placeholder="" required>
                 <p th:if="${#fields.hasErrors('matAmount')}" th:errors="*{matAmount}" class="fieldError"></p>
                 <label for="title" class="form-label">자재 가격</label>
-                <input type="text" class="form-control" th:field="*{matPrice}" id="title" placeholder="">
+                <input type="text" class="form-control" th:field="*{matPrice}" id="title" placeholder="" required>
                 <p th:if="${#fields.hasErrors('matPrice')}" th:errors="*{matPrice}" class="fieldError"></p>
                 <label for="title" class="form-label">매입처</label>
-                <input type="text" class="form-control" th:field="*{matBuyPlace}" id="title" placeholder="">
+                <input type="text" class="form-control" th:field="*{matBuyPlace}" id="title" placeholder="" required>
                 <p th:if="${#fields.hasErrors('matBuyPlace')}" th:errors="*{matBuyPlace}" class="fieldError"></p>
                 <label for="title" class="form-label">매입처 사업자 번호</label>
-                <input type="text" class="form-control" th:field="*{matBuyNum}" id="title" placeholder="">
+                <input type="text" class="form-control" th:field="*{matBuyNum}" id="title" placeholder="" required>
                 <p th:if="${#fields.hasErrors('matBuyNum')}" th:errors="*{matBuyNum}" class="fieldError"></p>
                 <label for="title" class="form-label">매입 일자</label>
-                <input type="date" class="form-control" name="matBuyDate" th:value="${materialDTO.matBuyDate}"  placeholder="">
+                <input type="date" class="form-control" name="matBuyDate" th:value="${materialDTO.matBuyDate}"  placeholder="" required>
                 <p th:if="${#fields.hasErrors('matBuyDate')}" th:errors="*{matBuyDate}" class="fieldError"></p>
                 <div class="mb-3">
                     <label for="matText" class="form-label">메모</label>

@@ -15,7 +15,7 @@ import java.net.URLEncoder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageRequestDTO {
+public class PageRequestDTO<E> {
     //클라이언트로부터 입력받은 url및 파라미터 정보 controller에서 파라미터 수집
 
     @Builder.Default //들어오면 들어온값, 안들어오면 이값

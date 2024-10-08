@@ -257,10 +257,10 @@
                 });
 
                 $(".delete").on("click", function() {
-                    if (confirm("진짜 삭제함?")) {
+                    if (confirm("삭제하시겠습니까?")) {
                         window.location.href = "/material/del?num=" + num;
                     } else {
-                        alert("신중해");
+                        alert("삭제가 취소 되었습니다.");
                     }
                 });
 

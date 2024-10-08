@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <title>게시글 상세보기</title>
 </head>
+
 <body>
 <div layout:fragment="content">
 
@@ -49,7 +50,8 @@
         <div th:each="replyDTO : ${replyDTOList}">
             <div class="reply-item">
                 <p><strong>작성자:</strong> <span th:text="${replyDTO.Rwriter != null ? replyDTO.Rwriter : '익명'}"></span></p>
-                <p><strong>내용:</strong> <span th:text="${replyDTO.rcontent}"></span></p>
+                <p><strong>내용:</strong></p> <p  style="white-space: pre-line;" th:utext="${replyDTO.rcontent}"></p>
+                <p><br></p>
                 <p><strong>작성 날짜:</strong> <span th:text="${#temporals.format(replyDTO.regidate)}"></span></p>
                 <div class="btn-group" role="group" aria-label="Basic example">
                     <a th:if="${replyDTO.Rwriter == logUser}"

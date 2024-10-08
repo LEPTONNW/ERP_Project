@@ -20,10 +20,11 @@ public class Annon extends BaseEntity{
     @Column (columnDefinition = "text")
     private String content;
 
+    private String writer;
+
     @ManyToOne
     @JoinColumn(name = "mno")
     private UsersEntity usersEntity;
 
-    private String writer;
 
 }

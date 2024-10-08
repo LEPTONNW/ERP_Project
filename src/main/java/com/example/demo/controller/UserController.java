@@ -250,7 +250,7 @@ public class UserController {
     @GetMapping("/forgotpass")
     public String forgotpass(Model model) {
         try {
-            model.addAttribute("userDTO", new UsersDTO());
+            model.addAttribute("usersDTO", new UsersDTO());
             return "forgotpass";
         } catch (Exception e) {
             model.addAttribute("err", "잘못된 접근입니다.");
@@ -269,7 +269,7 @@ public class UserController {
                 usersDTO.setEmail(userDTO.getEmail());
             }
             else {
-                model.addAttribute("userDTO", usersDTO); //폼에 바인딩
+                model.addAttribute("usersDTO", usersDTO); //폼에 바인딩
             }
             //입력된 아이디, 이메일 정보 확인
             UsersDTO getuser = userService.getUser(usersDTO.getUserid()); //입력된 아이디로 Entity정보 가져옴
@@ -288,6 +288,7 @@ public class UserController {
             }
         } catch (Exception e) {
             model.addAttribute("err", "ERROR : 아이디 또는 이메일 정보가 일치하지 않습니다.");
+
             return "forgotpass";
         }
     }

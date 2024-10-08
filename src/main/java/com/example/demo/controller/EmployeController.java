@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import com.example.demo.dto.*;
+import com.example.demo.service.EimgService;
 import com.example.demo.service.EmployeService;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +29,7 @@ public class EmployeController {
 
     private final UserService userService;
     private final EmployeService employeService;
+    private final EimgService eimgService;
 
 
     @PreAuthorize("isAuthenticated()")
@@ -140,12 +143,14 @@ public class EmployeController {
                 }
             }
             catch (Exception e) {
+                model.addAttribute("bindingDTO", new EmployeMergeDTO());
                 model.addAttribute("err", e.toString() );
             }
 
             return "employe/main";
         }
         catch (Exception e) {
+            model.addAttribute("bindingDTO", new EmployeMergeDTO());
             model.addAttribute("err" , "ERROR : 현재 유저정보가 없습니다.");
             return "employe/main";
         }
@@ -181,7 +186,6 @@ public class EmployeController {
                               Principal principal,
                               @RequestParam(value = "userid", required = false) String userid,
                               @ModelAttribute EmployeMergeDTO bindingDTO,
-                              MultipartFile multipartFile,
                               @ModelAttribute AdminSearchDTO usDTO, //유저정보,
                               BindingResult bindingResult, EimgDTO eimgDTO
     ) {
@@ -244,7 +248,8 @@ public class EmployeController {
                 //log.info("LOG!!! : " + bindingDTO.toString());
                 //유저 프로필 저장
                 log.info("여기는employe 컨트롤러 eimg DTO 확인"+eimgDTO);
-                userService.updateUser(getuserid, editDTO, multipartFile,eimgDTO);
+
+                userService.updateUser2(getuserid, editDTO);
 
                 //현재 수정할 것의 Mno값
                 Long templong = userService.getUser(getuserid).getMno();
@@ -305,13 +310,16 @@ public class EmployeController {
                 }
             }
             catch (Exception e) {
+                model.addAttribute("bindingDTO", bindingDTO);
                 model.addAttribute("err", e.toString());
             }
 
             return "employe/main";
         }
         catch (Exception e) {
-            model.addAttribute("err" , "ERROR : 현재 유저정보가 없습니다.");
+            model.addAttribute("bindingDTO", bindingDTO);
+            model.addAttribute("err" , e.toString());
+            //model.addAttribute("err" , "ERROR : 현재 유저정보가 없습니다.");
             return "employe/main";
         }
     }
